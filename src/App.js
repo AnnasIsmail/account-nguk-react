@@ -1,16 +1,29 @@
+import axios from 'axios';
 import React from 'react';
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
+import Login from './pages/SignIn';
+import Register from './pages/SignUp';
 
 function App() {
-  const [angka, setAngka] = React.useState([]);
+  const [angka, setAngka] = React.useState();
 
-  fetch('http://127.0.0.1:8000/api/coba')
-  .then((response) => response.json())
-  .then((data) => setAngka(data.data));
+  React.useEffect(()=>{
+    
+      axios.get('http://127.0.0.1:8000/api/coba').then(function (response) {
+        console.log(response.data)
+      });
+
+    },[])
 
   return (
     <>
-      {angka.map(data=>` ${data} , `)}
+      <Routes>
+        {/* <Route path="/" element={<Landing />} /> */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Register />} />
+        {/* <Redirect from="*" to="/" /> */}
+      </Routes>
     </>
   );
 }

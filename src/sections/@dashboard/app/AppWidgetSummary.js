@@ -1,11 +1,18 @@
 // @mui
-import PropTypes from 'prop-types';
-import { alpha, styled } from '@mui/material/styles';
 import { Card, Typography } from '@mui/material';
+import Button from '@mui/material/Button';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import { alpha, styled } from '@mui/material/styles';
+import PropTypes from 'prop-types';
+import React from 'react';
 // utils
-import { fShortenNumber } from '../../../utils/formatNumber';
+
 // components
 import Iconify from '../../../components/Iconify';
+
 
 // ----------------------------------------------------------------------
 
@@ -25,18 +32,37 @@ const IconWrapperStyle = styled('div')(({ theme }) => ({
 AppWidgetSummary.propTypes = {
   color: PropTypes.string,
   icon: PropTypes.string,
-  title: PropTypes.string.isRequired,
-  total: PropTypes.number.isRequired,
+  RiotId: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
+  password: PropTypes.string.isRequired,
   sx: PropTypes.object,
 };
 
-export default function AppWidgetSummary({ title, total, icon, color = 'primary', sx, ...other }) {
+const ExpandMore = styled((props) => {
+  const { expand, ...other } = props;
+  return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+  marginLeft: 'auto',
+  transition: theme.transitions.create('transform', {
+    duration: theme.transitions.duration.shortest,
+  }),
+}));
+
+export default function AppWidgetSummary({ username, password, RiotId, icon, color = 'error', sx, ...other }) {
+
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
   return (
     <Card
       sx={{
-        py: 5,
+        pt: 3,
+        pb: 1,
         boxShadow: 0,
-        textAlign: 'center',
         color: (theme) => theme.palette[color].darker,
         bgcolor: (theme) => theme.palette[color].lighter,
         ...sx,
@@ -56,11 +82,39 @@ export default function AppWidgetSummary({ title, total, icon, color = 'primary'
         <Iconify icon={icon} width={24} height={24} />
       </IconWrapperStyle>
 
-      <Typography variant="h3">{fShortenNumber(total)}</Typography>
+      <Typography className='RiotIdCard' variant="h4">{RiotId}</Typography>
 
-      <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
-        {title}
+      <Typography variant="subtitle1" className='data-account' sx={{ opacity: 0.72 }}>
+        Username: {username}
+        <Button color={color} onClick={() => { console.log('onClick'); }}>
+          <Iconify icon='fluent:copy-16-filled' width={24} height={24} />
+        </Button>
       </Typography>
+
+      <Typography variant="subtitle1" className='data-account' sx={{ opacity: 0.72 }}>
+        Password: {password}
+        <Button color={color} onClick={() => { console.log('onClick'); }}>
+          <Iconify icon='fluent:copy-16-filled' width={24} height={24} />
+        </Button>
+      </Typography>
+
+      <CardActions className='bottom-card-account'>
+        <div>
+          <Button className='button-bottom' color={color} size="small">Tracker.gg</Button>
+          <Button className='button-bottom' color={color} size="small">Edit Account</Button>
+        </div>
+        <Button expand={expanded} onClick={handleExpandClick} aria-expanded={expanded} aria-label="show more" className='button-bottom' color={color} size="small">
+          <Iconify icon='ic:twotone-expand-more' width={24} height={24} />
+          </Button>
+      </CardActions>
+
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent>
+          <Typography paragraph>Pemilik: Annas</Typography>
+          <Typography paragraph>Skin: Gosong</Typography>
+        </CardContent>
+      </Collapse>
+
     </Card>
   );
 }

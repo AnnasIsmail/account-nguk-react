@@ -1,0 +1,21 @@
+.RiotIdCard{
+    white-space: pre-wrap;
+    word-break: break-all;
+    text-align: center;
+}
+
+.data-account{
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 10px;
+    align-items: center;
+}
+
+.button-bottom{
+    text-transform: none !important;
+}
+
+.header-dashboard-account, .bottom-card-account{
+    display: flex;
+    justify-content: space-between;
+}

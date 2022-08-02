@@ -1,31 +1,19 @@
-import axios from 'axios';
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
-import './App.css';
-import Login from './pages/SignIn';
-import Register from './pages/SignUp';
+// routes
+import Router from './routes';
+// theme
+import ThemeProvider from './theme';
+// components
+import ScrollToTop from './components/ScrollToTop';
+import { BaseOptionChartStyle } from './components/chart/BaseOptionChart';
 
-function App() {
-  const [angka, setAngka] = React.useState();
+// ----------------------------------------------------------------------
 
-  React.useEffect(()=>{
-    
-      axios.get('http://127.0.0.1:8000/api/coba').then(function (response) {
-        console.log(response.data)
-      });
-
-    },[])
-
+export default function App() {
   return (
-    <>
-      <Routes>
-        {/* <Route path="/" element={<Landing />} /> */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Register />} />
-        {/* <Redirect from="*" to="/" /> */}
-      </Routes>
-    </>
+    <ThemeProvider>
+      <ScrollToTop />
+      <BaseOptionChartStyle />
+      <Router />
+    </ThemeProvider>
   );
 }
-
-export default App;

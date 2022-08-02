@@ -5,16 +5,16 @@ import Iconify from '../../components/Iconify';
 
 const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
-const navConfig = [
+const navConfigAdmin = [
   {
-    title: 'All Account',
-    path: '/dashboard/app',
-    icon: getIcon('material-symbols:switch-account-rounded'),
+    title: 'Manage Account',
+    path: '/dashboard/manage-account',
+    icon: getIcon('mdi:account-cog'),
   },
   {
-    title: 'Members',
-    path: '/dashboard/products',
-    icon: getIcon('eva:people-fill'),
+    title: 'Manage Users',
+    path: '/dashboard/user',
+    icon: getIcon('mdi:account-key'),
   },
   // {
   //   title: 'blog',
@@ -23,4 +23,4 @@ const navConfig = [
   // }
 ];
 
-export default navConfig;
+export default navConfigAdmin;

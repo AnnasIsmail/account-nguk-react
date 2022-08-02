@@ -19,3 +19,7 @@
     display: flex;
     justify-content: space-between;
 }
+
+.navbar-admin{
+    margin-left: 20px;
+}

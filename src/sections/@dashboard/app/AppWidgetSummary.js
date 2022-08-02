@@ -1,8 +1,10 @@
 // @mui
 import { Card, Typography } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import { alpha, styled } from '@mui/material/styles';
@@ -111,7 +113,34 @@ export default function AppWidgetSummary({ username, password, RiotId, icon, col
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>Pemilik: Annas</Typography>
-          <Typography paragraph>Skin: Gosong</Typography>
+          <Typography paragraph>Skin: 
+          <Chip avatar={<Avatar>M</Avatar>} label="Avatar" />
+          <Chip
+            avatar={<Avatar alt="Natacha" src="/static/images/avatar/1.jpg" />}
+            label="Avatar"
+            variant="outlined"
+          />
+                    <Chip
+            avatar={<Avatar alt="Natacha" src="/static/images/avatar/1.jpg" />}
+            label="Avatar"
+            variant="outlined"
+          />
+                    <Chip
+            avatar={<Avatar alt="Natacha" src="/static/images/avatar/1.jpg" />}
+            label="Avatar"
+            variant="outlined"
+          />
+                    <Chip
+            avatar={<Avatar alt="Natacha" src="/static/images/avatar/1.jpg" />}
+            label="Avatar"
+            variant="outlined"
+          />
+                    <Chip
+            avatar={<Avatar alt="Natacha" src="/static/images/avatar/1.jpg" />}
+            label="Avatar"
+            variant="outlined"
+          />
+          </Typography>
         </CardContent>
       </Collapse>
 

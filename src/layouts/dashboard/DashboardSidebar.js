@@ -14,6 +14,7 @@ import NavSection from '../../components/NavSection';
 import Scrollbar from '../../components/Scrollbar';
 //
 import navConfig from './NavConfig';
+import navConfigAdmin from './NavConfigAdmin';
 
 // ----------------------------------------------------------------------
 
@@ -81,8 +82,9 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       </Box>
 
       <NavSection navConfig={navConfig} />
+      <Typography className='navbar-admin' color='secondary' >Administrator</Typography>
+      <NavSection navConfig={navConfigAdmin} />
 
-      <Typography>Administrator</Typography>
 
       <Box sx={{ flexGrow: 1 }} />
 

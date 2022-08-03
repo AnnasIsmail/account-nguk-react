@@ -1,15 +1,17 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
 import DashboardLayout from './layouts/dashboard';
+import ManageData from './layouts/dashboard/ManageData';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 //
 import Blog from './pages/Blog';
-import User from './pages/User';
-import Login from './pages/Login';
-import NotFound from './pages/Page404';
-import Register from './pages/Register';
-import Products from './pages/Products';
 import DashboardApp from './pages/DashboardApp';
+import Login from './pages/Login';
+import NewAccount from './pages/NewAccount';
+import NotFound from './pages/Page404';
+import Products from './pages/Products';
+import Register from './pages/Register';
+import User from './pages/User';
 
 // ----------------------------------------------------------------------
 
@@ -37,5 +39,13 @@ export default function Router() {
       ],
     },
     { path: '*', element: <Navigate to="/404" replace /> },
+    {
+      path: '/account',
+      element: <ManageData />,
+      children: [
+        { path: 'create', element: <NewAccount /> },
+      ],
+    },
+
   ]);
 }

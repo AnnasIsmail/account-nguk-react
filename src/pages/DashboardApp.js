@@ -15,19 +15,15 @@ import Iconify from '../components/Iconify';
 export default function DashboardApp() {
   const name = 'Annas'
 
-  const [data,setData] = React.useState();
-  console.info('masuk');
+  const [data,setData] = React.useState([]);
 
   React.useEffect(() => {
     axios.get('http://127.0.0.1:8000/api/account').then((response) =>{
       setData(response.data.data);
-      console.log(data);
     });
     
   },[]);
-  fetch(`https://jsonplaceholder.typicode.com/posts`)
-  .then((response) => console.log(response));
-  
+
   return (
     <Page title="Dashboard">
 
@@ -36,7 +32,7 @@ export default function DashboardApp() {
             <Typography variant="h4" gutterBottom>
               Hi {name}
             </Typography>
-            <Button variant="contained" component={RouterLink} to="#" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button variant="contained" component={RouterLink} to="/account/create" startIcon={<Iconify icon="eva:plus-fill" />}>
               New Account
             </Button>
           </Stack>
@@ -44,14 +40,15 @@ export default function DashboardApp() {
         <Grid container spacing={3}>
 
       {
-      data.map((dataDalam)=>{
-        <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary username={dataDalam.RiotId} password="Annas211112345" RiotId="LUHUTFORPRESIDEN#PDIP" icon={'simple-icons:valorant'} />
-          </Grid>
+      data.map((dataDalam,index)=>{
+
+        const RiotIdAndTagline = `${dataDalam.riotId}#${dataDalam.tagLine}`
+
+        return (<Grid item xs={12} sm={6} md={3} key={dataDalam.id}>
+             <AppWidgetSummary username={dataDalam.riotId} password={dataDalam.password} RiotId={RiotIdAndTagline} owner={dataDalam.owner} icon={'simple-icons:valorant'} />
+          </Grid>)
       })
       }
-
-          
 
         </Grid>
       </Container>

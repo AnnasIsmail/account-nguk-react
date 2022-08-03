@@ -23,3 +23,30 @@
 .navbar-admin{
     margin-left: 20px;
 }
+
+.layout-manage-data{
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 20px;
+}
+
+@media only screen and (max-width: 1200px) {
+    .layout-manage-data{
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .form-new-account{
+        display: grid !important;
+        grid-template-columns: 1fr max-content 1fr;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .form-new-account-first{
+        margin-top: 15px;
+    }
+  }
+

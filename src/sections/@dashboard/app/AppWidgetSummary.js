@@ -6,7 +6,6 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
 import { alpha, styled } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -40,18 +39,9 @@ AppWidgetSummary.propTypes = {
   sx: PropTypes.object,
 };
 
-const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-  marginLeft: 'auto',
-  transition: theme.transitions.create('transform', {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
 
-export default function AppWidgetSummary({ username, password, RiotId, icon, color = 'error', sx, ...other }) {
+
+export default function AppWidgetSummary({ username, password, RiotId, owner, icon, color = 'error', sx, ...other }) {
 
   const [expanded, setExpanded] = React.useState(false);
 
@@ -105,14 +95,14 @@ export default function AppWidgetSummary({ username, password, RiotId, icon, col
           <Button className='button-bottom' color={color} size="small">Tracker.gg</Button>
           <Button className='button-bottom' color={color} size="small">Edit Account</Button>
         </div>
-        <Button expand={expanded} onClick={handleExpandClick} aria-expanded={expanded} aria-label="show more" className='button-bottom' color={color} size="small">
+        <Button  onClick={handleExpandClick} aria-expanded={expanded} aria-label="show more" className='button-bottom' color={color} size="small">
           <Iconify icon='ic:twotone-expand-more' width={24} height={24} />
           </Button>
       </CardActions>
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>Pemilik: Annas</Typography>
+          <Typography paragraph>Pemilik: {owner}</Typography>
           <Typography paragraph>Skin: 
           <Chip avatar={<Avatar>M</Avatar>} label="Avatar" />
           <Chip

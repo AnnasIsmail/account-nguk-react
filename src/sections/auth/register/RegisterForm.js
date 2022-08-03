@@ -1,15 +1,15 @@
-import * as Yup from 'yup';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
 // form
-import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
 // @mui
-import { Stack, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { IconButton, InputAdornment, Stack } from '@mui/material';
 // components
-import Iconify from '../../../components/Iconify';
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
+import Iconify from '../../../components/Iconify';
 
 // ----------------------------------------------------------------------
 
@@ -70,6 +70,8 @@ export default function RegisterForm() {
             ),
           }}
         />
+
+
 
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
           Register

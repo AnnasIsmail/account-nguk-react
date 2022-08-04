@@ -16,6 +16,11 @@ const navConfigAdmin = [
     path: '/dashboard/user',
     icon: getIcon('mdi:account-key'),
   },
+  {
+    title: 'Logs Users',
+    path: '/dashboard/logs',
+    icon: getIcon('fluent:phone-span-in-28-filled'),
+  },
   // {
   //   title: 'blog',
   //   path: '/dashboard/blog',

@@ -26,21 +26,16 @@ export default function NewAccountForm() {
   const RegisterSchema = Yup.object().shape({
     riotId: Yup.string().required('First name required'),
     tagLine: Yup.string().required('Last name required'),
-    username: Yup.string().email('Email must be a valid email address').required('Email is required'),
+    username: Yup.string().required('Last name required'),
     password: Yup.string().required('Password is required'),
-    pemilik: Yup.string().required('Pemilik is required'),
-    skins: Yup.string().required('First name required'),
-    agents: Yup.string().required('Last name required'),
+    owner: Yup.string().required('owner is required'),
 });
 
   const defaultValues = {
     riotId: '',
     tagLine: '',
-    email: '',
     password: '',
-    pemilik: '',
-    skins: '',
-    agents: '',
+    owner: '',
   };
 
   const methods = useForm({
@@ -53,8 +48,30 @@ export default function NewAccountForm() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async () => {
-    navigate('/dashboard', { replace: true });
+  const onSubmit = async (e) => {
+
+    const formData = new FormData();
+
+    formData.append('riotId', e.riotId);
+    formData.append('tagLine', e.tagLine);
+    formData.append('slug', 'asd');
+    formData.append('username', e.username);
+    formData.append('password', e.password);
+    formData.append('owner', e.owner);
+
+    axios({
+      url: 'http://127.0.0.1:8000/api/account/store', 
+      responseType: 'json',
+      method: 'post',
+      data : formData
+    }).then(()=> {
+        navigate('/dashboard/app', { replace: true });
+    }).catch((error)=> {
+      console.log(error);
+    });
+    
+    
+
   };
 
   const [autocompleteSkins, setAutocompleteSkins] = React.useState(
@@ -98,7 +115,7 @@ export default function NewAccountForm() {
 
         const skinsSementara = [];
 
-        data.map((data , index)=>{
+        data.map(data=>{
             if(data.displayName.startsWith('Standard') !== true){
                 return skinsSementara.push({title: data.displayName});
             }
@@ -131,7 +148,7 @@ export default function NewAccountForm() {
 
         const agentsSementara = [];
 
-        data.map((data , index)=>{
+        data.map(data=>{
             if(data.displayName !== 'Sova' && data.displayName !== 'Brimstone' && data.displayName !== 'Jett' && data.displayName !== 'Phoenix' && data.displayName !== 'Sage'){
                 return agentsSementara.push({title: data.displayName});
             }
@@ -155,7 +172,6 @@ export default function NewAccountForm() {
               />
             )}
           />);
-                console.log(data)
     });
 
 
@@ -187,7 +203,7 @@ export default function NewAccountForm() {
           }}
         />
 
-        <RHFTextField name="pemilik" label="Nama Pemilik" />
+        <RHFTextField name="owner" label="Nama Pemilik" />
 
 
       {autocompleteSkins}

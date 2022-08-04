@@ -80,11 +80,7 @@ export default function NewAccount() {
 
             <Typography sx={{ color: 'text.secondary', mb: 5 }}>Masukan dengan sesuai. Bila tidak ingin rata.</Typography>
 
-
             <NewAccountForm />
-
-           
-
             
           </ContentStyle>
         </Container>

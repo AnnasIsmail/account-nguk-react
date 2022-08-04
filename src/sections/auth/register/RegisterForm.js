@@ -42,8 +42,9 @@ export default function RegisterForm() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async () => {
-    navigate('/dashboard', { replace: true });
+  const onSubmit = async (e) => {
+    // navigate('/dashboard', { replace: true });
+    console.log(e)
   };
 
   return (

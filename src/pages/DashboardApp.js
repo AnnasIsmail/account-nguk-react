@@ -35,21 +35,8 @@ export default function DashboardApp() {
       setDataSkin(response.data.data);
     });
 
-    axios.get('https://valorant-api.com/v1/agents').then((response) =>{
-        let data = [];
-        data  = response.data.data;
-
-        const agentsSementara = [];
-
-        data.map(data=>{
-            if(data.displayName !== 'Sova' && data.displayName !== 'Brimstone' && data.displayName !== 'Jett' && data.displayName !== 'Phoenix' && data.displayName !== 'Sage'){
-                return agentsSementara.push({title: data.displayName});
-            }
-            return false;
-        });
-
-        dataAgent(agentsSementara);
-        
+    axios.get('http://127.0.0.1:8000/api/account/agent').then((response) =>{
+      setDataAgent(response.data.data);
     });
 
   },[]);

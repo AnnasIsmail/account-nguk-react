@@ -55,6 +55,7 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
     setExpanded(!expanded);
   };
 
+  console.log(dataAgent)
 
   const copy =(message, text)=>{
     copyProps(message);
@@ -175,7 +176,7 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
               
             })
           }
-            {(dataSkin.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).length === 0)?
+            {(dataAgent.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).length === 0)?
               <Chip color={color} label="Bot"  component="a" href="#basic-chip" clickable />
               :
               <></>

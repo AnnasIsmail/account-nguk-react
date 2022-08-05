@@ -1,43 +1,14 @@
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import Fade from '@mui/material/Fade';
+import Link from '@mui/material/Link';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import PropTypes from 'prop-types';
-import * as React from 'react';
-// web.cjs is required for IE11 support
-import { animated, useSpring } from 'react-spring/web.cjs';
 
-const Fade = React.forwardRef(function Fade(props, ref) {
-  const { in: open, children, onEnter, onExited, ...other } = props;
-  const style = useSpring({
-    from: { opacity: 0 },
-    to: { opacity: open ? 1 : 0 },
-    onStart: () => {
-      if (open && onEnter) {
-        onEnter();
-      }
-    },
-    onRest: () => {
-      if (!open && onExited) {
-        onExited();
-      }
-    },
-  });
-
-  return (
-    <animated.div ref={ref} style={style} {...other}>
-      {children}
-    </animated.div>
-  );
-});
-
-Fade.propTypes = {
-  children: PropTypes.element,
-  in: PropTypes.bool.isRequired,
-  onEnter: PropTypes.func,
-  onExited: PropTypes.func,
-};
+import Iconify from '../../../components/Iconify';
 
 const style = {
   position: 'absolute',
@@ -51,36 +22,64 @@ const style = {
   p: 4,
 };
 
-export default function SpringModal() {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+export default function DetailSkin(props) {
+ 
+  const detailSkin = props.detailSkin;
+  let levels = [];
+  if(props.detailSkin.levels !== undefined){
+    levels = props.detailSkin.levels;
+  }
 
   return (
-    <div>
-      <Button onClick={handleOpen}>Open modal</Button>
+    <>
       <Modal
-        aria-labelledby="spring-modal-title"
-        aria-describedby="spring-modal-description"
-        open={open}
-        onClose={handleClose}
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={props.open}
+        onClose={()=>props.handleClose()}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,
         }}
       >
-        <Fade in={open}>
+        <Fade in={props.open}>
           <Box sx={style}>
-            <Typography id="spring-modal-title" variant="h6" component="h2">
-              Text in a modal
+            <Typography>
+              <img src={(detailSkin.displayIcon !== null)?detailSkin.displayIcon:detailSkin.chromas[0].displayIcon} alt="imageSkin" />
             </Typography>
-            <Typography id="spring-modal-description" sx={{ mt: 2 }}>
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+            <Typography id="transition-modal-title" variant="h6" component="h2">
+              {detailSkin.displayName}
+            </Typography>
+            <Typography id="transition-modal-description" sx={{ mt: 2 }}>
+
+                  <div>
+              {levels.map((data , index)=>{
+                return(
+                  <Accordion>
+                      <AccordionSummary
+                        expandIcon={<Iconify icon='ic:twotone-expand-more' width={24} height={24} />}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                      >
+                        <Typography>{data.displayName}</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Typography>
+                          Video Weapon : {(data.streamedVideo !== null)? <Link href={data.streamedVideo} target="_blank" underline="hover">{'Link Video'}</Link> : <>Not Found</>}
+                        </Typography>
+                      </AccordionDetails>
+                    </Accordion>
+                );
+              })}
+
+                    
+                </div>
+                
             </Typography>
           </Box>
         </Fade>
       </Modal>
-    </div>
+    </>
   );
 }

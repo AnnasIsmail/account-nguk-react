@@ -1,7 +1,6 @@
 // @mui
 import { Card, Typography } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -11,10 +10,11 @@ import { alpha, styled } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 import React from 'react';
 // utils
+import axios from 'axios';
 
 // components
 import Iconify from '../../../components/Iconify';
-
+import DetailSkin from './DetailSkin';
 
 // ----------------------------------------------------------------------
 
@@ -44,9 +44,12 @@ const Alert = React.forwardRef((props, ref)=> {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function AppWidgetSummary({ username, password, RiotIdTagLine, owner, riotId, tagLine, icon, copyProps , color = 'error', sx, ...other }) {
+export default function AppWidgetSummary({ username, password, RiotIdTagLine, owner, riotId, tagLine, icon, copyProps, dataSkin, dataAgent, idAccount, color = 'error', sx, ...other }) {
 
   const [expanded, setExpanded] = React.useState(false);
+  const [openDetail, setOpenDetail] = React.useState(false);
+  // const [uuid , setUuid] = React.useState('');
+  const [detailSkin,setDetailSkin] = React.useState([]);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -57,6 +60,37 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
     copyProps(message);
     navigator.clipboard.writeText(text);
   }
+
+  const openDetailSkin =(uuid)=> {
+    // setUuid(uuid);
+
+
+    
+    axios.get(`https://valorant-api.com/v1/weapons/skins/${uuid}`).then((response) =>{
+      setDetailSkin(response.data.data);
+      setOpenDetail(true);
+    });
+
+  //   axios.get('https://valorant-api.com/v1/agents').then((response) =>{
+  //     let data = [];
+  //     data  = response.data.data;
+
+  //     const agentsSementara = [];
+
+  //     data.map(data=>{
+  //         if(data.displayName !== 'Sova' && data.displayName !== 'Brimstone' && data.displayName !== 'Jett' && data.displayName !== 'Phoenix' && data.displayName !== 'Sage'){
+  //             return agentsSementara.push({title: data.displayName});
+  //         }
+  //         return false;
+  //     });
+
+  //     dataAgent(agentsSementara);
+      
+  // });
+
+  }
+
+  const handleCloseDetailSkin = () => setOpenDetail(false);
 
   return (
     
@@ -114,37 +148,43 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>Pemilik: {owner}</Typography>
-          <Typography paragraph>Skin: 
-          <Chip avatar={<Avatar>M</Avatar>} label="Avatar" />
-          <Chip
-            label="Avatar"
-            variant="outlined"
-          />
-                    <Chip
-            avatar={<Avatar alt="Natacha" src="/static/images/avatar/1.jpg" />}
-            label="Avatar"
-            variant="outlined"
-          />
-                    <Chip
-            avatar={<Avatar alt="Natacha" src="/static/images/avatar/1.jpg" />}
-            label="Avatar"
-            variant="outlined"
-          />
-                    <Chip
-            avatar={<Avatar alt="Natacha" src="/static/images/avatar/1.jpg" />}
-            label="Avatar"
-            variant="outlined"
-          />
-                    <Chip
-            avatar={<Avatar alt="Natacha" src="/static/images/avatar/1.jpg" />}
-            label="Avatar"
-            variant="outlined"
-          />
+          <Typography className='paragraph-detail-account' paragraph>Skins: 
+            <br />
+            {
+            dataSkin.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).map((data , index)=>{
+                return (
+                  <Chip color={color} key={index} label={data.name}  onClick={()=>openDetailSkin(data.uuid)} component="a" clickable />
+                );
+              
+            })
+          }
+            {(dataSkin.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).length === 0)?
+              <Chip color={color} label="Gosong"  component="a" href="#basic-chip" clickable />
+              :
+              <></>
+            }
+          </Typography>
+
+          <Typography className='paragraph-detail-account' paragraph>Agents: 
+            <br />
+            {
+            dataAgent.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).map((data , index)=>{
+                return (
+                  <Chip color={color} key={index} label={data.name}  onClick={()=>openDetailSkin(data.uuid)} component="a" clickable />
+                );
+              
+            })
+          }
+            {(dataSkin.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).length === 0)?
+              <Chip color={color} label="Bot"  component="a" href="#basic-chip" clickable />
+              :
+              <></>
+            }
           </Typography>
         </CardContent>
       </Collapse>
 
-
+    <DetailSkin open={openDetail} handleClose={handleCloseDetailSkin} detailSkin={detailSkin} />
     </Card>
   );
 }

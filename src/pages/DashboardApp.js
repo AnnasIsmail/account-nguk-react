@@ -23,12 +23,35 @@ export default function DashboardApp() {
   const name = 'Annas'
 
   const [data,setData] = React.useState([]);
+  const [dataSkin,setDataSkin] = React.useState([]);
+  const [dataAgent,setDataAgent] = React.useState([]);
 
   React.useEffect(() => {
     axios.get('http://127.0.0.1:8000/api/account').then((response) =>{
       setData(response.data.data);
     });
     
+    axios.get('http://127.0.0.1:8000/api/account/skin').then((response) =>{
+      setDataSkin(response.data.data);
+    });
+
+    axios.get('https://valorant-api.com/v1/agents').then((response) =>{
+        let data = [];
+        data  = response.data.data;
+
+        const agentsSementara = [];
+
+        data.map(data=>{
+            if(data.displayName !== 'Sova' && data.displayName !== 'Brimstone' && data.displayName !== 'Jett' && data.displayName !== 'Phoenix' && data.displayName !== 'Sage'){
+                return agentsSementara.push({title: data.displayName});
+            }
+            return false;
+        });
+
+        dataAgent(agentsSementara);
+        
+    });
+
   },[]);
 
   const [message, setMessage] = React.useState('No Message');
@@ -75,12 +98,12 @@ export default function DashboardApp() {
         <Grid container spacing={3}>
 
       {
-      data.map((dataDalam,index)=>{
+      data.map((dataDalam)=>{
 
         const RiotIdAndTagline = `${dataDalam.riotId}#${dataDalam.tagLine}`
 
         return (<Grid item xs={12} sm={6} md={3} key={dataDalam.id}>
-             <AppWidgetSummary copyProps={copy} username={dataDalam.riotId} password={dataDalam.password} RiotIdTagLine={RiotIdAndTagline} owner={dataDalam.owner} icon={'simple-icons:valorant'} riotId={dataDalam.riotId} tagLine={dataDalam.tagLine} />
+             <AppWidgetSummary idAccount={dataDalam.id} dataSkin={dataSkin} dataAgent={dataAgent} copyProps={copy} username={dataDalam.riotId} password={dataDalam.password} RiotIdTagLine={RiotIdAndTagline} owner={dataDalam.owner} icon={'simple-icons:valorant'} riotId={dataDalam.riotId} tagLine={dataDalam.tagLine} />
           </Grid>)
       })
       }

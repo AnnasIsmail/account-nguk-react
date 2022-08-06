@@ -24,8 +24,14 @@ const style = {
 export default function DetailAgent(props) {
     const detailSkin = props.detailSkin;
     let levels = [];
+    let role = {}
+
   if(props.detailSkin.abilities !== undefined){
     levels = props.detailSkin.abilities;
+  }
+
+  if(detailSkin.role !== undefined){
+    role = detailSkin.role;
   }
 
   return (
@@ -48,7 +54,7 @@ export default function DetailAgent(props) {
               <img src={detailSkin.displayIcon} className="image-detail-agent" alt="imageSkin" />
             </Typography>
             <Typography id="transition-modal-title" variant="h6" component="h2">
-              {detailSkin.displayName}
+              {detailSkin.displayName}  ({role.displayName})
             </Typography>
             <Typography id="transition-modal-title" variant="p" component="p">
               " {detailSkin.description} "

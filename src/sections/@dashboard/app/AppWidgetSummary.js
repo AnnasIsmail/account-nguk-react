@@ -136,7 +136,7 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
       <CardActions className='bottom-card-account'>
         <div>
           <Button className='button-bottom' target="_blank" href={`https://tracker.gg/valorant/profile/riot/${riotId}%23${tagLine}/overview`} color={color} size="small">Tracker.gg</Button>
-          <Button className='button-bottom' target="_blank" href={`https://auth.riotgames.com/login`} color={color} size="small">Edit Account</Button>
+          <Button className='button-bottom' target="_blank" href={`https://auth.riotgames.com/login#acr_values=urn%3Ariot%3Agold&client_id=accountodactyl-prod&redirect_uri=https%3A%2F%2Faccount.riotgames.com%2Foauth2%2Flog-in&response_type=code&scope=openid%20email%20profile%20riot%3A%2F%2Friot.atlas%2Faccounts.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Fpassword.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Femail.edit%20riot%3A%2F%2Friot.atlas%2Faccounts.auth%20riot%3A%2F%2Fthird_party.revoke%20riot%3A%2F%2Fthird_party.query%20riot%3A%2F%2Fforgetme%2Fnotify.write%20riot%3A%2F%2Friot.authenticator%2Fauth.code%20riot%3A%2F%2Friot.authenticator%2Fauthz.edit%20riot%3A%2F%2Frso%2Fmfa%2Fdevice.write&state=4d7f39cb-9920-4700-a11f-e742346bba80&ui_locales=en`} color={color} size="small">Riot Account</Button>
         </div>
         <Button  onClick={handleExpandClick} aria-expanded={expanded} aria-label="show more" className='button-bottom' color={color} size="small">
           <Iconify icon='ic:twotone-expand-more' width={24} height={24} />
@@ -179,6 +179,8 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
               <></>
             }
           </Typography>
+          <Button className='button-bottom' target="_blank" href={`/dashboard/account/edit`} color={color} size="small">Edit Account</Button>
+
         </CardContent>
       </Collapse>
 

@@ -21,6 +21,7 @@ let agents = [];
 export default function NewAccountForm() {
   const navigate = useNavigate();
   const [skinSelect , setSkinSelect] = React.useState([]);
+  const [agentSelect , setAgentSelect] = React.useState([]);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -79,9 +80,9 @@ export default function NewAccountForm() {
 
         const formDataSkin = new FormData();
 
-        formData.append('account_id', idAccount);
-        formData.append('name', data.name);
-        formData.append('uuid', data.uuid);
+        formDataSkin.append('account_id', idAccount);
+        formDataSkin.append('name', data.name);
+        formDataSkin.append('uuid', data.uuid);
 
         axios({
           url: 'http://127.0.0.1:8000/api/account/skin/store', 
@@ -94,10 +95,35 @@ export default function NewAccountForm() {
         }).catch((error)=> {
           console.log(error);
         });
-      return false;
+        
+      return console.log('masuk skin');
 
       });
       
+      agentSelect.map((data)=>{
+
+        const formDataAgent = new FormData();
+
+        formDataAgent.append('account_id', idAccount);
+        formDataAgent.append('name', data.name);
+        formDataAgent.append('uuid', data.uuid);
+
+        axios({
+          url: 'http://127.0.0.1:8000/api/account/agent/store', 
+          responseType: 'json',
+          method: 'post',
+          data : formDataAgent
+        }).then((response)=> {
+          return console.log(response)
+            // navigate('/dashboard/all-account', { replace: true });
+        }).catch((error)=> {
+          console.log(error);
+        });
+        
+      return console.log('masuk');
+
+      });
+
         // navigate('/dashboard/all-account', { replace: true });
     }).catch((error)=> {
       console.log(error);
@@ -185,7 +211,7 @@ export default function NewAccountForm() {
 
         data.map(data=>{
             if(data.displayName !== 'Sova' && data.displayName !== 'Brimstone' && data.displayName !== 'Jett' && data.displayName !== 'Phoenix' && data.displayName !== 'Sage'){
-                return agentsSementara.push({title: data.displayName});
+                return agentsSementara.push({name : data.displayName , uuid : data.uuid});
             }
             return false;
         });
@@ -197,8 +223,8 @@ export default function NewAccountForm() {
             id="agents"
             name="agents"
             options={agents}
-            getOptionLabel={(option) => option.title}
-            onChange={(event, value) => console.log(value)}
+            getOptionLabel={(option) => option.name}
+            onChange={(event, value) => setAgentSelect(value)}
             filterSelectedOptions
             renderInput={(params) => (
               <TextField

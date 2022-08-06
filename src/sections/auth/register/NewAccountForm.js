@@ -20,8 +20,15 @@ let agents = [];
 
 export default function NewAccountForm() {
   const navigate = useNavigate();
+  const [skinSelect , setSkinSelect] = React.useState([]);
 
   const [showPassword, setShowPassword] = useState(false);
+
+
+  function changeSelect(value){
+    console.log(value)
+    // skinSelect = value
+  }
 
   const RegisterSchema = Yup.object().shape({
     riotId: Yup.string().required('First name required'),
@@ -64,8 +71,34 @@ export default function NewAccountForm() {
       responseType: 'json',
       method: 'post',
       data : formData
-    }).then(()=> {
-        navigate('/dashboard/app', { replace: true });
+    }).then((response)=> {
+      console.log(response.data.data.id)
+      const idAccount = response.data.data.id;
+
+      skinSelect.map((data)=>{
+
+        const formDataSkin = new FormData();
+
+        formData.append('account_id', idAccount);
+        formData.append('name', data.name);
+        formData.append('uuid', data.uuid);
+
+        axios({
+          url: 'http://127.0.0.1:8000/api/account/skin/store', 
+          responseType: 'json',
+          method: 'post',
+          data : formDataSkin
+        }).then((response)=> {
+          return console.log(response)
+            // navigate('/dashboard/all-account', { replace: true });
+        }).catch((error)=> {
+          console.log(error);
+        });
+      return false;
+
+      });
+      
+        // navigate('/dashboard/all-account', { replace: true });
     }).catch((error)=> {
       console.log(error);
     });
@@ -117,19 +150,21 @@ export default function NewAccountForm() {
 
         data.map(data=>{
             if(data.displayName.startsWith('Standard') !== true){
-                return skinsSementara.push({title: data.displayName});
+                return skinsSementara.push({name : data.displayName , uuid : data.uuid});
             }
             return false;
         });
 
         skins = skinsSementara;
         
+        
         setAutocompleteSkins(<Autocomplete
             multiple
             id="skins"
             name="skins"
             options={skins}
-            getOptionLabel={(option) => option.title}
+            getOptionLabel={(option) => option.name}
+            onChange={(event, value) => setSkinSelect(value)}
             filterSelectedOptions
             renderInput={(params) => (
               <TextField
@@ -163,11 +198,12 @@ export default function NewAccountForm() {
             name="agents"
             options={agents}
             getOptionLabel={(option) => option.title}
+            onChange={(event, value) => console.log(value)}
             filterSelectedOptions
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="List Agent Skins"
+                label="List Account Agents"
                 placeholder="Killjoy"
               />
             )}

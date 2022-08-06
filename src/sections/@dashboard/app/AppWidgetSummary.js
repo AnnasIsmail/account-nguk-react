@@ -14,6 +14,7 @@ import axios from 'axios';
 
 // components
 import Iconify from '../../../components/Iconify';
+import DetailAgent from './DetailAgent';
 import DetailSkin from './DetailSkin';
 
 // ----------------------------------------------------------------------
@@ -48,8 +49,12 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
 
   const [expanded, setExpanded] = React.useState(false);
   const [openDetail, setOpenDetail] = React.useState(false);
-  // const [uuid , setUuid] = React.useState('');
   const [detailSkin,setDetailSkin] = React.useState([]);
+  const handleCloseDetailSkin = () => setOpenDetail(false);
+
+  const [openDetailAgent, setOpenDetailAgent] = React.useState(false);
+  const [detailAgent,setDetailAgent] = React.useState([]);
+  const handleCloseDetailAgent = () => setOpenDetailAgent(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -62,36 +67,28 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
     navigator.clipboard.writeText(text);
   }
 
-  const openDetailSkin =(uuid)=> {
-    // setUuid(uuid);
+  const openDetailSkin =(uuid , name)=> {
 
+
+    if(name === 'skin'){
+      axios.get(`https://valorant-api.com/v1/weapons/skins/${uuid}`).then((response) =>{
+        setDetailSkin(response.data.data);
+        setOpenDetail(true);
+      });
+    }else{
+        axios.get(`https://valorant-api.com/v1/agents/${uuid}`).then((response) =>{
+          setDetailAgent(response.data.data);
+          setOpenDetailAgent(true);
+          
+      });
+    }
 
     
-    axios.get(`https://valorant-api.com/v1/weapons/skins/${uuid}`).then((response) =>{
-      setDetailSkin(response.data.data);
-      setOpenDetail(true);
-    });
 
-  //   axios.get('https://valorant-api.com/v1/agents').then((response) =>{
-  //     let data = [];
-  //     data  = response.data.data;
 
-  //     const agentsSementara = [];
-
-  //     data.map(data=>{
-  //         if(data.displayName !== 'Sova' && data.displayName !== 'Brimstone' && data.displayName !== 'Jett' && data.displayName !== 'Phoenix' && data.displayName !== 'Sage'){
-  //             return agentsSementara.push({title: data.displayName});
-  //         }
-  //         return false;
-  //     });
-
-  //     dataAgent(agentsSementara);
-      
-  // });
 
   }
 
-  const handleCloseDetailSkin = () => setOpenDetail(false);
 
   return (
     
@@ -154,7 +151,7 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
             {
             dataSkin.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).map((data , index)=>{
                 return (
-                  <Chip color={color} key={index} label={data.name}  onClick={()=>openDetailSkin(data.uuid)} component="a" clickable />
+                  <Chip color={color} key={index} label={data.name}  onClick={()=>openDetailSkin(data.uuid , 'skin')} component="a" clickable />
                 );
               
             })
@@ -171,7 +168,7 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
             {
             dataAgent.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).map((data , index)=>{
                 return (
-                  <Chip color={color} key={index} label={data.name}  onClick={()=>openDetailSkin(data.uuid)} component="a" clickable />
+                  <Chip color={color} key={index} label={data.name}  onClick={()=>openDetailSkin(data.uuid , 'agent')} component="a" clickable />
                 );
               
             })
@@ -186,6 +183,7 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
       </Collapse>
 
     <DetailSkin open={openDetail} handleClose={handleCloseDetailSkin} detailSkin={detailSkin} />
+    <DetailAgent open={openDetailAgent} handleClose={handleCloseDetailAgent} detailSkin={detailAgent} />
     </Card>
   );
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 // material
-import { styled, alpha } from '@mui/material/styles';
-import { Input, Slide, Button, IconButton, InputAdornment, ClickAwayListener } from '@mui/material';
+import { Button, ClickAwayListener, IconButton, Input, InputAdornment, Slide } from '@mui/material';
+import { alpha, styled } from '@mui/material/styles';
 // component
 import Iconify from '../../components/Iconify';
 
@@ -41,6 +41,7 @@ export default function Searchbar() {
 
   const handleClose = () => {
     setOpen(false);
+    document.getElementById('searchCall').click()
   };
 
   return (

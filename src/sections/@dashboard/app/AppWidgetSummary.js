@@ -60,8 +60,6 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
     setExpanded(!expanded);
   };
 
-  console.log(dataAgent)
-
   const copy =(message, text)=>{
     copyProps(message);
     navigator.clipboard.writeText(text);

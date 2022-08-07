@@ -41,6 +41,10 @@ export default function DashboardApp() {
 
   },[]);
 
+  function searchData(){
+    console.log('cari')
+  }
+
   const [message, setMessage] = React.useState('No Message');
 
   const [state, setState] = React.useState({
@@ -62,7 +66,7 @@ export default function DashboardApp() {
 
   return (
     <Page title="Dashboard">
-
+      <input hidden type="button" id='searchCall' onClick={searchData} />
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={open}

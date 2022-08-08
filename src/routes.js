@@ -6,6 +6,7 @@ import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 //
 import Blog from './pages/Blog';
 import DashboardApp from './pages/DashboardApp';
+import EditAccount from './pages/EditAccount';
 import Login from './pages/Login';
 import NewAccount from './pages/NewAccount';
 import NotFound from './pages/Page404';
@@ -44,6 +45,7 @@ export default function Router() {
       element: <ManageData />,
       children: [
         { path: 'create', element: <NewAccount /> },
+        { path: 'edit/:slug', element: <EditAccount /> },
       ],
     },
 

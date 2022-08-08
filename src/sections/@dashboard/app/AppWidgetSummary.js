@@ -177,7 +177,7 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
               <></>
             }
           </Typography>
-          <Button className='button-bottom' target="_blank" href={`/dashboard/account/edit`} color={color} size="small">Edit Account</Button>
+          <Button className='button-bottom' target="_blank" href={`/account/edit/${idAccount}`} color={color} size="small">Edit Account</Button>
 
         </CardContent>
       </Collapse>

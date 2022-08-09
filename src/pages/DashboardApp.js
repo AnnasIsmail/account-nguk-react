@@ -31,11 +31,11 @@ export default function DashboardApp() {
       setData(response.data.data);
     });
     
-    axios.get('http://127.0.0.1:8000/api/account/skin').then((response) =>{
+    axios.get('http://127.0.0.1:8000/api/skin').then((response) =>{
       setDataSkin(response.data.data);
     });
 
-    axios.get('http://127.0.0.1:8000/api/account/agent').then((response) =>{
+    axios.get('http://127.0.0.1:8000/api/agent').then((response) =>{
       setDataAgent(response.data.data);
     });
 
@@ -92,9 +92,10 @@ export default function DashboardApp() {
       data.map((dataDalam)=>{
 
         const RiotIdAndTagline = `${dataDalam.riotId}#${dataDalam.tagLine}`
+        console.log(dataSkin);
 
         return (<Grid item xs={12} sm={6} md={3} key={dataDalam.id}>
-             <AppWidgetSummary idAccount={dataDalam.id} dataSkin={dataSkin} dataAgent={dataAgent} copyProps={copy} username={dataDalam.riotId} password={dataDalam.password} RiotIdTagLine={RiotIdAndTagline} owner={dataDalam.owner} icon={'simple-icons:valorant'} riotId={dataDalam.riotId} tagLine={dataDalam.tagLine} />
+             <AppWidgetSummary idAccount={dataDalam.id} dataSkin={dataSkin} dataAgent={dataAgent} copyProps={copy} username={dataDalam.username} password={dataDalam.password} RiotIdTagLine={RiotIdAndTagline} owner={dataDalam.owner} icon={'simple-icons:valorant'} riotId={dataDalam.riotId} tagLine={dataDalam.tagLine} />
           </Grid>)
       })
       }

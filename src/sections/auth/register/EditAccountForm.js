@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import * as Yup from 'yup';
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,12 +18,14 @@ import Iconify from '../../../components/Iconify';
 let skins = [];
 let agents = [];
 
-export default function NewAccountForm() {
+export default function EditAccountForm() {
   const navigate = useNavigate();
   const [skinSelect , setSkinSelect] = React.useState([]);
   const [agentSelect , setAgentSelect] = React.useState([]);
+  const [dataAccount , setDataAccount] = React.useState([]);
+  const { slug } = useParams();
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
 
 
   function changeSelect(value){
@@ -39,22 +41,27 @@ export default function NewAccountForm() {
     owner: Yup.string().required('owner is required'),
 });
 
-  const defaultValues = {
-    riotId: '',
-    tagLine: '',
-    password: '',
-    owner: '',
-  };
+const [riotId, setRiotId] = React.useState('');
+const [tagLine, setTagLine] = React.useState('');
+const [username, setUsername] = React.useState('');
+const [pemilik, setPemilik] = React.useState('');
 
-  const methods = useForm({
-    resolver: yupResolver(RegisterSchema),
-    defaultValues,
-  });
-
-  const {
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
+    const defaultValues = {
+      riotId:  '',
+      tagLine: '',
+      password: '',
+      owner: '',
+    };
+  
+    const methods = useForm({
+      resolver: yupResolver(RegisterSchema),
+      defaultValues,
+    });
+  
+    const {
+      handleSubmit,
+      formState: { isSubmitting },
+    } = methods;
 
   const onSubmit = async (e) => {
 
@@ -96,7 +103,7 @@ export default function NewAccountForm() {
           console.log(error);
         });
         
-      return console.log('masuk skin');
+      return false;
 
       });
       
@@ -120,7 +127,7 @@ export default function NewAccountForm() {
           console.log(error);
         });
         
-      return console.log('masuk');
+      return false;
 
       });
 
@@ -168,6 +175,26 @@ export default function NewAccountForm() {
     />);
 
   React.useEffect(()=>{
+
+    axios.get(`http://127.0.0.1:8000/api/account/${slug}`).then((response) =>{
+      setDataAccount(response.data.data);
+
+      dataAccount.forEach(data=>{
+        setRiotId(data.riotId);
+        setTagLine(data.tagLine);
+        setUsername(data.username);
+        setPemilik(data.owner);
+      });
+    });
+
+    function getDataAccountSkins(){
+      
+    }
+
+    function getDataAccountAgents(){
+      
+    }
+
     axios.get('https://valorant-api.com/v1/weapons/skins').then((response) =>{
         let data = [];
         data  = response.data.data;
@@ -237,22 +264,23 @@ export default function NewAccountForm() {
     });
 
 
+
   },[]);
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)} >
       <Stack spacing={3}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} className="form-new-account" >
-          <RHFTextField name="riotId" label="Riot ID" className="form-new-account-first"  />
+          <RHFTextField value={riotId} name="riotId" label="Riot ID" className="form-new-account-first"  />
           <h1>#</h1>
-          <RHFTextField name="tagLine" label="Tag Line" />
+          <RHFTextField value={tagLine} name="tagLine" label="Tag Line"  />
         </Stack>
 
-        <RHFTextField name="username" label="Username" />
+        <RHFTextField value={username} name="username" label="Username"  />
 
         <RHFTextField
           name="password"
-          label="Password"
+          label="New Password"
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
@@ -265,7 +293,7 @@ export default function NewAccountForm() {
           }}
         />
 
-        <RHFTextField name="owner" label="Nama Pemilik" />
+        <RHFTextField value={pemilik} name="owner" label="Nama Pemilik"  />
 
 
       {autocompleteSkins}

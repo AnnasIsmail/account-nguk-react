@@ -6,7 +6,7 @@ import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
 // sections
-import NewAccountForm from '../sections/auth/register/NewAccountForm';
+import EditAccountForm from '../sections/auth/register/EditAccountForm';
 
 // ----------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ export default function EditAccount() {
 
             <Typography sx={{ color: 'text.secondary', mb: 5 }}>Masukan dengan sesuai. Bila tidak ingin rata.</Typography>
 
-            <NewAccountForm />
+            <EditAccountForm />
             
           </ContentStyle>
         </Container>

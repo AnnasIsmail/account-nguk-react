@@ -22,7 +22,6 @@ export default function NewAccountForm() {
   const navigate = useNavigate();
   const [skinSelect , setSkinSelect] = React.useState([]);
   const [agentSelect , setAgentSelect] = React.useState([]);
-
   const [showPassword, setShowPassword] = useState(false);
 
 
@@ -40,7 +39,6 @@ export default function NewAccountForm() {
 });
 
   const defaultValues = {
-    riotId: '',
     tagLine: '',
     password: '',
     owner: '',
@@ -96,7 +94,7 @@ export default function NewAccountForm() {
           console.log(error);
         });
         
-      return console.log('masuk skin');
+      return false;
 
       });
       
@@ -120,7 +118,7 @@ export default function NewAccountForm() {
           console.log(error);
         });
         
-      return console.log('masuk');
+      return false;
 
       });
 

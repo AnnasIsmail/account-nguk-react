@@ -45,12 +45,14 @@ const Alert = React.forwardRef((props, ref)=> {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function AppWidgetSummary({ username, password, RiotIdTagLine, owner, riotId, tagLine, icon, copyProps, dataSkin, dataAgent, idAccount, color = 'error', sx, ...other }) {
+export default function AppWidgetSummary({dataSkin, dataAgent, username, password, RiotIdTagLine, owner, riotId, tagLine, icon, copyProps,  idAccount, color = 'error', sx, ...other }) {
 
   const [expanded, setExpanded] = React.useState(false);
   const [openDetail, setOpenDetail] = React.useState(false);
   const [detailSkin,setDetailSkin] = React.useState([]);
   const handleCloseDetailSkin = () => setOpenDetail(false);
+
+  console.log(dataSkin);
 
   const [openDetailAgent, setOpenDetailAgent] = React.useState(false);
   const [detailAgent,setDetailAgent] = React.useState([]);
@@ -177,7 +179,7 @@ export default function AppWidgetSummary({ username, password, RiotIdTagLine, ow
               <></>
             }
           </Typography>
-          <Button className='button-bottom' target="_blank" href={`/account/edit/${idAccount}`} color={color} size="small">Edit Account</Button>
+          <Button className='button-bottom' href={`/account/edit/${idAccount}`} color={color} size="small">Edit Account</Button>
 
         </CardContent>
       </Collapse>

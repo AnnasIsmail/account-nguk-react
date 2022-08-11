@@ -88,8 +88,7 @@ export default function NewAccountForm() {
           method: 'post',
           data : formDataSkin
         }).then((response)=> {
-          return console.log(response)
-            // navigate('/dashboard/all-account', { replace: true });
+            navigate('/dashboard/all-account', { replace: true });
         }).catch((error)=> {
           console.log(error);
         });
@@ -112,8 +111,7 @@ export default function NewAccountForm() {
           method: 'post',
           data : formDataAgent
         }).then((response)=> {
-          return console.log(response)
-            // navigate('/dashboard/all-account', { replace: true });
+            navigate('/dashboard/all-account', { replace: true });
         }).catch((error)=> {
           console.log(error);
         });

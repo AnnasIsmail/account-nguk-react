@@ -8,11 +8,11 @@ import { useForm } from 'react-hook-form';
 // @mui
 import { LoadingButton } from '@mui/lab';
 import { IconButton, InputAdornment, Stack } from '@mui/material';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
 // components
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
 import Iconify from '../../../components/Iconify';
+import AutoCompleteAgents from './AutoCompleteAgents';
+import AutoCompleteSkins from './AutoCompleteSkins';
 
 // ----------------------------------------------------------------------
 let skins = [];
@@ -92,7 +92,7 @@ const [pemilik, setPemilik] = React.useState('');
         formDataSkin.append('uuid', data.uuid);
 
         axios({
-          url: 'http://127.0.0.1:8000/api/account/skin/store', 
+          url: 'http://127.0.0.1:8000/api/skin/store', 
           responseType: 'json',
           method: 'post',
           data : formDataSkin
@@ -116,7 +116,7 @@ const [pemilik, setPemilik] = React.useState('');
         formDataAgent.append('uuid', data.uuid);
 
         axios({
-          url: 'http://127.0.0.1:8000/api/account/agent/store', 
+          url: 'http://127.0.0.1:8000/api/agent/store', 
           responseType: 'json',
           method: 'post',
           data : formDataAgent
@@ -140,46 +140,14 @@ const [pemilik, setPemilik] = React.useState('');
 
   };
 
-  const [autocompleteSkins, setAutocompleteSkins] = React.useState(
-          <Autocomplete
-        multiple
-        id="skins"
-        name="skins"
-        options={noData}
-        getOptionLabel={(option) => option.title}
-        filterSelectedOptions
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Get Data"
-            placeholder="Get Data"
-          />
-        )}
-      />);
-
-      const [autocompleteAgents, setAutocompleteAgents] = React.useState(
-        <Autocomplete
-      multiple
-      id="agents"
-      name="agents"
-      options={noData}
-      getOptionLabel={(option) => option.title}
-      filterSelectedOptions
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Get Data"
-          placeholder="Get Data"
-        />
-      )}
-    />);
+  const [autocompleteSkins, setAutocompleteSkins] = React.useState();
+  const [autocompleteAgents, setAutocompleteAgents] = React.useState();
 
   React.useEffect(()=>{
-
     axios.get(`http://127.0.0.1:8000/api/account/${slug}`).then((response) =>{
       setDataAccount(response.data.data);
 
-      dataAccount.forEach(data=>{
+      response.data.data.forEach(data=>{
         setRiotId(data.riotId);
         setTagLine(data.tagLine);
         setUsername(data.username);
@@ -188,10 +156,17 @@ const [pemilik, setPemilik] = React.useState('');
     });
 
     function getDataAccountSkins(){
+      axios.get(`http://127.0.0.1:8000/api/skin/${slug}`).then((response) =>{
+        setAutocompleteSkins(<AutoCompleteSkins listSkins={skins} data={response.data.data} />);
+      });
       
     }
 
     function getDataAccountAgents(){
+      console.log(agents)
+      axios.get(`http://127.0.0.1:8000/api/agent/${slug}`).then((response) =>{
+        setAutocompleteAgents( <AutoCompleteAgents listAgents={agents} data={response.data.data} /> );
+      });
       
     }
 
@@ -209,25 +184,8 @@ const [pemilik, setPemilik] = React.useState('');
         });
 
         skins = skinsSementara;
+        getDataAccountSkins();
         
-        
-        setAutocompleteSkins(<Autocomplete
-            multiple
-            id="skins"
-            name="skins"
-            options={skins}
-            getOptionLabel={(option) => option.name}
-            onChange={(event, value) => setSkinSelect(value)}
-            filterSelectedOptions
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="List Account Skins"
-                placeholder="Reaver Vandal"
-              />
-            )}
-          />);
-
     });
     
     axios.get('https://valorant-api.com/v1/agents').then((response) =>{
@@ -245,22 +203,8 @@ const [pemilik, setPemilik] = React.useState('');
 
         agents = agentsSementara;
         
-        setAutocompleteAgents(<Autocomplete
-            multiple
-            id="agents"
-            name="agents"
-            options={agents}
-            getOptionLabel={(option) => option.name}
-            onChange={(event, value) => setAgentSelect(value)}
-            filterSelectedOptions
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="List Account Agents"
-                placeholder="Killjoy"
-              />
-            )}
-          />);
+        getDataAccountAgents();
+
     });
 
 

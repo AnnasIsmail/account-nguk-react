@@ -9,18 +9,17 @@ export default function AutocompleteSkins(props) {
     const dataSkinsReady = [];
 
     function getIndex(uuid){
+      let indexReturn;
       skins.forEach((data , index)=>{
         if(data.uuid === uuid){
-          console.log(index);
-          
-          return index;
+          indexReturn = index;
         }
       });
+      return indexReturn;
     }
 
     dataSkins.map((data , index)=>{
-      return dataSkinsReady.push(skins[getIndex[data.uuid]]);
-      // return dataSkinsReady.push(skins[index]);
+      return dataSkinsReady.push(skins[getIndex(data.uuid)]);
     });
 
     const [value, setValue] = React.useState(dataSkinsReady);

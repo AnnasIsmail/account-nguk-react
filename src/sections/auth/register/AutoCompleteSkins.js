@@ -5,13 +5,31 @@ import * as React from 'react';
 
 export default function AutocompleteSkins(props) {
     const skins = props.listSkins;
-    const [value, setValue] = React.useState(props.data);
+    const dataSkins = props.data;
+    const dataSkinsReady = [];
+
+    function getIndex(uuid){
+      skins.forEach((data , index)=>{
+        if(data.uuid === uuid){
+          console.log(index);
+          
+          return index;
+        }
+      });
+    }
+
+    dataSkins.map((data , index)=>{
+      return dataSkinsReady.push(skins[getIndex[data.uuid]]);
+      // return dataSkinsReady.push(skins[index]);
+    });
+
+    const [value, setValue] = React.useState(dataSkinsReady);
 
 
   return (
     <Autocomplete
       multiple
-      id="fixed-tags-demo"
+      id="skins"
       value={value}
       onChange={(event, newValue) => {
         setValue([...newValue]);

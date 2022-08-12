@@ -18,20 +18,13 @@ import AutoCompleteSkins from './AutoCompleteSkins';
 let skins = [];
 let agents = [];
 
-export default function EditAccountForm() {
+export default function EditAccountForm(props) {
   const navigate = useNavigate();
   const [skinSelect , setSkinSelect] = React.useState([]);
   const [agentSelect , setAgentSelect] = React.useState([]);
-  const [dataAccount , setDataAccount] = React.useState([]);
+  const dataAccount = props.dataAccount;
   const { slug } = useParams();
-
-  const [showPassword, setShowPassword] = React.useState(false);
-
-
-  function changeSelect(value){
-    console.log(value)
-    // skinSelect = value
-  }
+  const [showPassword, setShowPassword] = React.useState(true);
 
   const RegisterSchema = Yup.object().shape({
     riotId: Yup.string().required('First name required'),
@@ -41,16 +34,13 @@ export default function EditAccountForm() {
     owner: Yup.string().required('owner is required'),
 });
 
-const [riotId, setRiotId] = React.useState('');
-const [tagLine, setTagLine] = React.useState('');
-const [username, setUsername] = React.useState('');
-const [pemilik, setPemilik] = React.useState('');
 
     const defaultValues = {
-      riotId:  '',
-      tagLine: '',
-      password: '',
-      owner: '',
+      riotId:  dataAccount.riotId,
+      tagLine:  dataAccount.tagLine,
+      username:  dataAccount.username,
+      password:  dataAccount.password,
+      owner:  dataAccount.owner,
     };
   
     const methods = useForm({
@@ -74,8 +64,9 @@ const [pemilik, setPemilik] = React.useState('');
     formData.append('password', e.password);
     formData.append('owner', e.owner);
 
+
     axios({
-      url: 'http://127.0.0.1:8000/api/account/store', 
+      url: `http://127.0.0.1:8000/api/account/update/${slug}`, 
       responseType: 'json',
       method: 'post',
       data : formData
@@ -83,55 +74,68 @@ const [pemilik, setPemilik] = React.useState('');
       console.log(response.data.data.id)
       const idAccount = response.data.data.id;
 
-      skinSelect.map((data)=>{
+      axios({
+        url: `http://127.0.0.1:8000/api/skin/delete/${slug}`, 
+        responseType: 'json',
+        method: 'post',
+      }).then(()=>{
 
-        const formDataSkin = new FormData();
+        skinSelect.foreach((data)=>{
 
-        formDataSkin.append('account_id', idAccount);
-        formDataSkin.append('name', data.name);
-        formDataSkin.append('uuid', data.uuid);
-
-        axios({
-          url: 'http://127.0.0.1:8000/api/skin/store', 
-          responseType: 'json',
-          method: 'post',
-          data : formDataSkin
-        }).then((response)=> {
-          return console.log(response)
-            // navigate('/dashboard/all-account', { replace: true });
-        }).catch((error)=> {
-          console.log(error);
+          const formDataSkin = new FormData();
+  
+          formDataSkin.append('account_id', idAccount);
+          formDataSkin.append('name', data.name);
+          formDataSkin.append('uuid', data.uuid);
+  
+          axios({
+            url: 'http://127.0.0.1:8000/api/skin/store', 
+            responseType: 'json',
+            method: 'post',
+            data : formDataSkin
+          }).then((response)=> {
+            return console.log(response)
+              // navigate('/dashboard/all-account', { replace: true });
+          }).catch((error)=> {
+            console.log(error);
+          });
+          
         });
-        
-      return false;
 
       });
+
+      axios({
+        url: `http://127.0.0.1:8000/api/agent/delete/${slug}`, 
+        responseType: 'json',
+        method: 'post',
+      }).then(()=>{
+
+        agentSelect.foreach((data)=>{
+
+          const formDataAgent = new FormData();
+  
+          formDataAgent.append('account_id', idAccount);
+          formDataAgent.append('name', data.name);
+          formDataAgent.append('uuid', data.uuid);
+  
+          axios({
+            url: 'http://127.0.0.1:8000/api/agent/store', 
+            responseType: 'json',
+            method: 'post',
+            data : formDataAgent
+          }).then((response)=> {
+            return console.log(response)
+              // navigate('/dashboard/all-account', { replace: true });
+          }).catch((error)=> {
+            console.log(error);
+          });
+        });
+
+      });      
       
-      agentSelect.map((data)=>{
+    }).then(()=>{
+        navigate('/dashboard/all-account', { replace: true });
 
-        const formDataAgent = new FormData();
-
-        formDataAgent.append('account_id', idAccount);
-        formDataAgent.append('name', data.name);
-        formDataAgent.append('uuid', data.uuid);
-
-        axios({
-          url: 'http://127.0.0.1:8000/api/agent/store', 
-          responseType: 'json',
-          method: 'post',
-          data : formDataAgent
-        }).then((response)=> {
-          return console.log(response)
-            // navigate('/dashboard/all-account', { replace: true });
-        }).catch((error)=> {
-          console.log(error);
-        });
-        
-      return false;
-
-      });
-
-        // navigate('/dashboard/all-account', { replace: true });
     }).catch((error)=> {
       console.log(error);
     });
@@ -144,16 +148,16 @@ const [pemilik, setPemilik] = React.useState('');
   const [autocompleteAgents, setAutocompleteAgents] = React.useState();
 
   React.useEffect(()=>{
-    axios.get(`http://127.0.0.1:8000/api/account/${slug}`).then((response) =>{
-      setDataAccount(response.data.data);
+    // axios.get(`http://127.0.0.1:8000/api/account/${slug}`).then((response) =>{
+    //   setDataAccount(response.data.data);
 
-      response.data.data.forEach(data=>{
-        setRiotId(data.riotId);
-        setTagLine(data.tagLine);
-        setUsername(data.username);
-        setPemilik(data.owner);
-      });
-    });
+    //   response.data.data.forEach(data=>{
+    //     setRiotId(data.riotId);
+    //     setTagLine(data.tagLine);
+    //     setUsername(data.username);
+    //     setPemilik(data.owner);
+    //   });
+    // });
 
     function getDataAccountSkins(){
       axios.get(`http://127.0.0.1:8000/api/skin/${slug}`).then((response) =>{
@@ -215,12 +219,12 @@ const [pemilik, setPemilik] = React.useState('');
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)} >
       <Stack spacing={3}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} className="form-new-account" >
-          <RHFTextField value={riotId} name="riotId" label="Riot ID" className="form-new-account-first"  />
+          <RHFTextField name="riotId" label="Riot ID" className="form-new-account-first"  />
           <h1>#</h1>
-          <RHFTextField value={tagLine} name="tagLine" label="Tag Line"  />
+          <RHFTextField name="tagLine" label="Tag Line"  />
         </Stack>
 
-        <RHFTextField value={username} name="username" label="Username"  />
+        <RHFTextField name="username" label="Username"  />
 
         <RHFTextField
           name="password"
@@ -237,14 +241,14 @@ const [pemilik, setPemilik] = React.useState('');
           }}
         />
 
-        <RHFTextField value={pemilik} name="owner" label="Nama Pemilik"  />
+        <RHFTextField name="owner" label="Nama Pemilik"  />
 
 
       {autocompleteSkins}
       {autocompleteAgents}
 
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
-          Add New Account
+          Submit Editing Account
         </LoadingButton>
       </Stack>
     </FormProvider>

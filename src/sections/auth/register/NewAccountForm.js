@@ -22,7 +22,7 @@ export default function NewAccountForm() {
   const navigate = useNavigate();
   const [skinSelect , setSkinSelect] = React.useState([]);
   const [agentSelect , setAgentSelect] = React.useState([]);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
 
 
   function changeSelect(value){
@@ -56,77 +56,75 @@ export default function NewAccountForm() {
 
   const onSubmit = async (e) => {
 
-    const formData = new FormData();
+    const myPromise = new Promise((resolve , reject)=>{
 
-    formData.append('riotId', e.riotId);
-    formData.append('tagLine', e.tagLine);
-    formData.append('slug', 'asd');
-    formData.append('username', e.username);
-    formData.append('password', e.password);
-    formData.append('owner', e.owner);
-
-    axios({
-      url: 'http://127.0.0.1:8000/api/account/store', 
-      responseType: 'json',
-      method: 'post',
-      data : formData
-    }).then((response)=> {
-      console.log(response.data.data.id)
-      const idAccount = response.data.data.id;
-
-      skinSelect.map((data)=>{
-
-        const formDataSkin = new FormData();
-
-        formDataSkin.append('account_id', idAccount);
-        formDataSkin.append('name', data.name);
-        formDataSkin.append('uuid', data.uuid);
-
-        axios({
-          url: 'http://127.0.0.1:8000/api/account/skin/store', 
-          responseType: 'json',
-          method: 'post',
-          data : formDataSkin
-        }).then((response)=> {
-            navigate('/dashboard/all-account', { replace: true });
-        }).catch((error)=> {
-          console.log(error);
+      const formData = new FormData();
+  
+      formData.append('riotId', e.riotId);
+      formData.append('tagLine', e.tagLine);
+      formData.append('slug', 'asd');
+      formData.append('username', e.username);
+      formData.append('password', e.password);
+      formData.append('owner', e.owner);
+  
+      axios({
+        url: 'http://127.0.0.1:8000/api/account/store', 
+        responseType: 'json',
+        method: 'post',
+        data : formData
+      }).then((response)=> {
+        const idAccount = response.data.data.id;
+  
+        skinSelect.foreach((data)=>{
+  
+          const formDataSkin = new FormData();
+  
+          formDataSkin.append('account_id', idAccount);
+          formDataSkin.append('name', data.name);
+          formDataSkin.append('uuid', data.uuid);
+  
+          axios({
+            url: 'http://127.0.0.1:8000/api/skin/store', 
+            responseType: 'json',
+            method: 'post',
+            data : formDataSkin
+          }).then((response)=> {
+              // navigate('/dashboard/all-account', { replace: true });
+          }).catch((error)=> {
+            console.log(error);
+          });
+          
         });
         
-      return false;
-
-      });
-      
-      agentSelect.map((data)=>{
-
-        const formDataAgent = new FormData();
-
-        formDataAgent.append('account_id', idAccount);
-        formDataAgent.append('name', data.name);
-        formDataAgent.append('uuid', data.uuid);
-
-        axios({
-          url: 'http://127.0.0.1:8000/api/account/agent/store', 
-          responseType: 'json',
-          method: 'post',
-          data : formDataAgent
-        }).then((response)=> {
-            navigate('/dashboard/all-account', { replace: true });
-        }).catch((error)=> {
-          console.log(error);
+        agentSelect.foreach((data)=>{
+  
+          const formDataAgent = new FormData();
+  
+          formDataAgent.append('account_id', idAccount);
+          formDataAgent.append('name', data.name);
+          formDataAgent.append('uuid', data.uuid);
+  
+          axios({
+            url: 'http://127.0.0.1:8000/api/agent/store', 
+            responseType: 'json',
+            method: 'post',
+            data : formDataAgent
+          }).then((response)=> {
+              // navigate('/dashboard/all-account', { replace: true });
+          }).catch((error)=> {
+            console.log(error);
+          });
+          
         });
-        
-      return false;
-
+  
+      }).catch((error)=> {
+        console.log(error);
       });
 
-        // navigate('/dashboard/all-account', { replace: true });
-    }).catch((error)=> {
-      console.log(error);
     });
     
-    
-
+    await myPromise
+    navigate('/dashboard/all-account', { replace: true }) ;
   };
 
   const [autocompleteSkins, setAutocompleteSkins] = React.useState(

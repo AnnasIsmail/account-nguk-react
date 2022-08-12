@@ -1,7 +1,10 @@
 // @mui
 import { Card, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import axios from 'axios';
 // hooks
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
@@ -54,9 +57,22 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function EditAccount() {
-  const smUp = useResponsive('up', 'sm');
+  const navigate = useNavigate();
+  const { slug } = useParams();
 
+  const smUp = useResponsive('up', 'sm');
+  const [form , setForm] = React.useState();
   const mdUp = useResponsive('up', 'md');
+
+  React.useEffect(()=>{
+    
+    axios.get(`http://127.0.0.1:8000/api/account/${slug}`).then((response) =>{
+      response.data.data.forEach(data=>{
+        setForm(<EditAccountForm dataAccount={data} />);
+      });
+    });
+
+  },[]);
 
   return (
     <Page title="Register" className="new-account-container">
@@ -80,7 +96,7 @@ export default function EditAccount() {
 
             <Typography sx={{ color: 'text.secondary', mb: 5 }}>Masukan dengan sesuai. Bila tidak ingin rata.</Typography>
 
-            <EditAccountForm />
+            {form}
             
           </ContentStyle>
         </Container>

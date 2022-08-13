@@ -9,7 +9,7 @@ import axios from 'axios';
 import { Link as RouterLink } from 'react-router-dom';
 import Page from '../components/Page';
 // sections
-import GetDataAppWidget from '../sections/@dashboard/app/GetDataAppWidget';
+import { AppWidgetSummary } from '../sections/@dashboard/app';
 
 import Iconify from '../components/Iconify';
 
@@ -93,8 +93,10 @@ export default function DashboardApp() {
 
         const RiotIdAndTagline = `${dataDalam.riotId}#${dataDalam.tagLine}`
 
+        
+
         return (<Grid item xs={12} sm={6} md={3} key={dataDalam.id}>
-             <GetDataAppWidget idAccount={dataDalam.id} dataSkin={dataSkin} dataAgent={dataAgent} copyProps={copy} username={dataDalam.username} password={dataDalam.password} RiotIdTagLine={RiotIdAndTagline} owner={dataDalam.owner} icon={'simple-icons:valorant'} riotId={dataDalam.riotId} tagLine={dataDalam.tagLine} />
+             <AppWidgetSummary idAccount={dataDalam.id} dataSkin={dataSkin} dataAgent={dataAgent} copyProps={copy} username={dataDalam.username} password={dataDalam.password} RiotIdTagLine={RiotIdAndTagline} owner={dataDalam.owner} icon={'simple-icons:valorant'} riotId={dataDalam.riotId} tagLine={dataDalam.tagLine} />
           </Grid>)
       })
       }

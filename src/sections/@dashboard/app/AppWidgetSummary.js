@@ -18,12 +18,31 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
+
 // components
 import Iconify from '../../../components/Iconify';
 import DetailAgent from './DetailAgent';
 import DetailSkin from './DetailSkin';
 
 // ----------------------------------------------------------------------
+
+function LinearProgressWithLabel(props) {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ width: '100%', mr: 1 }}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="body2" color="text.secondary">{`${Math.round(
+          props.value,
+        )}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
 
 const IconWrapperStyle = styled('div')(({ theme }) => ({
   margin: 'auto',
@@ -51,7 +70,7 @@ const Alert = React.forwardRef((props, ref)=> {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function AppWidgetSummary({dataMMR , dataSkin, dataAgent, username, password, RiotIdTagLine, owner, riotId, tagLine, icon, copyProps,  idAccount, color = 'primary', sx, ...other }) {
+export default function AppWidgetSummary({  dataSkin, dataAgent, username, password, RiotIdTagLine, owner, riotId, tagLine, icon, copyProps,  idAccount, color = 'primary', sx, ...other }) {
 
   const [expanded, setExpanded] = React.useState(false);
   const [openDetail, setOpenDetail] = React.useState(false);
@@ -65,9 +84,19 @@ export default function AppWidgetSummary({dataMMR , dataSkin, dataAgent, usernam
   const [open, setOpen] = React.useState(false);
 
   const srcRank = 'https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/0/smallicon.png';
-  
-  console.log(dataMMR);
-  
+  const [rank , setRank] = React.useState();
+  const [loading , setLoading] = React.useState(false);
+  const [exp , setExp] = React.useState();
+  const [elo , setElo] = React.useState();
+
+  React.useEffect(()=>{
+    axios.get(`https://api.henrikdev.xyz/valorant/v1/mmr/ap/${riotId}/${tagLine}`).then((response) =>{
+        setRank(response.data.data.images.small);
+        setExp(response.data.data.ranking_in_tier);
+        setElo(response.data.data.elo);
+        setLoading(true);
+      });
+  },[]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -136,11 +165,20 @@ export default function AppWidgetSummary({dataMMR , dataSkin, dataAgent, usernam
             )} 100%)`,
         }}
       >
-        {/* <img src={srcRank} alt='asd' width={35} height={35} /> */}
-        <Skeleton variant="circular"><Avatar /></Skeleton>
+        {loading === false ?
+          <Skeleton variant="circular"><Avatar /></Skeleton>
+        :
+          <img src={rank} alt='asd' width={35} height={35} /> 
+        }
       </IconWrapperStyle>
 
-      <Typography className='RiotIdCard' sx={{ px:2 }} variant="h5">{dataMMR.name}</Typography>
+      {loading === false ?
+        <Skeleton width="100%"><Typography>.</Typography></Skeleton>
+        :
+        <LinearProgressWithLabel className='exp' value={exp} />
+      }
+
+      <Typography className='RiotIdCard' sx={{ px:2 }} variant="h5">{RiotIdTagLine}</Typography>
 
       <Typography variant="subtitle2" className='data-account' sx={{ opacity: 0.72 }}>
         Username: {username}
@@ -169,6 +207,11 @@ export default function AppWidgetSummary({dataMMR , dataSkin, dataAgent, usernam
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography paragraph>Pemilik: {owner}</Typography>
+          {loading === false ?
+            <Skeleton width="100%"><Typography>.</Typography></Skeleton>
+            :
+            <Typography paragraph>Elo: {elo}</Typography>
+          }
           <Typography className='paragraph-detail-account' paragraph>Skins: 
             <br />
             {

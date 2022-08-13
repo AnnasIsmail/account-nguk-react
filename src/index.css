@@ -11,6 +11,10 @@
     align-items: center;
 }
 
+.exp{
+    margin: 3px 10px;
+}
+
 .button-bottom{
     text-transform: none !important;
 }

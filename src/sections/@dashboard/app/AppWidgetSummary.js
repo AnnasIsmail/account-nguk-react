@@ -1,16 +1,22 @@
 // @mui
 import { Card, Typography } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
+import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Collapse from '@mui/material/Collapse';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Skeleton from '@mui/material/Skeleton';
 import { alpha, styled } from '@mui/material/styles';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import React from 'react';
-// utils
-import axios from 'axios';
 
 // components
 import Iconify from '../../../components/Iconify';
@@ -45,7 +51,7 @@ const Alert = React.forwardRef((props, ref)=> {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function AppWidgetSummary({dataSkin, dataAgent, username, password, RiotIdTagLine, owner, riotId, tagLine, icon, copyProps,  idAccount, color = 'error', sx, ...other }) {
+export default function AppWidgetSummary({dataMMR , dataSkin, dataAgent, username, password, RiotIdTagLine, owner, riotId, tagLine, icon, copyProps,  idAccount, color = 'primary', sx, ...other }) {
 
   const [expanded, setExpanded] = React.useState(false);
   const [openDetail, setOpenDetail] = React.useState(false);
@@ -55,6 +61,32 @@ export default function AppWidgetSummary({dataSkin, dataAgent, username, passwor
   const [openDetailAgent, setOpenDetailAgent] = React.useState(false);
   const [detailAgent,setDetailAgent] = React.useState([]);
   const handleCloseDetailAgent = () => setOpenDetailAgent(false);
+  
+  const [open, setOpen] = React.useState(false);
+
+  const srcRank = 'https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/0/smallicon.png';
+  
+  console.log(dataMMR);
+  
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (e) => {
+    if(e === 'agree'){
+      axios.post(`http://127.0.0.1:8000/api/account/delete/${idAccount}`).then((response) =>{
+        axios.post(`http://127.0.0.1:8000/api/skin/delete/${idAccount}`).then((response) =>{
+          axios.post(`http://127.0.0.1:8000/api/agent/delete/${idAccount}`).then((response) =>{
+            setOpen(false);
+            document.location.reload();
+          });
+        });
+      });
+    }else{
+      setOpen(false);
+    }
+  };
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -66,8 +98,6 @@ export default function AppWidgetSummary({dataSkin, dataAgent, username, passwor
   }
 
   const openDetailSkin =(uuid , name)=> {
-
-
     if(name === 'skin'){
       axios.get(`https://valorant-api.com/v1/weapons/skins/${uuid}`).then((response) =>{
         setDetailSkin(response.data.data);
@@ -81,7 +111,6 @@ export default function AppWidgetSummary({dataSkin, dataAgent, username, passwor
       });
     }
   }
-
 
   return (
     
@@ -107,10 +136,11 @@ export default function AppWidgetSummary({dataSkin, dataAgent, username, passwor
             )} 100%)`,
         }}
       >
-        <Iconify icon={icon} width={24} height={24} />
+        {/* <img src={srcRank} alt='asd' width={35} height={35} /> */}
+        <Skeleton variant="circular"><Avatar /></Skeleton>
       </IconWrapperStyle>
 
-      <Typography className='RiotIdCard' sx={{ px:2 }} variant="h5">{RiotIdTagLine}</Typography>
+      <Typography className='RiotIdCard' sx={{ px:2 }} variant="h5">{dataMMR.name}</Typography>
 
       <Typography variant="subtitle2" className='data-account' sx={{ opacity: 0.72 }}>
         Username: {username}
@@ -173,13 +203,34 @@ export default function AppWidgetSummary({dataSkin, dataAgent, username, passwor
             }
           </Typography>
           <Button className='button-bottom' href={`/account/edit/${idAccount}`} color={color} size="small">Edit Account</Button>
-          <Button className='button-bottom' href={`/account/delete/${idAccount}`} color={color} size="small">Delete Account</Button>
+          <Button className='button-bottom' onClick={handleClickOpen} color={color} size="small">Delete Account</Button>
 
         </CardContent>
       </Collapse>
 
     <DetailSkin open={openDetail} handleClose={handleCloseDetailSkin} detailSkin={detailSkin} />
     <DetailAgent open={openDetailAgent} handleClose={handleCloseDetailAgent} detailSkin={detailAgent} />
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Use Google's location service?"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Do you sure delete <b> {RiotIdTagLine} </b> ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=> handleClose('disagree')}>Disagree</Button>
+          <Button onClick={()=> handleClose('agree')} autoFocus>
+            Agree
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Card>
   );
 }

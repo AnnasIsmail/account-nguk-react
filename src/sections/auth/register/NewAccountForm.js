@@ -54,11 +54,21 @@ export default function NewAccountForm() {
     formState: { isSubmitting },
   } = methods;
 
+  let lengthSkins = 0;
+  let lengthAgents = 0;
+  let indexSkin = 0;
+  let indexAgent = 0;
+
+  function doneSubmit(){
+
+    if(lengthSkins === indexSkin && lengthAgents === indexAgent){
+      navigate('/dashboard/all-account', { replace: true }) ;
+    }
+  }
+
   const onSubmit = async (e) => {
 
-    const myPromise = new Promise((resolve , reject)=>{
-
-      const formData = new FormData();
+      const formData = new FormData(); 
   
       formData.append('riotId', e.riotId);
       formData.append('tagLine', e.tagLine);
@@ -74,8 +84,22 @@ export default function NewAccountForm() {
         data : formData
       }).then((response)=> {
         const idAccount = response.data.data.id;
-  
-        skinSelect.foreach((data)=>{
+        lengthSkins = skinSelect.length-1;
+        lengthAgents = agentSelect.length-1;          
+
+        if(skinSelect.length === 0){
+          lengthSkins = skinSelect.length;
+        }
+        
+        if(agentSelect.length === 0){
+        lengthAgents = agentSelect.length;          
+        }
+
+        if(skinSelect.length === 0 || agentSelect.length === 0){
+            doneSubmit();
+        }
+
+        skinSelect.map((data , index)=>{
   
           const formDataSkin = new FormData();
   
@@ -89,14 +113,15 @@ export default function NewAccountForm() {
             method: 'post',
             data : formDataSkin
           }).then((response)=> {
-              // navigate('/dashboard/all-account', { replace: true });
+              indexSkin = index;
+              doneSubmit();
           }).catch((error)=> {
             console.log(error);
           });
-          
+          return true;
         });
-        
-        agentSelect.foreach((data)=>{
+
+        agentSelect.map((data , index)=>{
   
           const formDataAgent = new FormData();
   
@@ -110,22 +135,29 @@ export default function NewAccountForm() {
             method: 'post',
             data : formDataAgent
           }).then((response)=> {
-              // navigate('/dashboard/all-account', { replace: true });
+            indexAgent = index;
+              doneSubmit();
           }).catch((error)=> {
             console.log(error);
           });
           
+          return true;
         });
-  
       }).catch((error)=> {
         console.log(error);
       });
-
+      
+    const myPromise = new Promise((resolve)=> {
+      setTimeout(() => {  
+        resolve('masuk')
+      }, 100000);
     });
     
-    await myPromise
-    navigate('/dashboard/all-account', { replace: true }) ;
+    await myPromise;
+
   };
+
+
 
   const [autocompleteSkins, setAutocompleteSkins] = React.useState(
           <Autocomplete

@@ -53,6 +53,18 @@ export default function EditAccountForm(props) {
       formState: { isSubmitting },
     } = methods;
 
+    let lengthSkins = 0;
+    let lengthAgents = 0;
+    let indexSkin = 0;
+    let indexAgent = 0;
+  
+    function doneSubmit(){
+
+      if(lengthSkins === indexSkin && lengthAgents === indexAgent){
+        navigate('/dashboard/all-account', { replace: true }) ;
+      }
+    }
+
   const onSubmit = async (e) => {
 
     const formData = new FormData();
@@ -71,17 +83,29 @@ export default function EditAccountForm(props) {
       method: 'post',
       data : formData
     }).then((response)=> {
-      console.log(response.data.data.id)
       const idAccount = response.data.data.id;
+      lengthSkins = skinSelect.length-1;
+      lengthAgents = agentSelect.length-1;          
+
+      if(skinSelect.length === 0){
+        lengthSkins = skinSelect.length;
+      }
+      
+      if(agentSelect.length === 0){
+      lengthAgents = agentSelect.length;          
+      }
+
+      if(skinSelect.length === 0 || agentSelect.length === 0){
+          doneSubmit();
+      }
 
       axios({
         url: `http://127.0.0.1:8000/api/skin/delete/${slug}`, 
         responseType: 'json',
         method: 'post',
-      }).then(()=>{
-
-        skinSelect.foreach((data)=>{
-
+      }).then((response)=>{
+        skinSelect.map((data , index)=>{
+  
           const formDataSkin = new FormData();
   
           formDataSkin.append('account_id', idAccount);
@@ -94,14 +118,13 @@ export default function EditAccountForm(props) {
             method: 'post',
             data : formDataSkin
           }).then((response)=> {
-            return console.log(response)
-              // navigate('/dashboard/all-account', { replace: true });
+              indexSkin = index;
+              doneSubmit();
           }).catch((error)=> {
             console.log(error);
           });
-          
+          return true;
         });
-
       });
 
       axios({
@@ -110,7 +133,7 @@ export default function EditAccountForm(props) {
         method: 'post',
       }).then(()=>{
 
-        agentSelect.foreach((data)=>{
+        agentSelect.map((data , index)=>{
 
           const formDataAgent = new FormData();
   
@@ -124,52 +147,55 @@ export default function EditAccountForm(props) {
             method: 'post',
             data : formDataAgent
           }).then((response)=> {
-            return console.log(response)
-              // navigate('/dashboard/all-account', { replace: true });
+              indexAgent = index;
+              doneSubmit();
           }).catch((error)=> {
             console.log(error);
           });
+          return true;
         });
 
       });      
       
-    }).then(()=>{
-        navigate('/dashboard/all-account', { replace: true });
-
     }).catch((error)=> {
       console.log(error);
     });
     
+    const myPromise = new Promise((resolve)=> {
+      setTimeout(() => {  
+        resolve('masuk')
+      }, 100000);
+    });
     
+    await myPromise;
 
   };
 
   const [autocompleteSkins, setAutocompleteSkins] = React.useState();
   const [autocompleteAgents, setAutocompleteAgents] = React.useState();
 
-  React.useEffect(()=>{
-    // axios.get(`http://127.0.0.1:8000/api/account/${slug}`).then((response) =>{
-    //   setDataAccount(response.data.data);
+  const SetSkin =(value)=>{
+    setSkinSelect(value);
+  }
 
-    //   response.data.data.forEach(data=>{
-    //     setRiotId(data.riotId);
-    //     setTagLine(data.tagLine);
-    //     setUsername(data.username);
-    //     setPemilik(data.owner);
-    //   });
-    // });
+  const SetAgent =(value)=> {
+    setAgentSelect(value);
+  }
+
+  React.useEffect(()=>{
 
     function getDataAccountSkins(){
       axios.get(`http://127.0.0.1:8000/api/skin/${slug}`).then((response) =>{
-        setAutocompleteSkins(<AutoCompleteSkins listSkins={skins} data={response.data.data} />);
+        setSkinSelect(response.data.data);
+        setAutocompleteSkins(<AutoCompleteSkins SetSkin={SetSkin} listSkins={skins} data={response.data.data} />);
       });
       
     }
 
     function getDataAccountAgents(){
-      console.log(agents)
       axios.get(`http://127.0.0.1:8000/api/agent/${slug}`).then((response) =>{
-        setAutocompleteAgents( <AutoCompleteAgents listAgents={agents} data={response.data.data} /> );
+        setAgentSelect(response.data.data);
+        setAutocompleteAgents( <AutoCompleteAgents SetAgent={SetAgent} listAgents={agents} data={response.data.data} /> );
       });
       
     }

@@ -17,9 +17,9 @@ export default function AutocompleteSkins(props) {
       });
       return indexReturn;
     }
-
-    dataSkins.map((data , index)=>{
-      return dataSkinsReady.push(skins[getIndex(data.uuid)]);
+    
+    dataSkins.forEach((data , index)=>{
+      dataSkinsReady.push(skins[getIndex(data.uuid)]);
     });
 
     const [value, setValue] = React.useState(dataSkinsReady);
@@ -31,8 +31,10 @@ export default function AutocompleteSkins(props) {
       id="skins"
       value={value}
       onChange={(event, newValue) => {
-        setValue([...newValue]);
+        setValue(newValue);
+        props.SetSkin(newValue);
       }}
+      filterSelectedOptions
       options={skins}
       getOptionLabel={(option) => option.name}
       renderTags={(tagValue, getTagProps) =>

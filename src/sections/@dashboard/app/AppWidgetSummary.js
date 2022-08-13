@@ -52,8 +52,6 @@ export default function AppWidgetSummary({dataSkin, dataAgent, username, passwor
   const [detailSkin,setDetailSkin] = React.useState([]);
   const handleCloseDetailSkin = () => setOpenDetail(false);
 
-  console.log(dataSkin);
-
   const [openDetailAgent, setOpenDetailAgent] = React.useState(false);
   const [detailAgent,setDetailAgent] = React.useState([]);
   const handleCloseDetailAgent = () => setOpenDetailAgent(false);
@@ -82,11 +80,6 @@ export default function AppWidgetSummary({dataSkin, dataAgent, username, passwor
           
       });
     }
-
-    
-
-
-
   }
 
 
@@ -180,6 +173,7 @@ export default function AppWidgetSummary({dataSkin, dataAgent, username, passwor
             }
           </Typography>
           <Button className='button-bottom' href={`/account/edit/${idAccount}`} color={color} size="small">Edit Account</Button>
+          <Button className='button-bottom' href={`/account/delete/${idAccount}`} color={color} size="small">Delete Account</Button>
 
         </CardContent>
       </Collapse>

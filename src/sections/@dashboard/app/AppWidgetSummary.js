@@ -70,7 +70,7 @@ const Alert = React.forwardRef((props, ref)=> {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function AppWidgetSummary({  dataSkin, dataAgent, username, password, RiotIdTagLine, owner, riotId, tagLine, icon, copyProps,  idAccount, color = 'primary', sx, ...other }) {
+export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username, password, owner, icon, copyProps,  idAccount, color = 'primary', sx, ...other }) {
 
   const [expanded, setExpanded] = React.useState(false);
   const [openDetail, setOpenDetail] = React.useState(false);
@@ -84,13 +84,17 @@ export default function AppWidgetSummary({  dataSkin, dataAgent, username, passw
   const [open, setOpen] = React.useState(false);
 
   const srcRank = 'https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/0/smallicon.png';
+  const [name , setName] = React.useState();
+  const [tag , setTag] = React.useState();
   const [rank , setRank] = React.useState();
   const [loading , setLoading] = React.useState(false);
   const [exp , setExp] = React.useState();
   const [elo , setElo] = React.useState();
 
   React.useEffect(()=>{
-    axios.get(`https://api.henrikdev.xyz/valorant/v1/mmr/ap/${riotId}/${tagLine}`).then((response) =>{
+    axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr/ap/${puuid}`).then((response) =>{
+        setName(response.data.data.name);
+        setTag(response.data.data.tag);
         setRank(response.data.data.images.small);
         setExp(response.data.data.ranking_in_tier);
         setElo(response.data.data.elo);
@@ -178,7 +182,14 @@ export default function AppWidgetSummary({  dataSkin, dataAgent, username, passw
         <LinearProgressWithLabel className='exp' value={exp} />
       }
 
-      <Typography className='RiotIdCard' sx={{ px:2 }} variant="h5">{RiotIdTagLine}</Typography>
+      <Typography className='RiotIdCard' sx={{ px:2 }} variant="h5">
+        {/* {RiotIdTagLine} */}
+        {loading === false ?
+          <Skeleton width="100%"><Typography>.</Typography></Skeleton>
+        :
+          `${name}#${tag}`
+        }
+        </Typography>
 
       <Typography variant="subtitle2" className='data-account' sx={{ opacity: 0.72 }}>
         Username: {username}
@@ -196,7 +207,7 @@ export default function AppWidgetSummary({  dataSkin, dataAgent, username, passw
 
       <CardActions className='bottom-card-account'>
         <div>
-          <Button className='button-bottom' target="_blank" href={`https://tracker.gg/valorant/profile/riot/${riotId}%23${tagLine}/overview`} color={color} size="small">Tracker.gg</Button>
+          <Button className='button-bottom' target="_blank" href={`https://tracker.gg/valorant/profile/riot/${name}%23${tag}/overview`} color={color} size="small">Tracker.gg</Button>
           <Button className='button-bottom' target="_blank" href={`https://auth.riotgames.com/login#acr_values=urn%3Ariot%3Agold&client_id=accountodactyl-prod&redirect_uri=https%3A%2F%2Faccount.riotgames.com%2Foauth2%2Flog-in&response_type=code&scope=openid%20email%20profile%20riot%3A%2F%2Friot.atlas%2Faccounts.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Fpassword.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Femail.edit%20riot%3A%2F%2Friot.atlas%2Faccounts.auth%20riot%3A%2F%2Fthird_party.revoke%20riot%3A%2F%2Fthird_party.query%20riot%3A%2F%2Fforgetme%2Fnotify.write%20riot%3A%2F%2Friot.authenticator%2Fauth.code%20riot%3A%2F%2Friot.authenticator%2Fauthz.edit%20riot%3A%2F%2Frso%2Fmfa%2Fdevice.write&state=4d7f39cb-9920-4700-a11f-e742346bba80&ui_locales=en`} color={color} size="small">Riot Account</Button>
         </div>
         <Button  onClick={handleExpandClick} aria-expanded={expanded} aria-label="show more" className='button-bottom' color={color} size="small">
@@ -264,7 +275,7 @@ export default function AppWidgetSummary({  dataSkin, dataAgent, username, passw
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Do you sure delete <b> {RiotIdTagLine} </b> ?
+            Do you sure delete <b> {name}#{tag} </b> ?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

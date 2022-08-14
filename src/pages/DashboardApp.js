@@ -91,12 +91,8 @@ export default function DashboardApp() {
       {
       data.map((dataDalam)=>{
 
-        const RiotIdAndTagline = `${dataDalam.riotId}#${dataDalam.tagLine}`
-
-        
-
         return (<Grid item xs={12} sm={6} md={3} key={dataDalam.id}>
-             <AppWidgetSummary idAccount={dataDalam.id} dataSkin={dataSkin} dataAgent={dataAgent} copyProps={copy} username={dataDalam.username} password={dataDalam.password} RiotIdTagLine={RiotIdAndTagline} owner={dataDalam.owner} icon={'simple-icons:valorant'} riotId={dataDalam.riotId} tagLine={dataDalam.tagLine} />
+             <AppWidgetSummary idAccount={dataDalam.id} dataSkin={dataSkin} dataAgent={dataAgent} copyProps={copy} username={dataDalam.username} password={dataDalam.password} puuid={dataDalam.puuid} owner={dataDalam.owner} icon={'simple-icons:valorant'}  />
           </Grid>)
       })
       }

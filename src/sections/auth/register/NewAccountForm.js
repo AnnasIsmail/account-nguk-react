@@ -10,6 +10,7 @@ import { LoadingButton } from '@mui/lab';
 import { IconButton, InputAdornment, Stack } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 // components
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
 import Iconify from '../../../components/Iconify';
@@ -24,11 +25,9 @@ export default function NewAccountForm() {
   const [agentSelect , setAgentSelect] = React.useState([]);
   const [showPassword, setShowPassword] = useState(true);
 
-
-  function changeSelect(value){
-    console.log(value)
-    // skinSelect = value
-  }
+  const [puuid , setpuuid] = React.useState();
+  const [error , setError] = React.useState(false);
+  const [textError , setTextError] = React.useState();
 
   const RegisterSchema = Yup.object().shape({
     riotId: Yup.string().required('First name required'),
@@ -70,9 +69,7 @@ export default function NewAccountForm() {
 
       const formData = new FormData(); 
   
-      formData.append('riotId', e.riotId);
-      formData.append('tagLine', e.tagLine);
-      formData.append('slug', 'asd');
+      formData.append('puuid', puuid);
       formData.append('username', e.username);
       formData.append('password', e.password);
       formData.append('owner', e.owner);
@@ -262,16 +259,50 @@ export default function NewAccountForm() {
           />);
     });
 
-
   },[]);
+
+
+  const checkPuuid=()=>{
+    const riotId = document.getElementById('riotId').value;
+    const tagline = document.getElementById('tagline').value;
+
+    if(riotId !== '' && riotId !== undefined && tagline !== '' && tagline !== undefined){
+      axios.get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId}/${tagline}`).then((response) =>{
+        setpuuid(response.data.data.puuid);
+        checkExistAccount(response.data.data.puuid);
+      }).catch((error)=> {
+        setError(true);
+        setTextError('Account Not Found');
+      });
+    }
+  }
+
+  const checkExistAccount=(puuid)=>{
+      axios.get(`http://127.0.0.1:8000/api/account/puuid/${puuid}`).then((response) =>{
+        console.log(response.data.data)
+        if(response.data.data.length === 0){
+          setError(false);
+        }else{
+          setError(true);
+          setTextError('Account Already Registered');
+        }
+      });
+  }
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)} >
+      {(error)?
+        <Typography variant="h6" gutterBottom component="div" color="error" >
+          {textError}
+        </Typography>
+      :
+      <></>
+      }
       <Stack spacing={3}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} className="form-new-account" >
-          <RHFTextField name="riotId" label="Riot ID" className="form-new-account-first"  />
+          <RHFTextField name="riotId" label="Riot ID" className="form-new-account-first" onBlur={checkPuuid} id="riotId" />
           <h1>#</h1>
-          <RHFTextField name="tagLine" label="Tag Line" />
+          <RHFTextField name="tagLine" label="Tag Line" onBlur={checkPuuid} id="tagline" />
         </Stack>
 
         <RHFTextField name="username" label="Username" />

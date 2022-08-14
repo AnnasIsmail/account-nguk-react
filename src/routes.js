@@ -12,6 +12,7 @@ import NewAccount from './pages/NewAccount';
 import NotFound from './pages/Page404';
 import Products from './pages/Products';
 import Register from './pages/Register';
+import Skins from './pages/Skins';
 import User from './pages/User';
 
 // ----------------------------------------------------------------------
@@ -24,6 +25,7 @@ export default function Router() {
       children: [
         { path: 'all-account', element: <DashboardApp /> },
         { path: 'agents', element: <Products /> },
+        { path: 'skins', element: <Skins /> },
         
         { path: 'user', element: <User /> },
         { path: 'blog', element: <Blog /> },

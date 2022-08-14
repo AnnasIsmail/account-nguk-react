@@ -70,7 +70,7 @@ export default function DetailAgent(props) {
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                       >
-                        <Typography>{data.displayName}</Typography>
+                        <Typography variant='h6'>{data.displayName}</Typography>
                       </AccordionSummary>
                       <AccordionDetails>
                         {/* <img src={data.displayIcon} className="image-detail-agent" alt="imageSkin" /> */}

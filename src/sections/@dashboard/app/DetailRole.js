@@ -4,7 +4,6 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Fade from '@mui/material/Fade';
-import Link from '@mui/material/Link';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 
@@ -22,14 +21,17 @@ const style = {
   p: 4,
 };
 
-export default function DetailSkin(props) {
- 
-  const detailSkin = props.detailSkin;
-  let levels = [];
-  let chromas = [];
-  if(props.detailSkin.levels !== undefined){
-    levels = props.detailSkin.levels;
-    chromas = props.detailSkin.chromas;
+export default function DetailRole(props) {
+    const detailSkin = props.detailSkin;
+    let levels = [];
+    let role = {}
+
+  if(props.detailSkin.abilities !== undefined){
+    levels = props.detailSkin.abilities;
+  }
+
+  if(detailSkin.role !== undefined){
+    role = detailSkin.role;
   }
 
   return (
@@ -40,23 +42,23 @@ export default function DetailSkin(props) {
         open={props.open}
         onClose={()=>props.handleClose()}
         closeAfterTransition
+        className="detail-Role"
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,
         }}
       >
-        <Fade in={props.open}>
-          <Box sx={style}>
-            <Typography>
-              <img src={(detailSkin.displayIcon !== null)?detailSkin.displayIcon:detailSkin.chromas[0].displayIcon} alt="imageSkin" />
-            </Typography>
+        <Fade in={props.open} >
+          <Box sx={style} >
             <Typography id="transition-modal-title" variant="h6" component="h2">
-              {detailSkin.displayName}
+              {detailSkin.displayName} 
+            </Typography>
+            <Typography id="transition-modal-title" variant="p" component="p">
+              " {detailSkin.description} "
             </Typography>
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
 
                   <div>
-                        <Typography>Level</Typography>
               {levels.map((data , index)=>{
                 return(
                   <Accordion>
@@ -68,33 +70,15 @@ export default function DetailSkin(props) {
                         <Typography>{data.displayName}</Typography>
                       </AccordionSummary>
                       <AccordionDetails>
+                        {/* <img src={data.displayIcon} className="image-detail-Role" alt="imageSkin" /> */}
                         <Typography>
-                          Video Weapon : {(data.streamedVideo !== null)? <Link href={data.streamedVideo} target="_blank" underline="hover">{'Link Video'}</Link> : <>Not Found</>}
+                          {data.description}
                         </Typography>
                       </AccordionDetails>
                     </Accordion>
                 );
               })}
-                        <Typography>Variant</Typography>
 
-                {chromas.map((data , index)=>{
-                return(
-                  <Accordion>
-                      <AccordionSummary
-                        expandIcon={<Iconify icon='ic:twotone-expand-more' width={24} height={24} />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                      >
-                        <Typography>{data.displayName}</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Typography>
-                          <img src={data.displayIcon} alt={data.assetPath} />
-                        </Typography>
-                      </AccordionDetails>
-                    </Accordion>
-                );
-              })}
                     
                 </div>
                 

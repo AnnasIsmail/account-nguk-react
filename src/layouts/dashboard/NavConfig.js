@@ -12,10 +12,16 @@ const navConfig = [
     icon: getIcon('material-symbols:switch-account-rounded'),
   },
   {
-    title: 'Members',
-    path: '/dashboard/products',
+    title: 'Agents',
+    path: '/dashboard/agents',
     icon: getIcon('eva:people-fill'),
   },
+  {
+    title: 'Skins',
+    path: '/dashboard/skins',
+    icon: getIcon('mdi:pistol'),
+  },
+
   // {
   //   title: 'blog',
   //   path: '/dashboard/blog',

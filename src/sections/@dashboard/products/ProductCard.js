@@ -1,9 +1,12 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import { Box, Card, Link, Stack, Typography } from '@mui/material';
-import Chip from '@mui/material/Chip';
 import { styled } from '@mui/material/styles';
+import axios from 'axios';
+import DetailAgent from '../app/DetailAgent';
+import DetailRole from '../app/DetailRole';
 // utils
 
 // ----------------------------------------------------------------------
@@ -23,27 +26,52 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale } = product;
+  const { uuid , displayName , fullPortrait ,role } = product;
+
+  const [openDetailRole, setOpenDetailRole] = React.useState(false);
+  const [detailRole,setDetailRole] = React.useState([]);
+  const handleCloseDetailRole = () => setOpenDetailRole(false);
+
+  const [openDetailAgent, setOpenDetailAgent] = React.useState(false);
+  const [detailAgent,setDetailAgent] = React.useState([]);
+  const handleCloseDetailAgent = () => setOpenDetailAgent(false);
+
+  const openDetailSkin =(uuid , name)=> {
+    if(name === 'agent'){
+      axios.get(`https://valorant-api.com/v1/agents/${uuid}`).then((response) =>{
+          setDetailAgent(response.data.data);
+          setOpenDetailAgent(true);
+      });
+    }else{
+      axios.get(`https://valorant-api.com/v1/agents/${uuid}`).then((response) =>{
+          setDetailRole(response.data.data.role);
+          setOpenDetailRole(true);
+      });
+    }
+  }
 
   return (
-    <Card>
-      <Box sx={{ pt: '100%', position: 'relative' }}>
-        
-        <ProductImgStyle alt={name} src={cover} />
+    <Card >
+      <Box sx={{ pt: '100%', position: 'relative' }} >
+        <ProductImgStyle alt='name' src={fullPortrait} />
       </Box>
 
-      <Stack spacing={2} sx={{ p: 3 }}>
-        <Link to="#" color="inherit" underline="hover" component={RouterLink}>
+      <Stack spacing={2} sx={{ p: 3 }} >
+        <Link to="#" color="inherit" underline="hover" onClick={()=>openDetailSkin(uuid , 'agent')} component={RouterLink}>
+        <Typography variant="h5" noWrap sx={{ mb: -2.5 }}>
+            {displayName}
+          </Typography>
+        </Link>
+        <Link to="#" color="inherit" underline="hover" onClick={()=>openDetailSkin(uuid , 'role')} component={RouterLink}>
           <Typography variant="subtitle2" noWrap>
-            {name}
+            {role.displayName}
           </Typography>
         </Link>
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Chip label="Orang Biasa" color="primary" />
-          <Chip label="Admin" color="success" />
-        </Stack>
       </Stack>
+
+      <DetailAgent open={openDetailAgent} handleClose={handleCloseDetailAgent} detailSkin={detailAgent} />
+      <DetailRole open={openDetailRole} handleClose={handleCloseDetailRole} detailSkin={detailRole} />
     </Card>
   );
 }

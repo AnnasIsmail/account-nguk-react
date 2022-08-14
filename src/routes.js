@@ -23,8 +23,9 @@ export default function Router() {
       element: <DashboardLayout />,
       children: [
         { path: 'all-account', element: <DashboardApp /> },
+        { path: 'agents', element: <Products /> },
+        
         { path: 'user', element: <User /> },
-        { path: 'products', element: <Products /> },
         { path: 'blog', element: <Blog /> },
       ],
     },

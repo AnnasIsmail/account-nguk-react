@@ -91,7 +91,7 @@ export default function DashboardApp() {
       {
       data.map((dataDalam)=>{
 
-        return (<Grid item xs={12} sm={6} md={3} key={dataDalam.id}>
+        return (<Grid item xs={12} sm={6} md={4} key={dataDalam.id}>
              <AppWidgetSummary idAccount={dataDalam.id} dataSkin={dataSkin} dataAgent={dataAgent} copyProps={copy} username={dataDalam.username} password={dataDalam.password} puuid={dataDalam.puuid} owner={dataDalam.owner} icon={'simple-icons:valorant'}  />
           </Grid>)
       })

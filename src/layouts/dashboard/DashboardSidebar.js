@@ -1,11 +1,10 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 // material
-import { Avatar, Box, Drawer, Link, Typography } from '@mui/material';
+import { Box, Drawer } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // mock
-import account from '../../_mock/account';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 // components
@@ -14,7 +13,6 @@ import NavSection from '../../components/NavSection';
 import Scrollbar from '../../components/Scrollbar';
 //
 import navConfig from './NavConfig';
-import navConfigAdmin from './NavConfigAdmin';
 
 // ----------------------------------------------------------------------
 
@@ -65,7 +63,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         <Logo />
       </Box>
 
-      <Box sx={{ mb: 5, mx: 2.5 }}>
+      {/* <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none" component={RouterLink} to="#">
           <AccountStyle>
             <Avatar src={account.photoURL} alt="photoURL" />
@@ -79,11 +77,11 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
             </Box>
           </AccountStyle>
         </Link>
-      </Box>
+      </Box> */}
 
       <NavSection navConfig={navConfig} />
-      <Typography className='navbar-admin' color='secondary' >Administrator</Typography>
-      <NavSection navConfig={navConfigAdmin} />
+      {/* <Typography className='navbar-admin' color='secondary' >Administrator</Typography> */}
+      {/* <NavSection navConfig={navConfigAdmin} /> */}
 
 
       <Box sx={{ flexGrow: 1 }} />

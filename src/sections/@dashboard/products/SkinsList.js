@@ -37,7 +37,7 @@ export default function SkinsList({ products, ...other }) {
           </Grid>
         ))}
       </Grid>
-        <Pagination count={countPage} shape="rounded" onClick={changePage} sx={{ mx: 'auto' , my: 3}} />
+        <Pagination count={countPage} shape="rounded" onClick={changePage} sx={{ mx: 'auto' , my: 5}} />
     </>
   );
 }

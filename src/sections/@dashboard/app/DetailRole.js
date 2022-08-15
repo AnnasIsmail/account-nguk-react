@@ -37,12 +37,12 @@ export default function DetailRole(props) {
   return (
     <>
       <Modal
+        className="detail-agent"
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={props.open}
         onClose={()=>props.handleClose()}
         closeAfterTransition
-        className="detail-Role"
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,

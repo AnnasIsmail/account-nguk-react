@@ -35,6 +35,7 @@ export default function DetailSkin(props) {
   return (
     <>
       <Modal
+        className="detail-agent"
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={props.open}
@@ -56,7 +57,7 @@ export default function DetailSkin(props) {
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
 
                   <div>
-                        <Typography>Level</Typography>
+                        <Typography variant='h6'>Level</Typography>
               {levels.map((data , index)=>{
                 return(
                   <Accordion>
@@ -75,7 +76,7 @@ export default function DetailSkin(props) {
                     </Accordion>
                 );
               })}
-                        <Typography>Variant</Typography>
+                        <Typography variant='h6'>Variant</Typography>
 
                 {chromas.map((data , index)=>{
                 return(

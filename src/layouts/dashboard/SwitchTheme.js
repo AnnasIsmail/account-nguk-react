@@ -1,63 +1,5 @@
-import PropTypes from 'prop-types';
-// material
-import { AppBar, Box, IconButton, Stack, Toolbar } from '@mui/material';
-import { alpha, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
-// components
-import Iconify from '../../components/Iconify';
-//
-// import NotificationsPopover from './NotificationsPopover';
-import Searchbar from './Searchbar';
-// ----------------------------------------------------------------------
-
-const DRAWER_WIDTH = 280;
-const APPBAR_MOBILE = 64;
-const APPBAR_DESKTOP = 92;
-
-const RootStyle = styled(AppBar)(({ theme }) => ({
-  boxShadow: 'none',
-  backdropFilter: 'blur(6px)',
-  WebkitBackdropFilter: 'blur(6px)', // Fix on Mobile
-  backgroundColor: alpha(theme.palette.background.default, 0.72),
-  [theme.breakpoints.up('lg')]: {
-    width: `calc(100% - ${DRAWER_WIDTH + 1}px)`,
-  },
-}));
-
-const ToolbarStyle = styled(Toolbar)(({ theme }) => ({
-  minHeight: APPBAR_MOBILE,
-  [theme.breakpoints.up('lg')]: {
-    minHeight: APPBAR_DESKTOP,
-    padding: theme.spacing(0, 5),
-  },
-}));
-
-// ----------------------------------------------------------------------
-
-DashboardNavbar.propTypes = {
-  onOpenSidebar: PropTypes.func,
-};
-
-export default function DashboardNavbar({ onOpenSidebar }) {
-  return (
-    <RootStyle>
-      <ToolbarStyle>
-        <IconButton onClick={onOpenSidebar} sx={{ mr: 1, color: 'text.primary', display: { lg: 'none' } }}>
-          <Iconify icon="eva:menu-2-fill" />
-        </IconButton>
-
-        <Searchbar />
-        <Box sx={{ flexGrow: 1 }} />
-
-        <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
-          {/* <NotificationsPopover /> */}
-          {/* <AccountPopover /> */}
-          <SwitchTheme />
-        </Stack>
-      </ToolbarStyle>
-    </RootStyle>
-  );
-}
 
 const SwitchTheme = styled(Switch)(({ theme }) => ({
   width: 62,
@@ -82,7 +24,7 @@ const SwitchTheme = styled(Switch)(({ theme }) => ({
     },
   },
   '& .MuiSwitch-thumb': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#2065D1' : '#2065D1',
+    backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
     width: 32,
     height: 32,
     '&:before': {

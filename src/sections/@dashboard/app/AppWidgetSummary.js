@@ -24,6 +24,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 // components
 import Iconify from '../../../components/Iconify';
 import DetailAgent from './DetailAgent';
+import DetailMMR from './DetailMMR';
 import DetailSkin from './DetailSkin';
 
 // ----------------------------------------------------------------------
@@ -82,6 +83,10 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
   const [detailAgent,setDetailAgent] = React.useState([]);
   const handleCloseDetailAgent = () => setOpenDetailAgent(false);
   
+  const [openDetailMMR, setOpenDetailMMR] = React.useState(false);
+  const [detailMMR,setDetailMMR] = React.useState([]);
+  const handleCloseDetailMMR = () => setOpenDetailMMR(false);
+
   const [open, setOpen] = React.useState(false);
 
   const srcRank = 'https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/0/smallicon.png';
@@ -137,13 +142,18 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
         setDetailSkin(response.data.data);
         setOpenDetail(true);
       });
-    }else{
+    }else if(name === 'agent'){
         axios.get(`https://valorant-api.com/v1/agents/${uuid}`).then((response) =>{
           setDetailAgent(response.data.data);
           setOpenDetailAgent(true);
           
       });
-    }
+    }else if(name === 'MMR'){
+      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr-history/ap/${uuid}`).then((response) =>{
+        setDetailMMR(response.data);
+        setOpenDetailMMR(true);
+    });
+  }
   }
 
   return (
@@ -210,7 +220,7 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
         <div>
           <Button className='button-bottom' target="_blank" href={`https://tracker.gg/valorant/profile/riot/${name}%23${tag}/overview`} color={color} size="small">Tracker.gg</Button>
           <Button className='button-bottom' target="_blank" href={`https://auth.riotgames.com/login#acr_values=urn%3Ariot%3Agold&client_id=accountodactyl-prod&redirect_uri=https%3A%2F%2Faccount.riotgames.com%2Foauth2%2Flog-in&response_type=code&scope=openid%20email%20profile%20riot%3A%2F%2Friot.atlas%2Faccounts.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Fpassword.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Femail.edit%20riot%3A%2F%2Friot.atlas%2Faccounts.auth%20riot%3A%2F%2Fthird_party.revoke%20riot%3A%2F%2Fthird_party.query%20riot%3A%2F%2Fforgetme%2Fnotify.write%20riot%3A%2F%2Friot.authenticator%2Fauth.code%20riot%3A%2F%2Friot.authenticator%2Fauthz.edit%20riot%3A%2F%2Frso%2Fmfa%2Fdevice.write&state=4d7f39cb-9920-4700-a11f-e742346bba80&ui_locales=en`} color={color} size="small">Riot Account</Button>
-          <Button className='button-bottom'  color={color} size="small">History MMR</Button>
+          <Button className='button-bottom' onClick={()=>openDetailSkin(puuid , 'MMR')} color={color} size="small">History MMR</Button>
         </div>
         <Button  onClick={handleExpandClick} aria-expanded={expanded} aria-label="show more" className='button-bottom' color={color} size="small">
           <Iconify icon='ic:twotone-expand-more' width={24} height={24} />
@@ -266,6 +276,7 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
 
     <DetailSkin open={openDetail} handleClose={handleCloseDetailSkin} detailSkin={detailSkin} />
     <DetailAgent open={openDetailAgent} handleClose={handleCloseDetailAgent} detailSkin={detailAgent} />
+    <DetailMMR open={openDetailMMR} handleClose={handleCloseDetailMMR} detailSkin={detailMMR} />
       <Dialog
         open={open}
         onClose={handleClose}

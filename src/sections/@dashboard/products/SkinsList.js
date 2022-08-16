@@ -19,8 +19,8 @@ export default function SkinsList({ products, ...other }) {
     }
   });
 
-  const changePage =(e)=>{
-    const page = parseInt(e.target.innerText, 10);
+  const changePage =(e , value)=>{
+    const page = value;
     const indexMax = page * 20;
     setCurrentPage(page);
     setIndexTo(indexMax);
@@ -37,7 +37,13 @@ export default function SkinsList({ products, ...other }) {
           </Grid>
         ))}
       </Grid>
-        <Pagination count={countPage} shape="rounded" onClick={changePage} sx={{ mx: 'auto' , my: 5}} />
+      <div className='flex-center' >
+      {(countPage > 0)?
+        <Pagination count={countPage} shape="rounded" onChange={changePage} sx={{ mx: 'auto' , my: 5}} />
+      :  
+        <></>
+      }
+      </div>
     </>
   );
 }

@@ -52,7 +52,7 @@ export default function DashboardNavbar({ onOpenSidebar }) {
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
           {/* <NotificationsPopover /> */}
           {/* <AccountPopover /> */}
-          <SwitchTheme />
+          <SwitchTheme defaultChecked onClick={()=>console.log('masuk')} />
         </Stack>
       </ToolbarStyle>
     </RootStyle>

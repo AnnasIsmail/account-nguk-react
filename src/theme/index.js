@@ -52,6 +52,10 @@ export default function ThemeProvider({ children }) {
     theme = createTheme(themeDark);
   }
 
+  function changeTheme(){
+    console.log('masuk');
+  }
+
   theme.components = componentsOverride(theme);
 
   return (

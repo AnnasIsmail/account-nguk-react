@@ -44,7 +44,7 @@ export default function ThemeProvider({ children }) {
   );
 
   let theme = {};
-  const themeSwitch = 'dark';
+  const themeSwitch = 'light';
 
   if (themeSwitch === 'light') {
     theme = createTheme(themeOptions);

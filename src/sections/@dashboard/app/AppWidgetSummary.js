@@ -23,6 +23,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 // components
 import Iconify from '../../../components/Iconify';
+import BackdropLoading from './BackDropLoading';
 import DetailAgent from './DetailAgent';
 import DetailMMR from './DetailMMR';
 import DetailSkin from './DetailSkin';
@@ -87,6 +88,15 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
   const [detailMMR,setDetailMMR] = React.useState([]);
   const handleCloseDetailMMR = () => setOpenDetailMMR(false);
 
+  const [openBackDrop , setOpenBackdrop] = React.useState(false);
+
+  const handleCloseBackDrop = () => {
+    setOpenBackdrop(false);
+  };
+  const handleToggleBackDrop = () => {
+    setOpenBackdrop(!openBackDrop);
+  };
+
   const [open, setOpen] = React.useState(false);
 
   const srcRank = 'https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/0/smallicon.png';
@@ -137,19 +147,23 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
   }
 
   const openDetailSkin =(uuid , name)=> {
+    handleToggleBackDrop();
     if(name === 'skin'){
       axios.get(`https://valorant-api.com/v1/weapons/skins/${uuid}`).then((response) =>{
+        handleCloseBackDrop();
         setDetailSkin(response.data.data);
         setOpenDetail(true);
       });
     }else if(name === 'agent'){
         axios.get(`https://valorant-api.com/v1/agents/${uuid}`).then((response) =>{
-          setDetailAgent(response.data.data);
+        handleCloseBackDrop();
+        setDetailAgent(response.data.data);
           setOpenDetailAgent(true);
           
       });
     }else if(name === 'MMR'){
       axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr-history/ap/${uuid}`).then((response) =>{
+        handleCloseBackDrop();
         setDetailMMR(response.data);
         setOpenDetailMMR(true);
     });
@@ -157,7 +171,9 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
   }
 
   return (
-    
+    <>
+    <BackdropLoading open={openBackDrop} />
+
     <Card
       sx={{
         pt: 3,
@@ -299,5 +315,7 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
         </DialogActions>
       </Dialog>
     </Card>
+    </>
+
   );
 }

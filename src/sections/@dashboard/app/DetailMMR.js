@@ -22,18 +22,13 @@ const style = {
 };
 
 export default function DetailMMR(props) {
-    console.log(props.detailSkin)
     const detailSkin = props.detailSkin;
     let levels = [];
-    let role = {}
 
-  if(props.detailSkin.abilities !== undefined){
-    levels = props.detailSkin.abilities;
+  if(props.detailSkin.data !== undefined){
+    levels = props.detailSkin.data;
   }
 
-  if(detailSkin.role !== undefined){
-    role = detailSkin.role;
-  }
 
   return (
     <>
@@ -52,10 +47,7 @@ export default function DetailMMR(props) {
         <Fade in={props.open}>
           <Box sx={style}>
             <Typography id="transition-modal-title" variant="h6" component="h2">
-              {props.detailSkin.name} # ({props.detailSkin.tag})
-            </Typography>
-            <Typography id="transition-modal-title" variant="p" component="p">
-              " {detailSkin.description} "
+              {props.detailSkin.name}#{props.detailSkin.tag}
             </Typography>
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
 
@@ -68,12 +60,34 @@ export default function DetailMMR(props) {
                         aria-controls="panel1a-content"
                         id="panel1a-header"
                       >
-                        <Typography variant='h6'>{data.displayName}</Typography>
+                      {(data.mmr_change_to_last_game > 1)?
+                        <Typography variant='h6' color="primary" >{data.date}</Typography>
+                        :
+                        <>
+                        {
+                       (data.mmr_change_to_last_game === 0)? 
+                       <Typography variant='h6' >{data.date}</Typography>
+                       :
+                       <Typography variant='h6' color="error" >{data.date}</Typography>
+                        }
+                        </>
+                      }
                       </AccordionSummary>
                       <AccordionDetails>
                         {/* <img src={data.displayIcon} className="image-detail-agent" alt="imageSkin" /> */}
                         <Typography>
-                          {data.description}
+                          <Typography>
+                            Rank : {data.currenttierpatched}
+                          </Typography>
+                          <Typography>
+                            MMR Match : {data.mmr_change_to_last_game}
+                          </Typography>
+                          <Typography>
+                            MMR in Tier : {data.ranking_in_tier}
+                          </Typography>
+                          <Typography>
+                            Elo : {data.elo}
+                          </Typography>
                         </Typography>
                       </AccordionDetails>
                     </Accordion>

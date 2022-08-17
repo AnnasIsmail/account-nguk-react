@@ -2,10 +2,10 @@
 import 'simplebar/src/simplebar.css';
 import './index.css';
 
+import { CookiesProvider } from 'react-cookie';
 import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
-
 //
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -18,7 +18,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <HelmetProvider>
     <BrowserRouter>
-      <App />
+      <CookiesProvider>
+        <App />
+      </CookiesProvider>
     </BrowserRouter>
   </HelmetProvider>
 );

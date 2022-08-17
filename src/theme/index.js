@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { CssBaseline } from '@mui/material';
 import { createTheme, StyledEngineProvider, ThemeProvider as MUIThemeProvider } from '@mui/material/styles';
 import React from 'react';
+import { useCookies } from 'react-cookie';
 //
 import componentsOverride from './overrides';
 import palette from './palette';
@@ -34,15 +35,15 @@ const themeDark = {
 
 let themeSwitch = 'light';
 
-const useDarkMode = () => {
+const useDarkMode = (themeCookie) => {
   const [theme, setTheme] = React.useState((themeSwitch === 'light')? themeOptions : themeDark);
   
   const toggleDarkMode = () => {
 
-    if (themeSwitch === 'light') {
-      themeSwitch = 'dark';
+    if (themeCookie === 'light') {
+      themeCookie = 'dark';
     } else {
-      themeSwitch = 'light';
+      themeCookie = 'light';
     }
 
     changeTheme();
@@ -50,7 +51,7 @@ const useDarkMode = () => {
 
   const changeTheme = () => {
 
-    if (themeSwitch === 'light') {
+    if (themeCookie === 'light' || themeCookie === undefined) {
       setTheme(themeOptions);
     } else {
       setTheme(themeDark);
@@ -62,7 +63,11 @@ const useDarkMode = () => {
 
 export default function ThemeProvider({ children }) {
 
-  const [theme, toggleDarkMode] = useDarkMode();
+  const [cookies, setCookie, removeCookie] = useCookies(['theme']);
+
+  const themeCookie = cookies.theme;
+  
+  const [theme, toggleDarkMode] = useDarkMode(themeCookie);
   const themeConfig = createTheme(theme);
 
   themeConfig.components = componentsOverride(themeConfig);

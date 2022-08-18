@@ -99,7 +99,6 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
 
   const [open, setOpen] = React.useState(false);
 
-  const srcRank = 'https://media.valorant-api.com/competitivetiers/564d8e28-c226-3180-6285-e48a390db8b1/0/smallicon.png';
   const [name , setName] = React.useState();
   const [tag , setTag] = React.useState();
   const [rank , setRank] = React.useState();

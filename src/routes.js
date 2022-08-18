@@ -13,6 +13,7 @@ import NotFound from './pages/Page404';
 import Products from './pages/Products';
 import Register from './pages/Register';
 import Skins from './pages/Skins';
+import TrackAccount from './pages/TrackAccount';
 import User from './pages/User';
 
 // ----------------------------------------------------------------------
@@ -49,6 +50,7 @@ export default function Router() {
       children: [
         { path: 'create', element: <NewAccount /> },
         { path: 'edit/:slug', element: <EditAccount /> },
+        { path: 'track', element: <TrackAccount /> },
       ],
     },
 

@@ -12,6 +12,11 @@ const navConfig = [
     icon: getIcon('material-symbols:switch-account-rounded'),
   },
   {
+    title: 'Track Account',
+    path: '/account/track',
+    icon: getIcon('gg:track'),
+  },
+  {
     title: 'Agents',
     path: '/dashboard/agents',
     icon: getIcon('eva:people-fill'),

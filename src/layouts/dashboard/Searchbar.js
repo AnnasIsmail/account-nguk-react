@@ -53,15 +53,15 @@ export default function Searchbar() {
   };
 
   
-    document.addEventListener('keydown', (event) => {
-      const name = event.key;
-      const code = event.code;
-      if (event.ctrlKey) {
-        if(name === 'q'){
-          handleOpen();
-        }
-      }
-    }, false);
+    // document.addEventListener('keydown', (event) => {
+    //   const name = event.key;
+    //   const code = event.code;
+    //   if (event.ctrlKey) {
+    //     if(name === 'q'){
+    //       handleOpen();
+    //     }
+    //   }
+    // }, false);
 
 
   return (
@@ -72,7 +72,7 @@ export default function Searchbar() {
           <IconButton onClick={handleOpen}>
             <Iconify icon="eva:search-fill" width={20} height={20} />
             <Typography variant="subtitle2" sx={{ ml: 1 }}>
-                Ctrl + Q
+                {/* Ctrl + Q */}
             </Typography>
           </IconButton>
         )}

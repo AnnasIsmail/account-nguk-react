@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { AppBar, Box, IconButton, Stack, Toolbar } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
+import { useCookies } from 'react-cookie';
 // components
 import Iconify from '../../components/Iconify';
 //
@@ -39,6 +40,8 @@ DashboardNavbar.propTypes = {
 };
 
 export default function DashboardNavbar({ onOpenSidebar }) {
+  const [cookies, setCookie, removeCookie] = useCookies(['theme']);
+
   return (
     <RootStyle>
       <ToolbarStyle>
@@ -52,7 +55,11 @@ export default function DashboardNavbar({ onOpenSidebar }) {
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>
           {/* <NotificationsPopover /> */}
           {/* <AccountPopover /> */}
-          <SwitchTheme defaultChecked onClick={()=>document.getElementById('theme').click()} />
+          {(cookies.theme === 'light' || cookies.theme === undefined)?
+            <SwitchTheme onClick={()=>document.getElementById('theme').click()} />
+          :
+            <SwitchTheme defaultChecked onClick={()=>document.getElementById('theme').click()} />
+          }
         </Stack>
       </ToolbarStyle>
     </RootStyle>
@@ -68,11 +75,11 @@ const SwitchTheme = styled(Switch)(({ theme }) => ({
     padding: 0,
     transform: 'translateX(6px)',
     '&.Mui-checked': {
-      color: '#fff',
+      color: '#000',
       transform: 'translateX(22px)',
       '& .MuiSwitch-thumb:before': {
         backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-          '#fff',
+          '#000',
         )}" d="M4.2 2.5l-.7 1.8-1.8.7 1.8.7.7 1.8.6-1.8L6.7 5l-1.9-.7-.6-1.8zm15 8.3a6.7 6.7 0 11-6.6-6.6 5.8 5.8 0 006.6 6.6z"/></svg>')`,
       },
       '& + .MuiSwitch-track': {
@@ -82,7 +89,7 @@ const SwitchTheme = styled(Switch)(({ theme }) => ({
     },
   },
   '& .MuiSwitch-thumb': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#2065D1' : '#2065D1',
+    backgroundColor: theme.palette.mode === 'dark' ? '#90caf9' : '#2065D1',
     width: 32,
     height: 32,
     '&:before': {

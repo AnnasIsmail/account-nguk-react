@@ -33,29 +33,30 @@ const themeDark = {
   palette: {mode: 'dark'}
 };
 
-let themeSwitch = 'light';
-
 const useDarkMode = (themeCookie) => {
-  const [theme, setTheme] = React.useState((themeSwitch === 'light')? themeOptions : themeDark);
+  const [cookies, setCookie, removeCookie] = useCookies();
+  const [theme, setTheme] = React.useState((cookies.theme === 'light' || cookies.theme === undefined)? themeOptions : themeDark);
   
   const toggleDarkMode = () => {
-
-    if (themeCookie === 'light') {
-      themeCookie = 'dark';
+    let toTheme = '';
+    if (cookies.theme === 'light' || cookies.theme === undefined) {
+      setCookie('theme' , 'dark');
+      toTheme = 'dark';
     } else {
-      themeCookie = 'light';
+      setCookie('theme' , 'light');
+      toTheme = 'light';
     }
 
-    changeTheme();
+    changeTheme(toTheme);
   };
 
-  const changeTheme = () => {
-
-    if (themeCookie === 'light' || themeCookie === undefined) {
+  const changeTheme = (toTheme) => {
+    if (toTheme === 'light' || toTheme === undefined) {
       setTheme(themeOptions);
     } else {
       setTheme(themeDark);
     }
+
   };
 
   return [theme, toggleDarkMode];
@@ -63,11 +64,11 @@ const useDarkMode = (themeCookie) => {
 
 export default function ThemeProvider({ children }) {
 
-  const [cookies, setCookie, removeCookie] = useCookies(['theme']);
+  const [cookies, setCookie, removeCookie] = useCookies();
 
   const themeCookie = cookies.theme;
   
-  const [theme, toggleDarkMode] = useDarkMode(themeCookie);
+  const [theme, toggleDarkMode] = useDarkMode();
   const themeConfig = createTheme(theme);
 
   themeConfig.components = componentsOverride(themeConfig);

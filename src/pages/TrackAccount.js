@@ -59,7 +59,7 @@ export default function TrackAccount() {
   const mdUp = useResponsive('up', 'md');
 
   return (
-    <Page title="Register" className="new-account-container">
+    <Page title="Track Account" className="new-account-container">
       <RootStyle>
         
 

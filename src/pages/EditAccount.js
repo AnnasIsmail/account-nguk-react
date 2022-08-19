@@ -75,7 +75,7 @@ export default function EditAccount() {
   },[]);
 
   return (
-    <Page title="Register" className="new-account-container">
+    <Page title="Edit Account" className="new-account-container">
       <RootStyle>
         
 

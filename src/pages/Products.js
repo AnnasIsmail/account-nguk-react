@@ -22,7 +22,7 @@ export default function EcommerceShop() {
   },[]);
 
   return (
-    <Page title="Dashboard: Products">
+    <Page title="All Agents">
       <Container>
         <Typography variant="h4" sx={{ mb: 5 }}>
           All Agents

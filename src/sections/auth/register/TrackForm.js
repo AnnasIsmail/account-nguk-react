@@ -19,6 +19,8 @@ export default function TrackForm() {
   const navigate = useNavigate();
   
   const [puuid , setpuuid] = React.useState();
+  const [data , setData] = React.useState({});
+  const [detailAccount , setDetailAccount] = React.useState();
   const [error , setError] = React.useState(false);
   const [textError , setTextError] = React.useState();
   const [loading, setLoading] = React.useState(false);
@@ -45,22 +47,43 @@ export default function TrackForm() {
 
 
   const onSubmit = async (e) => {
-    setLoading(true);
+
     const riotId = e.riotId;
     const tagline = e.tagLine;
 
-
-      axios.get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId}/${tagline}`).then((response) =>{
-        setpuuid(response.data.data.puuid);
-        setLoading(false);
-        setError(false);
-      }).catch((error)=> {
-        setError(true);
-        setTextError('Account Not Found');
-        setLoading(false);
-      });
-
+    if(data.name !== undefined){
+    
+    if(riotId.toLowerCase() === data.name.toLowerCase() && tagline.toLowerCase() === data.tag.toLowerCase()){
+      const riotId = e.riotId;
+      const tagline = e.tagLine;
+    }else{
+      CheckAccount(riotId , tagline);
+    }
+  }else{
+    CheckAccount(riotId , tagline);
   }
+}
+
+function CheckAccount(riotId , tagline){
+      
+  setLoading(true);
+  setDetailAccount(<></>);
+
+    axios.get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId}/${tagline}`).then((response) =>{
+      setpuuid(response.data.data.puuid);
+      setData(response.data.data);
+      setLoading(false);
+      setError(false);
+      setDetailAccount(
+        <DetailAccount data={response.data.data} puuid={puuid} />
+      );
+    }).catch((error)=> {
+      setError(true);
+      setTextError('Account Not Found');
+      setLoading(false);
+      setData({});
+    });
+}
 
 
   return (
@@ -82,8 +105,8 @@ export default function TrackForm() {
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading}>
           Track Account
         </LoadingButton>
-        <DetailAccount  />
-
+        
+        {detailAccount}
       </Stack>
     </FormProvider>
   );

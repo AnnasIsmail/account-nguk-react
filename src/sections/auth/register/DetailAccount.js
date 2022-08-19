@@ -1,12 +1,18 @@
 // @mui
 import { Card, Typography } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import LinearProgress from '@mui/material/LinearProgress';
+import Skeleton from '@mui/material/Skeleton';
 import { alpha, styled } from '@mui/material/styles';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import React from 'react';
+//
+import BackdropLoading from '../../@dashboard/app/BackDropLoading';
+import DetailMMR from '../../@dashboard/app/DetailMMR';
 
 function LinearProgressWithLabel(props) {
   return (
@@ -45,19 +51,54 @@ DetailAccount.propTypes = {
   sx: PropTypes.object,
 };
 
-export default function DetailAccount({ title, total, icon, color = 'primary', sx, ...other }) {
-
-    const [name , setName] = React.useState();
-    const [tag , setTag] = React.useState();
+export default function DetailAccount({ data , puuid , color = 'primary', sx, ...other }) {
+  
     const [rank , setRank] = React.useState();
-    const [loading , setLoading] = React.useState(false);
+    const [srcRank , setSrcRank] = React.useState();
+    const [loading , setLoading] = React.useState(true);
     const [exp , setExp] = React.useState();
     const [elo , setElo] = React.useState();
 
+    React.useEffect(()=>{
+      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr/${data.region}/${data.puuid}`).then((response) =>{
+        setRank(response.data.data.currenttierpatched);
+        setElo(response.data.data.elo);
+        setSrcRank(response.data.data.images.small);
+        setExp(response.data.data.ranking_in_tier);
+        setLoading(false);
+      });
+    },[]);
+
+    const [openDetailMMR, setOpenDetailMMR] = React.useState(false);
+    const [detailMMR,setDetailMMR] = React.useState([]);
+    const handleCloseDetailMMR = () => setOpenDetailMMR(false);
+
+    const [openBackDrop , setOpenBackdrop] = React.useState(false);
+
+    const handleCloseBackDrop = () => {
+      setOpenBackdrop(false);
+    };
+    const handleToggleBackDrop = () => {
+      setOpenBackdrop(!openBackDrop);
+    };
+
+    const openDetailSkin =(uuid , name)=> {
+    handleToggleBackDrop();
+        axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr-history/ap/${uuid}`).then((response) =>{
+          handleCloseBackDrop();
+          setDetailMMR(response.data);
+          setOpenDetailMMR(true);
+      });
+    }
+
   return (
+    <>
+    <BackdropLoading open={openBackDrop} />
     <Card
       sx={{
-        py: 4,
+        pt: 4,
+        pb: 1,
+        px: 2,
         boxShadow: 0,
         textAlign: 'center',
         color: (theme) => theme.palette[color].darker,
@@ -76,35 +117,63 @@ export default function DetailAccount({ title, total, icon, color = 'primary', s
             )} 100%)`,
         }}
       >
-        <img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/12/smallicon.png" alt="rank" width={45} height={45} />
+        {(loading)?
+          <Skeleton variant="circular">
+            <Avatar />
+          </Skeleton>
+        :
+          <img src={srcRank} alt="rank" width={45} height={45} />
+        }
       </IconWrapperStyle>
 
-      <Typography variant="subtitle1" sx={{ opacity: 0.8 , m: 0 }}>
-        Gold 2
-      </Typography>
 
-      <LinearProgressWithLabel value={20} />
+        {(loading)?
+          <Skeleton width="100%">
+            <Typography>.</Typography>
+          </Skeleton>
+          :
+          <Typography variant="subtitle1" sx={{ opacity: 0.8 , m: 0 }}>
+              {rank}
+          </Typography>
+        }
 
-      <Typography variant="h4">Irjen</Typography>
+        {(loading)?
+          <Skeleton width="100%">
+            <Typography>.</Typography>
+          </Skeleton>
+        :
+          <LinearProgressWithLabel value={exp} />
+        }
+
+      <Typography variant="h4">{data.name}#{data.tag}</Typography>
 
       <Typography variant="subtitle2" className='detail-account' sx={{ opacity: 0.72 }}>
         <b>Level :</b>
-        198
+        {data.account_level}
       </Typography>
 
       <Typography variant="subtitle2" className='detail-account' sx={{ opacity: 0.72 }}>
-        <b>Elo :</b>
-        198
+      {(loading)?
+          <Skeleton width="100%">
+            <Typography>.</Typography>
+          </Skeleton>
+        :
+          <>
+            <b>Elo :</b>
+            {elo}
+          </>
+        }
       </Typography>
 
       <CardActions className='bottom-card-account'>
         <div>
-          <Button className='button-bottom' target="_blank" href={`https://tracker.gg/valorant/profile/riot/${name}%23${tag}/overview`} color={color} size="small">Tracker.gg</Button>
-          <Button className='button-bottom' target="_blank" href={`https://auth.riotgames.com/login#acr_values=urn%3Ariot%3Agold&client_id=accountodactyl-prod&redirect_uri=https%3A%2F%2Faccount.riotgames.com%2Foauth2%2Flog-in&response_type=code&scope=openid%20email%20profile%20riot%3A%2F%2Friot.atlas%2Faccounts.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Fpassword.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Femail.edit%20riot%3A%2F%2Friot.atlas%2Faccounts.auth%20riot%3A%2F%2Fthird_party.revoke%20riot%3A%2F%2Fthird_party.query%20riot%3A%2F%2Fforgetme%2Fnotify.write%20riot%3A%2F%2Friot.authenticator%2Fauth.code%20riot%3A%2F%2Friot.authenticator%2Fauthz.edit%20riot%3A%2F%2Frso%2Fmfa%2Fdevice.write&state=4d7f39cb-9920-4700-a11f-e742346bba80&ui_locales=en`} color={color} size="small">Riot Account</Button>
-          <Button className='button-bottom' onClick={()=>openDetailSkin(puuid , 'MMR')} color={color} size="small">History MMR</Button>
+          <Button className='button-bottom' target="_blank" href={`https://tracker.gg/valorant/profile/riot/${data.name}%23${data.tag}/overview`} color={color} size="small">Tracker.gg</Button>
+          <Button className='button-bottom' onClick={()=>openDetailSkin(data.puuid , 'MMR')} color={color} size="small">History MMR</Button>
         </div>
       </CardActions>
-
+      <DetailMMR open={openDetailMMR} handleClose={handleCloseDetailMMR} detailSkin={detailMMR} />
     </Card>
+    </>
+
   );
 }

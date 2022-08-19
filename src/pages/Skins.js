@@ -31,7 +31,7 @@ export default function Skins() {
   }
 
   return (
-    <Page title="Dashboard: Products">
+    <Page title="All Skins">
       <Container>
         <Typography variant="h4" sx={{ mb: 5 }}>
           All Skins

@@ -7,14 +7,14 @@ const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 
 const navConfigAdmin = [
   {
-    title: 'Manage Account',
+    title: 'Add New Access',
     path: '/dashboard/manage-account',
-    icon: getIcon('mdi:account-cog'),
+    icon: getIcon('ic:baseline-person-add-alt-1'),
   },
   {
     title: 'Logs',
     path: '/dashboard/logs',
-    icon: getIcon('fluent:phone-span-in-28-filled'),
+    icon: getIcon('fluent:arrow-repeat-all-20-filled'),
   },
   // {
   //   title: 'blog',

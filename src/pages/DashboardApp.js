@@ -66,7 +66,6 @@ export default function DashboardApp() {
 
   return (
     <Page title="All Account">
-      <input hidden type="button" id='searchCall' onClick={searchData} />
       <Snackbar
         anchorOrigin={{ vertical, horizontal }}
         open={open}

@@ -71,7 +71,7 @@ export default function Searchbar() {
         {!isOpen && (
           <IconButton onClick={handleOpen}>
             <Iconify icon="eva:search-fill" width={20} height={20} />
-            <Typography variant="subtitle2" sx={{ ml: 1 }}>
+            <Typography variant="subtitle2">
                 {/* Ctrl + Q */}
             </Typography>
           </IconButton>

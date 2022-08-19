@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { AppBar, Box, IconButton, Stack, Toolbar } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
+import React from 'react';
 import { useCookies } from 'react-cookie';
 // components
 import Iconify from '../../components/Iconify';
@@ -40,8 +41,13 @@ DashboardNavbar.propTypes = {
 };
 
 export default function DashboardNavbar({ onOpenSidebar }) {
+  
   const [cookies, setCookie, removeCookie] = useCookies(['theme']);
+  const [title , setTitle] = React.useState(null);
 
+  React.useEffect(()=>{
+    setTitle(document.getElementById('searchCall'));
+  })
   return (
     <RootStyle>
       <ToolbarStyle>
@@ -49,7 +55,10 @@ export default function DashboardNavbar({ onOpenSidebar }) {
           <Iconify icon="eva:menu-2-fill" />
         </IconButton>
 
-        <Searchbar />
+        {(title !== null)&&
+          <Searchbar />
+        }
+
         <Box sx={{ flexGrow: 1 }} />
 
         <Stack direction="row" alignItems="center" spacing={{ xs: 0.5, sm: 1.5 }}>

@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 // material
-import { Box, Drawer } from '@mui/material';
+import { Box, Drawer, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // mock
 // hooks
@@ -13,6 +13,7 @@ import NavSection from '../../components/NavSection';
 import Scrollbar from '../../components/Scrollbar';
 //
 import navConfig from './NavConfig';
+import navConfigAdmin from './NavConfigAdmin';
 
 // ----------------------------------------------------------------------
 
@@ -80,8 +81,8 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       </Box> */}
 
       <NavSection navConfig={navConfig} />
-      {/* <Typography className='navbar-admin' color='secondary' >Administrator</Typography> */}
-      {/* <NavSection navConfig={navConfigAdmin} /> */}
+      <Typography className='navbar-admin' color='secondary' >Administrator</Typography>
+      <NavSection navConfig={navConfigAdmin} />
 
 
       <Box sx={{ flexGrow: 1 }} />

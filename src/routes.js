@@ -27,8 +27,8 @@ export default function Router() {
         { path: 'all-account', element: <DashboardApp /> },
         { path: 'agents', element: <Products /> },
         { path: 'skins', element: <Skins /> },
+        { path: 'logs', element: <User /> },
         
-        { path: 'user', element: <User /> },
         { path: 'blog', element: <Blog /> },
       ],
     },

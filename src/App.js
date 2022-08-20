@@ -1,3 +1,4 @@
+import React from 'react';
 // routes
 import Router from './routes';
 // theme
@@ -9,11 +10,18 @@ import ScrollToTop from './components/ScrollToTop';
 // ----------------------------------------------------------------------
 
 function App() {
+
+  const [login , setLogin] = React.useState(false);
+
   return (
     <ThemeProvider>
       <ScrollToTop />
       <BaseOptionChartStyle />
-      <Router />
+      {(login)?
+        <Router />
+      :
+        <>belom login</>
+      }
     </ThemeProvider>
   );
 }

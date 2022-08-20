@@ -81,7 +81,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       </Box> */}
 
       <NavSection navConfig={navConfig} />
-      <Typography className='navbar-admin' color='secondary' >Administrator</Typography>
+      <Typography className='navbar-admin' color='primary' >Administrator</Typography>
       <NavSection navConfig={navConfigAdmin} />
 
 

@@ -1,12 +1,13 @@
 // @mui
 import { Card, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import React from 'react';
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
 // sections
-import TrackForm from '../sections/auth/register/TrackForm';
+import AddAccessForm from '../sections/auth/register/AddAccessForm';
 
 // ----------------------------------------------------------------------
 
@@ -53,13 +54,32 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function TrackAccount() {
+export default function AddAccess() {
   const smUp = useResponsive('up', 'sm');
-
   const mdUp = useResponsive('up', 'md');
 
+  
+  const [message, setMessage] = React.useState('No Message');
+
+  const [state, setState] = React.useState({
+    open: false,
+    vertical: 'bottom',horizontal: 'right'
+  });
+
+  const { vertical, horizontal, open } = state;
+
+  const handleClose = () => {
+    setState({ ...state, open: false });
+  };
+
+  const copy =(message)=>{
+    const newState = {  vertical: 'bottom',horizontal: 'right',}
+    setMessage(message);
+    setState({ open: true, ...newState });
+  }
+
   return (
-    <Page title="Track Account" className="new-account-container">
+    <Page title="Add New Access" className="new-account-container">
       <RootStyle>
         
 
@@ -75,12 +95,12 @@ export default function TrackAccount() {
         <Container>
           <ContentStyle>
             <Typography variant="h4" gutterBottom>
-              Track Account Valorant
+              New Access
             </Typography>
 
-            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Masukan dengan sesuai. Bila tidak ingin rata.</Typography>
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Give the Name You Want to Give Access.</Typography>
 
-            <TrackForm  />
+            <AddAccessForm copyProps={copy} />
             
           </ContentStyle>
         </Container>

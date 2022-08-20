@@ -3,6 +3,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import ManageData from './layouts/dashboard/ManageData';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
+import AddAccess from './pages/AddAccess';
 //
 import Blog from './pages/Blog';
 import DashboardApp from './pages/DashboardApp';
@@ -51,6 +52,7 @@ export default function Router() {
         { path: 'create', element: <NewAccount /> },
         { path: 'edit/:slug', element: <EditAccount /> },
         { path: 'track', element: <TrackAccount /> },
+        { path: 'addAccess', element: <AddAccess /> },
       ],
     },
 

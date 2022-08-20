@@ -1,6 +1,8 @@
 // material
 import { Container } from '@mui/material';
+import Skeleton from '@mui/material/Skeleton';
 import { DataGrid } from '@mui/x-data-grid';
+import axios from 'axios';
 import React from 'react';
 // components
 import Page from '../components/Page';
@@ -8,32 +10,45 @@ import Page from '../components/Page';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [
-  { id: 'name', label: 'Name', alignRight: false },
-  { id: 'activity', label: 'Activity', alignRight: false },
-  { id: 'ipAddress', label: 'Ip Address', alignRight: false },
-  { id: 'browser', label: 'Browser', alignRight: false },
-  { id: 'date', label: 'Date', alignRight: false },
-  { id: '' },
-];
+
 
 export default function User() {
 
-  const [pageSize, setPageSize] = React.useState(5);
+  const [pageSize, setPageSize] = React.useState(10);
+  const [loading , setLoading] = React.useState(false);
+
+  React.useEffect(()=>{
+    axios.get('http://127.0.0.1:8000/api/log').then((response) =>{
+      rows = response.data.data
+      setLoading(true);
+    });
+  },[]);
 
   return (
     <Page title="Logs Users" >
       <Container >
-      <div style={{ height: '75vh', width: '100%' }}>
-      <DataGrid
+      {(loading)?
+        <div style={{ height: '75vh', width: '100%' }}>
+          <DataGrid
               rows={rows}
               columns={columns}
-        pageSize={pageSize}
-        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-        rowsPerPageOptions={[5, 10, 20]}
-        pagination
-      />
-    </div>
+              pageSize={pageSize}
+              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+              rowsPerPageOptions={[10, 25, 50, 100]}
+              pagination
+              sx={{
+                boxShadow: 2,
+                border: 2,
+                borderColor: 'primary.light',
+                '& .MuiDataGrid-cell:hover': {
+                  color: 'primary.main',
+                },
+              }}
+            />
+          </div>
+      :
+        <Skeleton variant="rectangular" style={{ height: '75vh', width: '100%', borderRadius: 10 }} />
+      }
       
       </Container>
     </Page>
@@ -41,310 +56,13 @@ export default function User() {
 }
 
 const columns = [
-  { field: 'name', headerName: 'Name', width: 180, editable: false },
-  { field: 'age', headerName: 'Age', type: 'number', editable: false },
-  {
-    field: 'dateCreated',
-    headerName: 'Date Created',
-    type: 'date',
-    width: 180,
-    editable: false,
-  },
-  {
-    field: 'lastLogin',
-    headerName: 'Last Login',
-    type: 'dateTime',
-    width: 220,
-    editable: false,
-  },
+  { field: 'access_name', headerName: 'Name', width: 150, editable: false },
+  { field: 'access_code', headerName: 'Access Code', width: 150, editable: false, hide: true },
+  { field: 'activity', headerName: 'Activity',width:250 , editable: false },
+  { field: 'ip_address',headerName: 'Ip Address',width: 130,editable: false,},
+  { field: 'browser',headerName: 'Browser',width: 180,editable: false,},
+  { field: 'DateTime',headerName: 'Date Time',type: 'dateTime',width: 220,editable: false,},
+  { field: 'created_at',headerName: 'Create At',width: 220,editable: false, hide: true},
 ];
 
-const rows = [
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },  {
-    id: 1,
-    name: 'annas',
-    age: 26,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-    {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-    {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-  {
-    id: 1,
-    name: 'annas',
-    age: 25,
-    dateCreated: 'sadad',
-    lastLogin: 'asdsad',
-  },
-];
+let rows = [];

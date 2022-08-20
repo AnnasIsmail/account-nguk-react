@@ -41,10 +41,6 @@ export default function DashboardApp() {
 
   },[]);
 
-  function searchData(){
-    console.log('cari')
-  }
-
   const [message, setMessage] = React.useState('No Message');
 
   const [state, setState] = React.useState({

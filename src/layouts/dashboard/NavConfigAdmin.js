@@ -8,7 +8,7 @@ const getIcon = (name) => <Iconify icon={name} width={22} height={22} />;
 const navConfigAdmin = [
   {
     title: 'Add New Access',
-    path: '/dashboard/manage-account',
+    path: '/account/addAccess',
     icon: getIcon('ic:baseline-person-add-alt-1'),
   },
   {

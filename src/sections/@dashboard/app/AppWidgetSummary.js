@@ -2,6 +2,7 @@
 import { Card, Typography } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -12,14 +13,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import LinearProgress from '@mui/material/LinearProgress';
 import Skeleton from '@mui/material/Skeleton';
 import { alpha, styled } from '@mui/material/styles';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import React from 'react';
-
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
 
 // components
 import Iconify from '../../../components/Iconify';

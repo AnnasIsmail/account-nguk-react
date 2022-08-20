@@ -69,7 +69,7 @@ function CheckAccount(riotId , tagline){
   setLoading(true);
   setDetailAccount(<></>);
 
-    axios.get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId}/${tagline}`).then((response) =>{
+    axios.get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId.trim().replace(' ' , '%20')}/${tagline}`).then((response) =>{
       setpuuid(response.data.data.puuid);
       setData(response.data.data);
       setLoading(false);

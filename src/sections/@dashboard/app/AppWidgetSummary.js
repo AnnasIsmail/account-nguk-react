@@ -101,6 +101,7 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
   const [open, setOpen] = React.useState(false);
 
   const [name , setName] = React.useState();
+  const [nameRank , setNameRank] = React.useState();
   const [tag , setTag] = React.useState();
   const [rank , setRank] = React.useState();
   const [loading , setLoading] = React.useState(false);
@@ -111,6 +112,7 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
 
   React.useEffect(()=>{
     axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr/ap/${puuid}`).then((response) =>{
+        setNameRank(response.data.data.currenttierpatched);
         setName(response.data.data.name);
         setTag(response.data.data.tag);
         setRank(response.data.data.images.small);
@@ -218,6 +220,10 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
           <img src={rank} alt='asd' width={35} height={35} /> 
         }
       </IconWrapperStyle>
+
+      <Typography variant="subtitle1" sx={{ opacity: 0.8 , textAlign:'center' }}>
+          {nameRank}
+        </Typography>
 
       {loading === false ?
         <Skeleton width="100%"><Typography>.</Typography></Skeleton>

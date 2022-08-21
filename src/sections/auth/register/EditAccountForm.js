@@ -178,14 +178,6 @@ export default function EditAccountForm(props) {
       console.log(error);
     });
     
-    const myPromise = new Promise((resolve)=> {
-      setTimeout(() => {  
-        resolve('masuk')
-      }, 100000);
-    });
-    
-    await myPromise;
-
   };
 
   const [autocompleteSkins, setAutocompleteSkins] = React.useState();

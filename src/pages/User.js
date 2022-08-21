@@ -35,6 +35,7 @@ export default function User() {
               pageSize={pageSize}
               onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
               rowsPerPageOptions={[10, 25, 50, 100]}
+              onRowClick={(e)=>console.log(e)}
               pagination
               sx={{
                 boxShadow: 2,

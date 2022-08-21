@@ -36,14 +36,18 @@ const themeDark = {
 const useDarkMode = (themeCookie) => {
   const [cookies, setCookie, removeCookie] = useCookies();
   const [theme, setTheme] = React.useState((cookies.theme === 'light' || cookies.theme === undefined)? themeOptions : themeDark);
-  
+
+  const today = new Date();
+  const nextYear = new Date();
+  nextYear.setDate(today.getDate()+3600);
+
   const toggleDarkMode = () => {
     let toTheme = '';
     if (cookies.theme === 'light' || cookies.theme === undefined) {
-      setCookie('theme' , 'dark');
+      setCookie('theme' , 'dark' , {expires: nextYear});
       toTheme = 'dark';
     } else {
-      setCookie('theme' , 'light');
+      setCookie('theme' , 'light' , {expires: nextYear});
       toTheme = 'light';
     }
 

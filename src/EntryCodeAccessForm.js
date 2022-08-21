@@ -49,14 +49,40 @@ export default function EntryCodeAccessForm(props) {
   const onSubmit = async (e) => {
 
     const code = e.code;
+    const formDataLog = new FormData();
+
+    formDataLog.append('access_code', code);
+    formDataLog.append('ip_address', cookies.myIp);
+    formDataLog.append('browser', cookies.browser);
+
 
     axios(`http://127.0.0.1:8000/api/access/${code}`).then((response) =>{
-        setCookie('codeAccess', code , {expires: nextYear});
-        document.location.reload()
+        const responseName = response.data.data[0].name;
+        formDataLog.append('access_name', responseName);
+        formDataLog.append('activity', 'Success Login');
+        axios({
+            url: 'http://127.0.0.1:8000/api/log/store', 
+            responseType: 'json',
+            method: 'post',
+            data : formDataLog
+          }).then((response) =>{
+            setCookie('codeAccess', code , {expires: nextYear});
+            setCookie('name', responseName , {expires: nextYear});
+            document.location.reload()
+        });
     }).catch((error)=> {
-      setError(true);
-      setTextError('Access Code Is Wrong!');
-      setLoading(false);
+        formDataLog.append('access_name', 'No Detect');
+        formDataLog.append('activity', 'Failed Login');
+        axios({
+            url: 'http://127.0.0.1:8000/api/log/store', 
+            responseType: 'json',
+            method: 'post',
+            data : formDataLog
+          }).then((response) =>{
+            setError(true);
+            setTextError('Access Code Is Wrong!');
+            setLoading(false);
+        });
     });
 }
 

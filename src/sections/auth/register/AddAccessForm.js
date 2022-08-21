@@ -52,6 +52,7 @@ export default function AddAccessForm(props) {
     const d = new Date();
     const time = d.getTime().toString().slice(9);
     const nameDanTime = `${name}${time}`;
+    
     const formDataAgent = new FormData();
   
     formDataAgent.append('access_code', nameDanTime);
@@ -66,7 +67,7 @@ export default function AddAccessForm(props) {
     }).then((response) =>{
       setDone(true);
       setCodeField(
-            <RHFTextField name="accessCode" label="Access Code" className="form-new-account-first"id="accessCode" value={nameDanTime} disabled />
+        <RHFTextField name="accessCode" label="Access Code" className="form-new-account-first"id="accessCode" value={nameDanTime} disabled />
       );
       setCode(name);
       setLoading(false);

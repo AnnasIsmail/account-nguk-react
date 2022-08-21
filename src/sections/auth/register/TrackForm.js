@@ -1,6 +1,8 @@
 import React from 'react';
+import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
@@ -24,6 +26,8 @@ export default function TrackForm() {
   const [error , setError] = React.useState(false);
   const [textError , setTextError] = React.useState();
   const [loading, setLoading] = React.useState(false);
+
+  const [cookies, setCookie, removeCookie] = useCookies();
 
   const RegisterSchema = Yup.object().shape({
     riotId: Yup.string().required('First name required'),
@@ -69,11 +73,25 @@ function CheckAccount(riotId , tagline){
   setLoading(true);
   setDetailAccount(<></>);
 
+  const formDataLog = new FormData();
+      
+  formDataLog.append('access_code', cookies.codeAccess);
+  formDataLog.append('ip_address', cookies.myIp);
+  formDataLog.append('browser', cookies.browser);
+  formDataLog.append('access_name', cookies.name);
+  formDataLog.append('activity', `Tracked Account Riot ID: ${riotId}, Tag Line: ${tagline}`);
+
     axios.get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId.trim().replace(' ' , '%20')}/${tagline}`).then((response) =>{
       setpuuid(response.data.data.puuid);
       setData(response.data.data);
       setLoading(false);
       setError(false);
+      axios({
+        url: 'http://127.0.0.1:8000/api/log/store', 
+        responseType: 'json',
+        method: 'post',
+        data : formDataLog
+      });
       setDetailAccount(
         <DetailAccount data={response.data.data} puuid={puuid} />
       );

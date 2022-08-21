@@ -19,6 +19,8 @@ import { alpha, styled } from '@mui/material/styles';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import React from 'react';
+import { useCookies } from 'react-cookie';
+import { Link as RouterLink } from 'react-router-dom';
 
 // components
 import Iconify from '../../../components/Iconify';
@@ -105,6 +107,8 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
   const [exp , setExp] = React.useState();
   const [elo , setElo] = React.useState();
 
+  const [cookies, setCookie, removeCookie] = useCookies();
+
   React.useEffect(()=>{
     axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr/ap/${puuid}`).then((response) =>{
         setName(response.data.data.name);
@@ -122,6 +126,20 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
 
   const handleClose = (e) => {
     if(e === 'agree'){
+      const formDataLog = new FormData();
+      
+      formDataLog.append('access_code', cookies.codeAccess);
+      formDataLog.append('ip_address', cookies.myIp);
+      formDataLog.append('browser', cookies.browser);
+      formDataLog.append('access_name', cookies.name);
+      formDataLog.append('activity', `Deleted Account id: ${idAccount}, Riot ID: ${name}, Tag Line: ${tag}`);
+      axios({
+        url: 'http://127.0.0.1:8000/api/log/store', 
+        responseType: 'json',
+        method: 'post',
+        data : formDataLog
+      });
+      
       axios.post(`http://127.0.0.1:8000/api/account/delete/${idAccount}`).then((response) =>{
         axios.post(`http://127.0.0.1:8000/api/skin/delete/${idAccount}`).then((response) =>{
           axios.post(`http://127.0.0.1:8000/api/agent/delete/${idAccount}`).then((response) =>{
@@ -282,7 +300,7 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
               <></>
             }
           </Typography>
-          <Button className='button-bottom' href={`/account/edit/${idAccount}`} color={color} size="small">Edit Account</Button>
+          <Button className='button-bottom' component={RouterLink} to={`/account/edit/${idAccount}`} color={color} size="small">Edit Account</Button>
           <Button className='button-bottom' onClick={handleClickOpen} color={color} size="small">Delete Account</Button>
 
         </CardContent>
@@ -298,7 +316,7 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Use Google's location service?"}
+          {"Warning Delete Account"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">

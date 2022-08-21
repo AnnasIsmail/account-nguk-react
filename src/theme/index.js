@@ -44,10 +44,14 @@ const useDarkMode = (themeCookie) => {
   const toggleDarkMode = () => {
     let toTheme = '';
     if (cookies.theme === 'light' || cookies.theme === undefined) {
-      setCookie('theme' , 'dark' , {expires: nextYear});
+      setCookie('theme' , 'dark' , {expires: nextYear , path: '/'});
+      setCookie('theme' , 'dark' , {expires: nextYear , path: '/dashboard'});
+      setCookie('theme' , 'dark' , {expires: nextYear , path: '/account'});
       toTheme = 'dark';
     } else {
-      setCookie('theme' , 'light' , {expires: nextYear});
+      setCookie('theme' , 'light' , {expires: nextYear , path: '/'});
+      setCookie('theme' , 'light' , {expires: nextYear , path: '/dashboard'});
+      setCookie('theme' , 'light' , {expires: nextYear , path: '/account'});
       toTheme = 'light';
     }
 

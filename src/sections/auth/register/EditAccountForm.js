@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCookies } from 'react-cookie';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as Yup from 'yup';
 // form
@@ -26,18 +27,22 @@ export default function EditAccountForm(props) {
   const { slug } = useParams();
   const [showPassword, setShowPassword] = React.useState(true);
 
+  const [cookies, setCookie, removeCookie] = useCookies();
+
   const RegisterSchema = Yup.object().shape({
-    riotId: Yup.string().required('First name required'),
-    tagLine: Yup.string().required('Last name required'),
+    riotId:  Yup.string(),
+    tagLine:  Yup.string(),
     username: Yup.string().required('Last name required'),
     password: Yup.string().required('Password is required'),
     owner: Yup.string().required('owner is required'),
 });
 
+  const [riotId , setRiotId] = React.useState([]);
+  const [tagLine , setTagLine] = React.useState([]);
 
     const defaultValues = {
-      riotId:  dataAccount.riotId,
-      tagLine:  dataAccount.tagLine,
+      riotId:  '',
+      tagLine:  '',
       username:  dataAccount.username,
       password:  dataAccount.password,
       owner:  dataAccount.owner,
@@ -69,13 +74,17 @@ export default function EditAccountForm(props) {
 
     const formData = new FormData();
 
-    formData.append('riotId', e.riotId);
-    formData.append('tagLine', e.tagLine);
-    formData.append('slug', 'asd');
+    formData.append('puuid', dataAccount.puuid);
     formData.append('username', e.username);
     formData.append('password', e.password);
     formData.append('owner', e.owner);
 
+    const formDataLog = new FormData();
+      
+    formDataLog.append('access_code', cookies.codeAccess);
+    formDataLog.append('ip_address', cookies.myIp);
+    formDataLog.append('browser', cookies.browser);
+    formDataLog.append('access_name', cookies.name);
 
     axios({
       url: `http://127.0.0.1:8000/api/account/update/${slug}`, 
@@ -98,6 +107,14 @@ export default function EditAccountForm(props) {
       if(skinSelect.length === 0 || agentSelect.length === 0){
           doneSubmit();
       }
+
+      formDataLog.append('activity', `Edited Account id: ${idAccount}, Riot ID: ${riotId}, Tag Line: ${tagLine}`);
+      axios({
+        url: 'http://127.0.0.1:8000/api/log/store', 
+        responseType: 'json',
+        method: 'post',
+        data : formDataLog
+      });
 
       axios({
         url: `http://127.0.0.1:8000/api/skin/delete/${slug}`, 
@@ -184,6 +201,15 @@ export default function EditAccountForm(props) {
 
   React.useEffect(()=>{
 
+    function getRiotIdAndTagLine(){
+      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/account/${dataAccount.puuid}`).then((response) =>{
+          setRiotId(response.data.data.name);
+          setTagLine(response.data.data.tag);
+      });
+    }
+
+    getRiotIdAndTagLine();
+
     function getDataAccountSkins(){
       axios.get(`http://127.0.0.1:8000/api/skin/${slug}`).then((response) =>{
         setSkinSelect(response.data.data);
@@ -245,9 +271,9 @@ export default function EditAccountForm(props) {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)} >
       <Stack spacing={3}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} className="form-new-account" >
-          <RHFTextField name="riotId" label="Riot ID" className="form-new-account-first"  />
+          <RHFTextField name="riotId" label="Riot ID" className="form-new-account-first" value={riotId} disabled />
           <h1>#</h1>
-          <RHFTextField name="tagLine" label="Tag Line"  />
+          <RHFTextField name="tagLine" label="Tag Line" value={tagLine} disabled />
         </Stack>
 
         <RHFTextField name="username" label="Username"  />
@@ -282,5 +308,4 @@ export default function EditAccountForm(props) {
 }
 
 
-const noData = [
-  ];
+const noData = [];

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 // form
@@ -28,6 +29,8 @@ export default function NewAccountForm() {
   const [puuid , setpuuid] = React.useState();
   const [error , setError] = React.useState(false);
   const [textError , setTextError] = React.useState();
+
+  const [cookies, setCookie, removeCookie] = useCookies();
 
   const RegisterSchema = Yup.object().shape({
     riotId: Yup.string().required('First name required'),
@@ -73,7 +76,14 @@ export default function NewAccountForm() {
       formData.append('username', e.username);
       formData.append('password', e.password);
       formData.append('owner', e.owner);
-  
+      
+      const formDataLog = new FormData();
+      
+      formDataLog.append('access_code', cookies.codeAccess);
+      formDataLog.append('ip_address', cookies.myIp);
+      formDataLog.append('browser', cookies.browser);
+      formDataLog.append('access_name', cookies.name);
+
       axios({
         url: 'http://127.0.0.1:8000/api/account/store', 
         responseType: 'json',
@@ -95,6 +105,14 @@ export default function NewAccountForm() {
         if(skinSelect.length === 0 || agentSelect.length === 0){
             doneSubmit();
         }
+
+        formDataLog.append('activity', `Created Account id: ${idAccount}, Riot ID: ${e.riotId}, Tag Line: ${e.tagLine}`);
+        axios({
+          url: 'http://127.0.0.1:8000/api/log/store', 
+          responseType: 'json',
+          method: 'post',
+          data : formDataLog
+        });
 
         skinSelect.map((data , index)=>{
   

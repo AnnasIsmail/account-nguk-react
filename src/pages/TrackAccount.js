@@ -78,7 +78,7 @@ export default function TrackAccount() {
               Track Account Valorant
             </Typography>
 
-            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Masukan dengan sesuai. Bila tidak ingin rata.</Typography>
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Profile Private? Gangaruh Banh.</Typography>
 
             <TrackForm  />
             

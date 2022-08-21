@@ -6,6 +6,7 @@ import axios from 'axios';
 import React from 'react';
 // components
 import Page from '../components/Page';
+import DetailLog from '../sections/@dashboard/app/DetailLog';
 // mock
 
 // ----------------------------------------------------------------------
@@ -17,12 +18,21 @@ export default function User() {
   const [pageSize, setPageSize] = React.useState(10);
   const [loading , setLoading] = React.useState(false);
 
+  const [openDetailMMR, setOpenDetailMMR] = React.useState(false);
+  const [detailMMR,setDetailMMR] = React.useState([]);
+  const handleCloseDetailMMR = () => setOpenDetailMMR(false);
+
   React.useEffect(()=>{
     axios.get('http://127.0.0.1:8000/api/log').then((response) =>{
       rows = response.data.data
       setLoading(true);
     });
   },[]);
+
+  const openDetailLog=(e)=> {
+    setDetailMMR(e.row);
+    setOpenDetailMMR(true);
+  }
 
   return (
     <Page title="Logs Users" >
@@ -35,7 +45,7 @@ export default function User() {
               pageSize={pageSize}
               onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
               rowsPerPageOptions={[10, 25, 50, 100]}
-              onRowClick={(e)=>console.log(e)}
+              onRowClick={openDetailLog}
               pagination
               sx={{
                 boxShadow: 2,
@@ -52,6 +62,8 @@ export default function User() {
       }
       
       </Container>
+      <DetailLog open={openDetailMMR} handleClose={handleCloseDetailMMR} dataLog={detailMMR} />
+
     </Page>
   );
 }

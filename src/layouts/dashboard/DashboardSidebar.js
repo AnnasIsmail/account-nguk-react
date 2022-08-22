@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { useLocation } from 'react-router-dom';
 // material
 import { Box, Drawer, Typography } from '@mui/material';
@@ -42,15 +43,22 @@ DashboardSidebar.propTypes = {
 };
 
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
-  const { pathname } = useLocation();
+  const [isAdmin , setIsAdmin] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies();
 
+  const { pathname } = useLocation();
   const isDesktop = useResponsive('up', 'lg');
 
   useEffect(() => {
     if (isOpenSidebar) {
       onCloseSidebar();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    console.log(cookies.aStre23);
+    
+    if(cookies.aStre23 === '1892gdb18'){
+      setIsAdmin(true);
+    }
+
   }, [pathname]);
 
   const renderContent = (
@@ -81,8 +89,14 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       </Box> */}
 
       <NavSection navConfig={navConfig} />
-      <Typography className='navbar-admin' color='primary' >Administrator</Typography>
-      <NavSection navConfig={navConfigAdmin} />
+      {(isAdmin)?
+        <>
+          <Typography className='navbar-admin' color='primary' >Administrator</Typography>
+          <NavSection navConfig={navConfigAdmin} />
+        </>
+        :
+        <></>
+      }
 
 
       <Box sx={{ flexGrow: 1 }} />

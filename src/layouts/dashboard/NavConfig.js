@@ -26,6 +26,11 @@ const navConfig = [
     path: '/dashboard/skins',
     icon: getIcon('mdi:pistol'),
   },
+  {
+    title: 'Log Out',
+    path: '/dashboard/logout',
+    icon: getIcon('humbleicons:logout'),
+  },
 
   // {
   //   title: 'blog',

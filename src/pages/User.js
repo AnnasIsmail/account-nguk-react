@@ -4,6 +4,8 @@ import Skeleton from '@mui/material/Skeleton';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 import React from 'react';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from "react-router-dom";
 // components
 import Page from '../components/Page';
 import DetailLog from '../sections/@dashboard/app/DetailLog';
@@ -21,6 +23,14 @@ export default function User() {
   const [openDetailMMR, setOpenDetailMMR] = React.useState(false);
   const [detailMMR,setDetailMMR] = React.useState([]);
   const handleCloseDetailMMR = () => setOpenDetailMMR(false);
+
+  const [cookies, setCookie, removeCookie] = useCookies();
+  const navigate = useNavigate();
+
+  
+  if(cookies.aStre23 !== '1892gdb18'){
+    navigate("/404", { replace: true });
+  }
 
   React.useEffect(()=>{
     axios.get('http://127.0.0.1:8000/api/log').then((response) =>{

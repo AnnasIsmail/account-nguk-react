@@ -5,6 +5,7 @@ import ManageData from './layouts/dashboard/ManageData';
 import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 import AddAccess from './pages/AddAccess';
 //
+import Logout from './Logout';
 import Blog from './pages/Blog';
 import DashboardApp from './pages/DashboardApp';
 import EditAccount from './pages/EditAccount';
@@ -16,7 +17,6 @@ import Register from './pages/Register';
 import Skins from './pages/Skins';
 import TrackAccount from './pages/TrackAccount';
 import User from './pages/User';
-
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -29,6 +29,7 @@ export default function Router() {
         { path: 'agents', element: <Products /> },
         { path: 'skins', element: <Skins /> },
         { path: 'logs', element: <User /> },
+        { path: 'logout', element: <Logout /> },
         
         { path: 'blog', element: <Blog /> },
       ],

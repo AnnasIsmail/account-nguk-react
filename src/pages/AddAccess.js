@@ -2,6 +2,8 @@
 import { Card, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React from 'react';
+import { useCookies } from 'react-cookie';
+import { useNavigate } from "react-router-dom";
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
@@ -76,6 +78,13 @@ export default function AddAccess() {
     const newState = {  vertical: 'bottom',horizontal: 'right',}
     setMessage(message);
     setState({ open: true, ...newState });
+  }
+
+  const [cookies, setCookie, removeCookie] = useCookies();
+  const navigate = useNavigate();
+
+  if(cookies.aStre23 !== '1892gdb18'){
+    navigate("/404", { replace: true });
   }
 
   return (

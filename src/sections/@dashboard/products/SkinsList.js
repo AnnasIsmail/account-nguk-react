@@ -7,17 +7,17 @@ import SkinsCard from './SkinCard';
 
 export default function SkinsList({ products, ...other }) {
 
-  const countPage = Math.floor(products.length / 20);
-  const [currentPage , setCurrentPage] = React.useState(1);
-  const [indexFrom , setIndexFrom] = React.useState(-1);
-  const [indexTo , setIndexTo] = React.useState(20);
-
  const  productsReady = [];
   products.forEach(element => {
     if(!element.displayName.includes("Standard")){
       productsReady.push(element);
     }
   });
+
+  const countPage = Math.floor(productsReady.length / 20)+1;
+  const [currentPage , setCurrentPage] = React.useState(1);
+  const [indexFrom , setIndexFrom] = React.useState(-1);
+  const [indexTo , setIndexTo] = React.useState(20);
 
   const changePage =(e , value)=>{
     const page = value;

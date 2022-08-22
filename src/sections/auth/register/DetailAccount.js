@@ -84,7 +84,7 @@ export default function DetailAccount({ data , puuid , color = 'primary', sx, ..
 
     const openDetailSkin =(uuid , name)=> {
     handleToggleBackDrop();
-        axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr-history/ap/${uuid}`).then((response) =>{
+        axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr-history/${data.region}/${uuid}`).then((response) =>{
           handleCloseBackDrop();
           setDetailMMR(response.data);
           setOpenDetailMMR(true);

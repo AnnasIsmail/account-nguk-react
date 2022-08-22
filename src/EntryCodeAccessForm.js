@@ -58,6 +58,7 @@ export default function EntryCodeAccessForm(props) {
 
     axios(`http://127.0.0.1:8000/api/access/${code}`).then((response) =>{
         const responseName = response.data.data[0].name;
+        const role = response.data.data[0].role;
         formDataLog.append('access_name', responseName);
         formDataLog.append('activity', 'Success Login');
         axios({
@@ -68,6 +69,11 @@ export default function EntryCodeAccessForm(props) {
           }).then((response) =>{
             setCookie('codeAccess', code , {expires: nextYear});
             setCookie('name', responseName , {expires: nextYear});
+            if(role === 'admin'){
+              setCookie('aStre23', '1892gdb18' , {expires: nextYear});
+            }else{
+              setCookie('aStre23', '18924jdbfbr' , {expires: nextYear});
+            }
             document.location.reload()
         });
     }).catch((error)=> {

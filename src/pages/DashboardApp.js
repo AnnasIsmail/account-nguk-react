@@ -2,6 +2,7 @@
 import { Container, Grid, Stack, Typography } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import Pagination from '@mui/material/Pagination';
 import Snackbar from '@mui/material/Snackbar';
 import React from 'react';
 // components
@@ -60,6 +61,23 @@ export default function DashboardApp() {
     setState({ open: true, ...newState });
   }
 
+
+  const countPage = Math.floor(data.length / 6)+1;
+  const [currentPage , setCurrentPage] = React.useState(1);
+  const [indexFrom , setIndexFrom] = React.useState(-1);
+  const [indexTo , setIndexTo] = React.useState(6);
+
+ const  productsReady = [];
+
+
+  const changePage =(e , value)=>{
+    const page = value;
+    const indexMax = page * 6;
+    setCurrentPage(page);
+    setIndexTo(indexMax);
+    setIndexFrom(indexMax - 7);
+  }
+
   return (
     <Page title="All Account">
       <Snackbar
@@ -84,15 +102,18 @@ export default function DashboardApp() {
         <Grid container spacing={3}>
 
       {
-      data.map((dataDalam)=>{
-
-        return (<Grid item xs={12} sm={6} md={4} key={dataDalam.id}>
+      data.map((dataDalam , index)=>{return(
+          (index > indexFrom && index < indexTo)&&
+          <Grid item xs={12} sm={6} md={4} key={dataDalam.id}>
              <AppWidgetSummary idAccount={dataDalam.id} dataSkin={dataSkin} dataAgent={dataAgent} copyProps={copy} username={dataDalam.username} password={dataDalam.password} puuid={dataDalam.puuid} owner={dataDalam.owner} icon={'simple-icons:valorant'}  />
           </Grid>)
       })
       }
 
         </Grid>
+        <div className='flex-center' >
+          <Pagination count={countPage} shape="rounded" onChange={changePage} sx={{ mx: 'auto' , my: 5}} />
+        </div>
       </Container>
     </Page>
   );

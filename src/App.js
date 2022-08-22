@@ -51,11 +51,13 @@ function App() {
   }
 
   React.useEffect(()=>{
-    axios(`http://127.0.0.1:8000/api/access/${code}`).then((response) =>{
+    if(code !== undefined){
+      axios(`http://127.0.0.1:8000/api/access/${code}`).then((response) =>{
         setLogin(true);
-  }).catch((error)=> {
-    removeCookie('codeAccess');
-  });
+      }).catch((error)=> {
+        removeCookie('codeAccess');
+      });
+    }
   },[]);
 
   return (

@@ -134,7 +134,7 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
       formDataLog.append('ip_address', cookies.myIp);
       formDataLog.append('browser', cookies.browser);
       formDataLog.append('access_name', cookies.name);
-      formDataLog.append('activity', `Deleted Account id: ${idAccount}, Riot ID: ${name}, Tag Line: ${tag}`);
+      formDataLog.append('activity', `Deleted Account id: ${idAccount}, Riot ID: ${name}, Tag Line: ${tag},  PUUID: ${puuid}`);
       axios({
         url: 'http://127.0.0.1:8000/api/log/store', 
         responseType: 'json',

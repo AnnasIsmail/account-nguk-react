@@ -8,10 +8,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import { useForm } from 'react-hook-form';
 // @mui
-import { Stack } from '@mui/material';
+import { IconButton, InputAdornment, Stack } from '@mui/material';
 import Typography from '@mui/material/Typography';
 // components
 import { FormProvider, RHFTextField } from './components/hook-form';
+import Iconify from './components/Iconify';
 // ----------------------------------------------------------------------
 
 export default function EntryCodeAccessForm(props) {
@@ -25,6 +26,9 @@ export default function EntryCodeAccessForm(props) {
   const [cookies, setCookie, removeCookie] = useCookies();
   const today = new Date();
   const nextYear = new Date();
+
+  const [showPassword, setShowPassword] = React.useState(false);
+
   nextYear.setDate(today.getDate()+3600);
 
   const RegisterSchema = Yup.object().shape({
@@ -103,7 +107,17 @@ export default function EntryCodeAccessForm(props) {
       }
       <Stack spacing={3}>
 
-          <RHFTextField name="code" label="Access Code" />
+          <RHFTextField name="code" label="Access Code" type={showPassword ? 'text' : 'password'} 
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton edge="end" onClick={() => setShowPassword(!showPassword)}>
+                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          />
           <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading}>
             Submit
           </LoadingButton>

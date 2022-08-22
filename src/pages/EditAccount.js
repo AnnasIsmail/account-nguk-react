@@ -2,8 +2,8 @@
 import { Card, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
-// hooks
 import React from 'react';
+// hooks
 import { useNavigate, useParams } from 'react-router-dom';
 import useResponsive from '../hooks/useResponsive';
 // components
@@ -64,6 +64,25 @@ export default function EditAccount() {
   const [form , setForm] = React.useState();
   const mdUp = useResponsive('up', 'md');
 
+  const [loading , setLoading] = React.useState(false);
+  const [srcImage , setSrcImage] = React.useState();
+  const [nameSkins , setNameSkins] = React.useState();
+
+  React.useEffect(()=>{
+    axios.get('https://valorant-api.com/v1/weapons/skins').then((response) =>{
+      const random = Math.floor(Math.random() * response.data.data.length);
+      console.log(random);
+      console.log(response.data.data[random].chromas[0]);
+      if(response.data.data[random].displayIcon !== null){
+        setSrcImage(response.data.data[random].displayIcon);
+      }else{
+        setSrcImage(response.data.data[random].chromas[0].displayIcon);
+      }
+      setNameSkins(response.data.data[random].displayName);
+      setLoading(true);
+    });
+  },[]);
+
   React.useEffect(()=>{
     
     axios.get(`http://127.0.0.1:8000/api/account/${slug}`).then((response) =>{
@@ -84,7 +103,16 @@ export default function EditAccount() {
             <Typography variant="h3" sx={{ px: 5, mt:-5 , mb: 3 }}>
               Mohon Jujur Dalam Mengisi Form Ini.
             </Typography>
-            <img alt="register" src="https://cdnb.artstation.com/p/assets/images/images/046/348/769/large/gop-gap-gg080.jpg?1644915253" />
+            {(loading)?
+              <>
+                <img alt="Random Skins" src={srcImage} sx={{ px: 3 }} />
+                <Typography variant="subtitle1" sx={{ textAlign: 'center' }} gutterBottom>
+                  {nameSkins}
+                </Typography>
+              </>
+            :
+              <></>
+            }
           </SectionStyle>
         )}
 

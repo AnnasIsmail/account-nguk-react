@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import Pagination from '@mui/material/Pagination';
 import Snackbar from '@mui/material/Snackbar';
 import React from 'react';
+import { useCookies } from 'react-cookie';
 // components
 import axios from 'axios';
 import { Link as RouterLink } from 'react-router-dom';
@@ -21,7 +22,8 @@ const Alert = React.forwardRef((props, ref)=> {
 });
 
 export default function DashboardApp() {
-  const name = 'Annas'
+  const [cookies, setCookie, removeCookie] = useCookies();
+  const name = cookies.name;
 
   const [data,setData] = React.useState([]);
   const [dataSkin,setDataSkin] = React.useState([]);
@@ -62,7 +64,7 @@ export default function DashboardApp() {
   }
 
 
-  const countPage = Math.floor(data.length / 6)+1;
+  const countPage = Math.ceil(data.length / 6);
   const [currentPage , setCurrentPage] = React.useState(1);
   const [indexFrom , setIndexFrom] = React.useState(-1);
   const [indexTo , setIndexTo] = React.useState(6);

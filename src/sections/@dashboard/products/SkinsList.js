@@ -14,7 +14,7 @@ export default function SkinsList({ products, ...other }) {
     }
   });
 
-  const countPage = Math.floor(productsReady.length / 20)+1;
+  const countPage = Math.ceil(productsReady.length / 20);
   const [currentPage , setCurrentPage] = React.useState(1);
   const [indexFrom , setIndexFrom] = React.useState(-1);
   const [indexTo , setIndexTo] = React.useState(20);

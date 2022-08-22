@@ -14,9 +14,13 @@ import EntryCodeAccess from './EntryCodeAccess';
 
 function App() {
 
-  const [login , setLogin] = React.useState(false);
   const [cookies, setCookie, removeCookie] = useCookies();
   const code = cookies.codeAccess;
+  const [login , setLogin] = React.useState(false);
+
+  if(code !== undefined && login === false){
+    setLogin(true);
+  }
 
   const today = new Date();
   const nextYear = new Date();
@@ -52,11 +56,29 @@ function App() {
 
   React.useEffect(()=>{
     if(code !== undefined){
-      axios(`http://127.0.0.1:8000/api/access/${code}`).then((response) =>{
-        setLogin(true);
-      }).catch((error)=> {
-        removeCookie('codeAccess');
-      });
+      try {
+        axios(`http://127.0.0.1:8000/api/access/${code}`).then((response) =>{
+          setLogin(true);
+        }).catch((error)=> {
+          removeCookie('codeAccess' , {path: '/'});
+          removeCookie('name' , {path: '/'});
+          removeCookie('aStre23' , {path: '/'});
+      
+          removeCookie('codeAccess' , {path: '/dashboard'});
+          removeCookie('name',  {path: '/dashboard'});
+          removeCookie('aStre23' , {path: '/dashboard'});
+          document.location.reload();
+        });
+      } catch (error) {
+        removeCookie('codeAccess' , {path: '/'});
+        removeCookie('name' , {path: '/'});
+        removeCookie('aStre23' , {path: '/'});
+    
+        removeCookie('codeAccess' , {path: '/dashboard'});
+        removeCookie('name',  {path: '/dashboard'});
+        removeCookie('aStre23' , {path: '/dashboard'});
+        document.location.reload();
+      }
     }
   },[]);
 

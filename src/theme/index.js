@@ -64,7 +64,6 @@ const useDarkMode = (themeCookie) => {
     } else {
       setTheme(themeDark);
     }
-
   };
 
   return [theme, toggleDarkMode];

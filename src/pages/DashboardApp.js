@@ -26,23 +26,21 @@ export default function DashboardApp() {
   const name = cookies.name;
 
   const [data,setData] = React.useState([]);
-  const [dataSkin,setDataSkin] = React.useState([]);
-  const [dataAgent,setDataAgent] = React.useState([]);
 
   React.useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/account').then((response) =>{
-      setData(response.data.data);
-    });
-    
-    axios.get('http://127.0.0.1:8000/api/skin').then((response) =>{
-      setDataSkin(response.data.data);
-    });
-
-    axios.get('http://127.0.0.1:8000/api/agent').then((response) =>{
-      setDataAgent(response.data.data);
-    });
-
+    renderAccount();
   },[]);
+
+  const renderAccount =()=> {
+    axios({
+      url: 'http://localhost:5000/accounts/', 
+      responseType: 'json',
+      method: 'post',
+      data : {access_code: cookies.codeAccess}
+    }).then((response) =>{
+      setData(response.data);
+    });
+  }
 
   const [message, setMessage] = React.useState('No Message');
 
@@ -68,8 +66,7 @@ export default function DashboardApp() {
   const [currentPage , setCurrentPage] = React.useState(1);
   const [indexFrom , setIndexFrom] = React.useState(-1);
   const [indexTo , setIndexTo] = React.useState(6);
-
- const  productsReady = [];
+  const  productsReady = [];
 
 
   const changePage =(e , value)=>{
@@ -107,7 +104,7 @@ export default function DashboardApp() {
       data.map((dataDalam , index)=>{return(
           (index > indexFrom && index < indexTo)&&
           <Grid item xs={12} sm={6} md={4} key={dataDalam.id}>
-             <AppWidgetSummary idAccount={dataDalam.id} dataSkin={dataSkin} dataAgent={dataAgent} copyProps={copy} username={dataDalam.username} password={dataDalam.password} puuid={dataDalam.puuid} owner={dataDalam.owner} icon={'simple-icons:valorant'}  />
+             <AppWidgetSummary idAccount={dataDalam._id} rerender={renderAccount} dataAccount={dataDalam} copyProps={copy} username={dataDalam.username} password={dataDalam.password} puuid={dataDalam.puuid} owner={dataDalam.owner} icon={'simple-icons:valorant'}  />
           </Grid>)
       })
       }

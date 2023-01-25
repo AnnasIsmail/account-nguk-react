@@ -52,47 +52,62 @@ export default function EntryCodeAccessForm(props) {
 
   const onSubmit = async (e) => {
 
+    const timeElapsed = Date.now();
+    const today = new Date(timeElapsed);
     const code = e.code;
-    const formDataLog = new FormData();
+    const objectLog = {
+      access_code: code,
+      ip_address: cookies.myIp,
+      browser:cookies.browser,
+      created_at: today.toISOString()
+    };
 
-    formDataLog.append('access_code', code);
-    formDataLog.append('ip_address', cookies.myIp);
-    formDataLog.append('browser', cookies.browser);
+    axios({
+      url: 'http://localhost:5000/access/', 
+      responseType: 'json',
+      method: 'post',
+      data : {access_code: code}
+    }).then((response) =>{
 
+        const responseName = response.data.name;
+        const role = response.data.role;
+        objectLog.access_name = responseName;
+        objectLog.activity = 'Success Login';
 
-    axios(`http://127.0.0.1:8000/api/access/${code}`).then((response) =>{
-        const responseName = response.data.data[0].name;
-        const role = response.data.data[0].role;
-        formDataLog.append('access_name', responseName);
-        formDataLog.append('activity', 'Success Login');
-        axios({
-            url: 'http://127.0.0.1:8000/api/log/store', 
+        if(response.status === 200){
+          axios({
+            url: 'http://localhost:5000/logs/create', 
             responseType: 'json',
             method: 'post',
-            data : formDataLog
+            data : objectLog
           }).then((response) =>{
-            setCookie('codeAccess', code , {expires: nextYear});
-            setCookie('name', responseName , {expires: nextYear});
-            if(role === 'admin'){
-              setCookie('aStre23', '1892gdb18' , {expires: nextYear});
-            }else{
-              setCookie('aStre23', '18924jdbfbr' , {expires: nextYear});
+            console.log(response)
+            if(response.status === 200){
+              setCookie('codeAccess', code , {expires: nextYear});
+              setCookie('name', responseName , {expires: nextYear});
+              if(role === 'admin'){
+                setCookie('aStre23', '1892gdb18' , {expires: nextYear});
+              }else{
+                setCookie('aStre23', '18924jdbfbr' , {expires: nextYear});
+              }
+              // document.location.reload()
             }
-            document.location.reload()
         });
-    }).catch((error)=> {
-        formDataLog.append('access_name', 'No Detect');
-        formDataLog.append('activity', 'Failed Login');
-        axios({
-            url: 'http://127.0.0.1:8000/api/log/store', 
-            responseType: 'json',
-            method: 'post',
-            data : formDataLog
-          }).then((response) =>{
-            setError(true);
-            setTextError('Access Code Is Wrong!');
-            setLoading(false);
-        });
+        }else if(response.status === 201){
+          objectLog.access_name = 'No Detect';
+              objectLog.activity = 'Failed Login';
+
+              axios({
+                  url: 'http://localhost:5000/logs/create', 
+                  responseType: 'json',
+                  method: 'post',
+                  data : objectLog
+                }).then((response) =>{
+                  setError(true);
+                  setTextError('Access Code Is Wrong!');
+                  setLoading(false);
+              });
+        }
     });
 }
 

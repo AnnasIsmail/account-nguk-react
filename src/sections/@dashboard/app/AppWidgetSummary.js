@@ -73,7 +73,7 @@ const Alert = React.forwardRef((props, ref)=> {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username, password, owner, icon, copyProps,  idAccount, color = 'primary', sx, ...other }) {
+export default function AppWidgetSummary({ puuid, rerender, dataAccount, username, password, owner, icon, copyProps,  idAccount, color = 'primary', sx, ...other }) {
 
   const [expanded, setExpanded] = React.useState(false);
   
@@ -128,27 +128,35 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
 
   const handleClose = (e) => {
     if(e === 'agree'){
-      const formDataLog = new FormData();
-      
-      formDataLog.append('access_code', cookies.codeAccess);
-      formDataLog.append('ip_address', cookies.myIp);
-      formDataLog.append('browser', cookies.browser);
-      formDataLog.append('access_name', cookies.name);
-      formDataLog.append('activity', `Deleted Account id: ${idAccount}, Riot ID: ${name}, Tag Line: ${tag},  PUUID: ${puuid}`);
+      const timeElapsed = Date.now();
+      const today = new Date(timeElapsed);
+      const objectLog = {
+        access_code: cookies.codeAccess,
+        access_name: cookies.name,
+        ip_address: cookies.myIp,
+        browser:cookies.browser,
+        activity: `Deleted Account id: ${idAccount}, Riot ID: ${name}, Tag Line: ${tag},  PUUID: ${puuid}`,
+        created_at: today.toISOString()
+      };
+      console.log(idAccount)
       axios({
-        url: 'http://127.0.0.1:8000/api/log/store', 
+        url: 'http://localhost:5000/accounts/delete', 
         responseType: 'json',
         method: 'post',
-        data : formDataLog
-      });
-      
-      axios.post(`http://127.0.0.1:8000/api/account/delete/${idAccount}`).then((response) =>{
-        axios.post(`http://127.0.0.1:8000/api/skin/delete/${idAccount}`).then((response) =>{
-          axios.post(`http://127.0.0.1:8000/api/agent/delete/${idAccount}`).then((response) =>{
+        data : {idAccount, access_code: cookies.codeAccess}
+      }).then((response) =>{
+        console.log(response)
+        if(response.status === 200){
+          axios({
+            url: 'http://localhost:5000/logs/create', 
+            responseType: 'json',
+            method: 'post',
+            data : objectLog
+          }).then((response) => {
             setOpen(false);
-            document.location.reload();
+            rerender();
           });
-        });
+        }
       });
     }else{
       setOpen(false);
@@ -276,34 +284,20 @@ export default function AppWidgetSummary({ puuid, dataSkin, dataAgent, username,
           <Typography className='paragraph-detail-account' paragraph>Skins: 
             <br />
             {
-            dataSkin.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).map((data , index)=>{
-                return (
-                  <Chip color={color} key={index} label={data.name}  onClick={()=>openDetailSkin(data.uuid , 'skin')} component="a" clickable />
-                );
-              
-            })
-          }
-            {(dataSkin.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).length === 0)?
-              <Chip color={color} label="Gosong"  component="a" href="#basic-chip" clickable />
+              (dataAccount.skin.length === 0)?
+                <Chip color={color} label="Gosong"  component="a" href="#basic-chip" />
               :
-              <></>
+                dataAccount.skin.map((data,index)=><Chip color={color} key={index} label={data.name}  onClick={()=>openDetailSkin(data.uuid , 'skin')} component="a" clickable />)
             }
           </Typography>
 
           <Typography className='paragraph-detail-account' paragraph>Agents: 
             <br />
             {
-            dataAgent.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).map((data , index)=>{
-                return (
-                  <Chip color={color} key={index} label={data.name}  onClick={()=>openDetailSkin(data.uuid , 'agent')} component="a" clickable />
-                );
-              
-            })
-          }
-            {(dataAgent.filter((dataFilter)=> parseInt(dataFilter.account_id , 10) === idAccount).length === 0)?
-              <Chip color={color} label="Bot"  component="a" href="#basic-chip" clickable />
+              (dataAccount.agent.length === 0)?
+                <Chip color={color} label="Gosong"  component="a" href="#basic-chip" />
               :
-              <></>
+                dataAccount.agent.map((data,index)=><Chip color={color} key={index} label={data.name}  onClick={()=>openDetailSkin(data.uuid , 'agent')} component="a" clickable />)
             }
           </Typography>
           <Button className='button-bottom' component={RouterLink} to={`/account/edit/${idAccount}`} color={color} size="small">Edit Account</Button>

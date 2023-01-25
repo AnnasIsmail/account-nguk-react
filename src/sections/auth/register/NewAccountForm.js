@@ -56,123 +56,52 @@ export default function NewAccountForm() {
     formState: { isSubmitting },
   } = methods;
 
-  let lengthSkins = 0;
-  let lengthAgents = 0;
-  let indexSkin = 0;
-  let indexAgent = 0;
-
-  function doneSubmit(){
-
-    if(lengthSkins === indexSkin && lengthAgents === indexAgent){
-      navigate('/dashboard/all-account', { replace: true }) ;
-    }
-  }
-
   const onSubmit = async (e) => {
 
-      const formData = new FormData(); 
-  
-      formData.append('puuid', puuid);
-      formData.append('username', e.username);
-      formData.append('password', e.password);
-      formData.append('owner', e.owner);
-      
-      const formDataLog = new FormData();
-      
-      formDataLog.append('access_code', cookies.codeAccess);
-      formDataLog.append('ip_address', cookies.myIp);
-      formDataLog.append('browser', cookies.browser);
-      formDataLog.append('access_name', cookies.name);
+    const timeElapsed = Date.now();
+    const today = new Date(timeElapsed);
 
-      axios({
-        url: 'http://127.0.0.1:8000/api/account/store', 
-        responseType: 'json',
-        method: 'post',
-        data : formData
-      }).then((response)=> {
-        const idAccount = response.data.data.id;
-        lengthSkins = skinSelect.length-1;
-        lengthAgents = agentSelect.length-1;          
+    const objectAccount = {
+      puuid, 
+      username: e.username,
+      password: e.password,
+      owner: e.owner,
+      skin:skinSelect,
+      agent: agentSelect,
+      created_at: today.toISOString(),
+      update_at: today.toISOString(),
+      update_by: cookies.codeAccess,
+      delete_status: false
+    };
+    const objectLog = {
+      access_code: cookies.access_code,
+      access_name: cookies.name,
+      ip_address: cookies.myIp,
+      browser:cookies.browser,
+      created_at: today.toISOString()
+    };
 
-        if(skinSelect.length === 0){
-          lengthSkins = skinSelect.length;
-        }
-        
-        if(agentSelect.length === 0){
-        lengthAgents = agentSelect.length;          
-        }
+    axios({
+      url: 'http://localhost:5000/accounts/add', 
+      responseType: 'json',
+      method: 'post',
+      data : objectAccount
+    }).then((response) =>{
 
-        if(skinSelect.length === 0 || agentSelect.length === 0){
-            doneSubmit();
-        }
-
-        formDataLog.append('activity', `Created Account id: ${idAccount}, Riot ID: ${e.riotId}, Tag Line: ${e.tagLine}`);
+      if(response.status === 200){
+        objectLog.activity = `Created Account id: ${puuid}, Riot ID: ${e.riotId}, Tag Line: ${e.tagLine}`;
         axios({
-          url: 'http://127.0.0.1:8000/api/log/store', 
+          url: 'http://localhost:5000/logs/create', 
           responseType: 'json',
           method: 'post',
-          data : formDataLog
+          data : objectLog
+        }).then((response) =>{
+          navigate('/dashboard/all-account', { replace: true }) ;
         });
+      }
 
-        skinSelect.map((data , index)=>{
-  
-          const formDataSkin = new FormData();
-  
-          formDataSkin.append('account_id', idAccount);
-          formDataSkin.append('name', data.name);
-          formDataSkin.append('uuid', data.uuid);
-  
-          axios({
-            url: 'http://127.0.0.1:8000/api/skin/store', 
-            responseType: 'json',
-            method: 'post',
-            data : formDataSkin
-          }).then((response)=> {
-              indexSkin = index;
-              doneSubmit();
-          }).catch((error)=> {
-            console.log(error);
-          });
-          return true;
-        });
-
-        agentSelect.map((data , index)=>{
-  
-          const formDataAgent = new FormData();
-  
-          formDataAgent.append('account_id', idAccount);
-          formDataAgent.append('name', data.name);
-          formDataAgent.append('uuid', data.uuid);
-  
-          axios({
-            url: 'http://127.0.0.1:8000/api/agent/store', 
-            responseType: 'json',
-            method: 'post',
-            data : formDataAgent
-          }).then((response)=> {
-            indexAgent = index;
-              doneSubmit();
-          }).catch((error)=> {
-            console.log(error);
-          });
-          
-          return true;
-        });
-      }).catch((error)=> {
-        console.log(error);
-      });
-      
-    const myPromise = new Promise((resolve)=> {
-      setTimeout(() => {  
-        resolve('masuk')
-      }, 100000);
     });
-    
-    await myPromise;
-
   };
-
-
 
   const [autocompleteSkins, setAutocompleteSkins] = React.useState(
           <Autocomplete
@@ -216,14 +145,13 @@ export default function NewAccountForm() {
         const skinsSementara = [];
 
         data.map(data=>{
-            if(data.displayName.startsWith('Standard') !== true){
+            if(data.displayName.startsWith('Standard') !== true && data.displayName.startsWith('Random') !== true){
                 return skinsSementara.push({name : data.displayName , uuid : data.uuid});
             }
             return false;
         });
 
         skins = skinsSementara;
-        
         
         setAutocompleteSkins(<Autocomplete
             multiple
@@ -296,13 +224,17 @@ export default function NewAccountForm() {
   }
 
   const checkExistAccount=(puuid)=>{
-      axios.get(`http://127.0.0.1:8000/api/account/puuid/${puuid}`).then((response) =>{
-        console.log(response.data.data)
-        if(response.data.data.length === 0){
-          setError(false);
-        }else{
+      axios({
+        url: 'http://localhost:5000/accounts/exist', 
+        responseType: 'json',
+        method: 'post',
+        data : {puuid}
+      }).then((response) =>{
+        if(response.status === 200){
           setError(true);
           setTextError('Account Already Registered');
+        }else{
+          setError(false);
         }
       });
   }

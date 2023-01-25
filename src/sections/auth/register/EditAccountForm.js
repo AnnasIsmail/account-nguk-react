@@ -58,124 +58,51 @@ export default function EditAccountForm(props) {
       formState: { isSubmitting },
     } = methods;
 
-    let lengthSkins = 0;
-    let lengthAgents = 0;
-    let indexSkin = 0;
-    let indexAgent = 0;
-  
-    function doneSubmit(){
-
-      if(lengthSkins === indexSkin && lengthAgents === indexAgent){
-        navigate('/dashboard/all-account', { replace: true }) ;
-      }
-    }
 
   const onSubmit = async (e) => {
 
-    const formData = new FormData();
+    const timeElapsed = Date.now();
+    const today = new Date(timeElapsed);
 
-    formData.append('puuid', dataAccount.puuid);
-    formData.append('username', e.username);
-    formData.append('password', e.password);
-    formData.append('owner', e.owner);
+    const objectAccount = {
+      _id: slug,
+      username: e.username,
+      password: e.password,
+      owner: e.owner,
+      skin:skinSelect,
+      agent: agentSelect,
+      update_at: today.toISOString(),
+      update_by: cookies.codeAccess,
+      delete_status: false
+    };
+    const objectLog = {
+      access_code: cookies.codeAccess,
+      access_name: cookies.name,
+      ip_address: cookies.myIp,
+      browser:cookies.browser,
+      created_at: today.toISOString(),
+      activity: `Edited Account id: ${slug}, Riot ID: ${riotId}, Tag Line: ${tagLine}`
+    };
 
-    const formDataLog = new FormData();
-      
-    formDataLog.append('access_code', cookies.codeAccess);
-    formDataLog.append('ip_address', cookies.myIp);
-    formDataLog.append('browser', cookies.browser);
-    formDataLog.append('access_name', cookies.name);
-
+  
     axios({
-      url: `http://127.0.0.1:8000/api/account/update/${slug}`, 
+      url: 'http://localhost:5000/accounts/update', 
       responseType: 'json',
       method: 'post',
-      data : formData
-    }).then((response)=> {
-      const idAccount = response.data.data.id;
-      lengthSkins = skinSelect.length-1;
-      lengthAgents = agentSelect.length-1;          
+      data : objectAccount
+    }).then((response) =>{
 
-      if(skinSelect.length === 0){
-        lengthSkins = skinSelect.length;
-      }
-      
-      if(agentSelect.length === 0){
-      lengthAgents = agentSelect.length;          
-      }
-
-      if(skinSelect.length === 0 || agentSelect.length === 0){
-          doneSubmit();
-      }
-
-      formDataLog.append('activity', `Edited Account id: ${idAccount}, Riot ID: ${riotId}, Tag Line: ${tagLine}`);
-      axios({
-        url: 'http://127.0.0.1:8000/api/log/store', 
-        responseType: 'json',
-        method: 'post',
-        data : formDataLog
-      });
-
-      axios({
-        url: `http://127.0.0.1:8000/api/skin/delete/${slug}`, 
-        responseType: 'json',
-        method: 'post',
-      }).then((response)=>{
-        skinSelect.map((data , index)=>{
-  
-          const formDataSkin = new FormData();
-  
-          formDataSkin.append('account_id', idAccount);
-          formDataSkin.append('name', data.name);
-          formDataSkin.append('uuid', data.uuid);
-  
-          axios({
-            url: 'http://127.0.0.1:8000/api/skin/store', 
-            responseType: 'json',
-            method: 'post',
-            data : formDataSkin
-          }).then((response)=> {
-              indexSkin = index;
-              doneSubmit();
-          }).catch((error)=> {
-            console.log(error);
-          });
-          return true;
+      if(response.status === 200){
+        axios({
+          url: 'http://localhost:5000/logs/create', 
+          responseType: 'json',
+          method: 'post',
+          data : objectLog
+        }).then((response) =>{
+          navigate('/dashboard/all-account', { replace: true }) ;
         });
-      });
+      }
 
-      axios({
-        url: `http://127.0.0.1:8000/api/agent/delete/${slug}`, 
-        responseType: 'json',
-        method: 'post',
-      }).then(()=>{
-
-        agentSelect.map((data , index)=>{
-
-          const formDataAgent = new FormData();
-  
-          formDataAgent.append('account_id', idAccount);
-          formDataAgent.append('name', data.name);
-          formDataAgent.append('uuid', data.uuid);
-  
-          axios({
-            url: 'http://127.0.0.1:8000/api/agent/store', 
-            responseType: 'json',
-            method: 'post',
-            data : formDataAgent
-          }).then((response)=> {
-              indexAgent = index;
-              doneSubmit();
-          }).catch((error)=> {
-            console.log(error);
-          });
-          return true;
-        });
-
-      });      
-      
-    }).catch((error)=> {
-      console.log(error);
     });
     
   };
@@ -203,19 +130,13 @@ export default function EditAccountForm(props) {
     getRiotIdAndTagLine();
 
     function getDataAccountSkins(){
-      axios.get(`http://127.0.0.1:8000/api/skin/${slug}`).then((response) =>{
-        setSkinSelect(response.data.data);
-        setAutocompleteSkins(<AutoCompleteSkins SetSkin={SetSkin} listSkins={skins} data={response.data.data} />);
-      });
-      
+        setSkinSelect(dataAccount.skin);
+        setAutocompleteSkins(<AutoCompleteSkins SetSkin={SetSkin} listSkins={skins} data={dataAccount.skin} />);
     }
 
     function getDataAccountAgents(){
-      axios.get(`http://127.0.0.1:8000/api/agent/${slug}`).then((response) =>{
-        setAgentSelect(response.data.data);
-        setAutocompleteAgents( <AutoCompleteAgents SetAgent={SetAgent} listAgents={agents} data={response.data.data} /> );
-      });
-      
+        setAgentSelect(dataAccount.agent);
+        setAutocompleteAgents( <AutoCompleteAgents SetAgent={SetAgent} listAgents={agents} data={dataAccount.agent} /> );
     }
 
     axios.get('https://valorant-api.com/v1/weapons/skins').then((response) =>{
@@ -225,7 +146,7 @@ export default function EditAccountForm(props) {
         const skinsSementara = [];
 
         data.map(data=>{
-            if(data.displayName.startsWith('Standard') !== true){
+            if(data.displayName.startsWith('Standard') !== true && data.displayName.startsWith('Random') !== true){
                 return skinsSementara.push({name : data.displayName , uuid : data.uuid});
             }
             return false;

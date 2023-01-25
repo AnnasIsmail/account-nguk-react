@@ -57,7 +57,12 @@ function App() {
   React.useEffect(()=>{
     if(code !== undefined){
       try {
-        axios(`http://127.0.0.1:8000/api/access/${code}`).then((response) =>{
+        axios({
+          url: 'http://localhost:5000/access/', 
+          responseType: 'json',
+          method: 'post',
+          data : {access_code: code}
+        }).then((response) =>{
           setLogin(true);
         }).catch((error)=> {
           removeCookie('codeAccess' , {path: '/'});

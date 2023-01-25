@@ -46,6 +46,10 @@
     z-index: 12011123;
 }
 
+.MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon.css-1rssnjk-MuiAutocomplete-root .MuiOutlinedInput-root{
+    max-width: 480px !important;
+}
+
 .paragraph-detail-account{
     display: flex !important;
     flex-wrap: wrap;

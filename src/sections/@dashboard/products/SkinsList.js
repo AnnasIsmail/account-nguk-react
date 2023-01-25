@@ -9,7 +9,7 @@ export default function SkinsList({ products, ...other }) {
 
  const  productsReady = [];
   products.forEach(element => {
-    if(!element.displayName.includes("Standard")){
+    if(!element.displayName.includes("Standard") && !element.displayName.includes("Random")){
       productsReady.push(element);
     }
   });

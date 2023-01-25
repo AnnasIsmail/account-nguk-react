@@ -3,6 +3,7 @@ import { Card, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import React from 'react';
+import { useCookies } from 'react-cookie';
 // hooks
 import { useNavigate, useParams } from 'react-router-dom';
 import useResponsive from '../hooks/useResponsive';
@@ -59,6 +60,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 export default function EditAccount() {
   const navigate = useNavigate();
   const { slug } = useParams();
+  const [cookies, setCookie, removeCookie] = useCookies();
 
   const smUp = useResponsive('up', 'sm');
   const [form , setForm] = React.useState();
@@ -71,8 +73,6 @@ export default function EditAccount() {
   React.useEffect(()=>{
     axios.get('https://valorant-api.com/v1/weapons/skins').then((response) =>{
       const random = Math.floor(Math.random() * response.data.data.length);
-      console.log(random);
-      console.log(response.data.data[random].chromas[0]);
       if(response.data.data[random].displayIcon !== null){
         setSrcImage(response.data.data[random].displayIcon);
       }else{
@@ -84,11 +84,13 @@ export default function EditAccount() {
   },[]);
 
   React.useEffect(()=>{
-    
-    axios.get(`http://127.0.0.1:8000/api/account/${slug}`).then((response) =>{
-      response.data.data.forEach(data=>{
-        setForm(<EditAccountForm dataAccount={data} />);
-      });
+    axios({
+      url: 'http://localhost:5000/accounts/specific', 
+      responseType: 'json',
+      method: 'post',
+      data : {_id: slug, access_code: cookies.codeAccess}
+    }).then((response) =>{
+        setForm(<EditAccountForm dataAccount={response.data} />);
     });
 
   },[]);
@@ -119,7 +121,7 @@ export default function EditAccount() {
         <Container>
           <ContentStyle>
             <Typography variant="h4" gutterBottom>
-              Add New Account Valorant.
+              Edit Account Valorant.
             </Typography>
 
             <Typography sx={{ color: 'text.secondary', mb: 5 }}>Masukan dengan sesuai. Bila tidak ingin rata.</Typography>

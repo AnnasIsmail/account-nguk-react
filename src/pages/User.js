@@ -3,6 +3,7 @@ import { Container } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
+import moment from 'moment';
 import React from 'react';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from "react-router-dom";
@@ -33,9 +34,23 @@ export default function User() {
   }
 
   React.useEffect(()=>{
-    axios.get('http://127.0.0.1:8000/api/log').then((response) =>{
-      rows = response.data.data
-      setLoading(true);
+    axios.get('http://localhost:5000/logs/').then((response) =>{
+      const temporaryRows = []
+      const wait = new Promise((res , rej)=>{
+        response.data.forEach((data , index)=>{
+          const temporaryObject = data;
+          temporaryObject.id = index+1;
+          temporaryObject.ago = moment(data.created_at).fromNow();
+          temporaryObject.created_at = moment(data.created_at).format("dddd, MMMM Do YYYY, h:mm:ss a");
+          temporaryRows.push(temporaryObject);
+          if(index === response.data.length-1) res();
+        });
+      })
+
+      wait.then(()=>{
+        rows = temporaryRows;        
+        setLoading(true);
+      });
     });
   },[]);
 
@@ -83,9 +98,9 @@ const columns = [
   { field: 'access_code', headerName: 'Access Code', width: 150, editable: false, hide: true },
   { field: 'activity', headerName: 'Activity',width:250 , editable: false },
   { field: 'ip_address',headerName: 'Ip Address',width: 130,editable: false,},
-  { field: 'browser',headerName: 'Browser',width: 180,editable: false,},
-  { field: 'DateTime',headerName: 'Date Time',type: 'dateTime',width: 220,editable: false,},
-  { field: 'created_at',headerName: 'Create At',width: 220,editable: false, hide: true},
+  { field: 'browser',headerName: 'Browser',width: 140,editable: false,},
+  { field: 'ago',headerName: 'Ago',width: 120,editable: false},
+  { field: 'created_at',headerName: 'Create At',width: 280,editable: false},
 ];
 
 let rows = [];

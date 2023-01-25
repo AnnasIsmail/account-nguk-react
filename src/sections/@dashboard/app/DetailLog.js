@@ -60,7 +60,7 @@ export default function DetailLog(props) {
                           </Typography>
                           <Typography>
                           <b>Different Time : </b>
-                            {dataLog.DateTime}
+                            {dataLog.ago}
                           </Typography>
                           <Typography>
                           <b>Actually Time : </b>

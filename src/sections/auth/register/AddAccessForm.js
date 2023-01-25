@@ -48,28 +48,29 @@ export default function AddAccessForm(props) {
   const onSubmit = async (e) => {
 
     const name = e.name;
+    const timeElapsed = Date.now();
+    const today = new Date(timeElapsed);
 
     const d = new Date();
     const time = d.getTime().toString().slice(9);
-    const nameDanTime = `${name}${time}`;
-    
-    const formDataAgent = new FormData();
-  
-    formDataAgent.append('access_code', nameDanTime);
-    formDataAgent.append('name', name);
-    formDataAgent.append('role', 'User');
+    const accessCode = `${name}${time}`;
+    const role = 'User';
+
+    const objectSubmit = {
+      access_code: accessCode,name,role,created_at:today.toISOString(),
+    }
 
     axios({
-      url: 'http://127.0.0.1:8000/api/access/store', 
+      url: 'http://localhost:5000/access/GiveNewAccess', 
       responseType: 'json',
       method: 'post',
-      data : formDataAgent
+      data : objectSubmit
     }).then((response) =>{
       setDone(true);
       setCodeField(
-        <RHFTextField name="accessCode" label="Access Code" className="form-new-account-first"id="accessCode" value={nameDanTime} disabled />
+        <RHFTextField name="accessCode" label="Access Code" className="form-new-account-first"id="accessCode" value={accessCode} disabled />
       );
-      setCode(name);
+      setCode(accessCode);
       setLoading(false);
       setError(false);
     }).catch((error)=> {

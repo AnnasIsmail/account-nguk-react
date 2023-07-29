@@ -6,22 +6,19 @@ import LogoOnlyLayout from './layouts/LogoOnlyLayout';
 import AddAccess from './pages/AddAccess';
 //
 import Logout from './Logout';
-import Blog from './pages/Blog';
+import Agents from './pages/Agents';
 import CreateCrosshair from './pages/CreateCrosshair';
 import Crosshair from './pages/Crosshair';
 import DashboardApp from './pages/DashboardApp';
 import EditAccount from './pages/EditAccount';
 import EsportSchedule from './pages/EsportSchedule';
-import Login from './pages/Login';
+import Logs from './pages/Logs';
 import NewAccount from './pages/NewAccount';
 import NotFound from './pages/Page404';
-import Products from './pages/Products';
-import Register from './pages/Register';
 import Skins from './pages/Skins';
 import TrackAccount from './pages/TrackAccount';
 import UpdateCrosshair from './pages/UpdateCrosshair';
 import UpdateValorant from './pages/UpdateValorant';
-import User from './pages/User';
 import UserManagement from './pages/UserManagement';
 // ----------------------------------------------------------------------
 
@@ -32,11 +29,10 @@ export default function Router() {
       element: <DashboardLayout />,
       children: [
         { path: 'all-account', element: <DashboardApp /> },
-        { path: 'agents', element: <Products /> },
+        { path: 'agents', element: <Agents /> },
         { path: 'skins', element: <Skins /> },
-        { path: 'logs', element: <User /> },
+        { path: 'logs', element: <Logs /> },
         { path: 'logout', element: <Logout /> },
-        { path: 'blog', element: <Blog /> },
         { path: 'user-management', element: <UserManagement /> },
         { path: 'esport-schedule', element: <EsportSchedule /> },
         { path: 'crosshair', element: <Crosshair /> },
@@ -48,8 +44,6 @@ export default function Router() {
       element: <LogoOnlyLayout />,
       children: [
         { path: '/', element: <Navigate to="/dashboard/all-account" /> },
-        { path: 'login', element: <Login /> },
-        { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],
@@ -73,6 +67,5 @@ export default function Router() {
         { path: 'edit/:slug', element: <UpdateCrosshair /> },
       ],
     },
-
   ]);
 }

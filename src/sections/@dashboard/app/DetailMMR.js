@@ -20,14 +20,14 @@ const style = {
   boxShadow: 24,
   p: 4,
   maxHeight: '80vh',
-  overflow: 'auto'
+  overflow: 'auto',
 };
 
 export default function DetailMMR(props) {
-    const detailSkin = props.detailSkin;
-    let levels = [];
+  const detailSkin = props.detailSkin;
+  let levels = [];
 
-  if(props.detailSkin.data !== undefined){
+  if (props.detailSkin.data !== undefined) {
     levels = props.detailSkin.data;
   }
 
@@ -37,7 +37,7 @@ export default function DetailMMR(props) {
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={props.open}
-        onClose={()=>props.handleClose()}
+        onClose={() => props.handleClose()}
         closeAfterTransition
         className="detail-agent"
         BackdropComponent={Backdrop}
@@ -51,49 +51,43 @@ export default function DetailMMR(props) {
               {props.detailSkin.name} # {props.detailSkin.tag}
             </Typography>
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
-
-                  <div>
-              {levels.map((data , index)=>(
+              <div>
+                {levels.map((data, index) => (
                   // eslint-disable-next-line react/jsx-key
                   <Accordion>
-                      <AccordionSummary
-                        expandIcon={<Iconify icon='ic:twotone-expand-more' width={24} height={24} />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                      >
-                      {(data.mmr_change_to_last_game > 1)?
-                        <Typography variant='h6' color="primary" >{data.date}</Typography>
-                        :
-                        <>
-                        {
-                       (data.mmr_change_to_last_game === 0)? 
-                       <Typography variant='h6' >{data.date}</Typography>
-                       :
-                       <Typography variant='h6' color="error" >{data.date}</Typography>
-                        }
-                        </>
-                      }
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        {/* <img src={data.displayIcon} className="image-detail-agent" alt="imageSkin" /> */}
-                        <Typography>
-                          <Typography>
-                            Rank : {data.currenttierpatched}
-                          </Typography>
-                          <Typography>
-                            MMR Match : {data.mmr_change_to_last_game}
-                          </Typography>
-                          <Typography>
-                            MMR in Tier : {data.ranking_in_tier}
-                          </Typography>
-                          <Typography>
-                            Elo : {data.elo}
-                          </Typography>
+                    <AccordionSummary
+                      expandIcon={<Iconify icon="ic:twotone-expand-more" width={24} height={24} />}
+                      aria-controls="panel1a-content"
+                      id="panel1a-header"
+                    >
+                      {data.mmr_change_to_last_game > 1 ? (
+                        <Typography variant="h6" color="primary">
+                          {data.date}
                         </Typography>
-                      </AccordionDetails>
-                    </Accordion>
+                      ) : (
+                        <>
+                          {data.mmr_change_to_last_game === 0 ? (
+                            <Typography variant="h6">{data.date}</Typography>
+                          ) : (
+                            <Typography variant="h6" color="error">
+                              {data.date}
+                            </Typography>
+                          )}
+                        </>
+                      )}
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      {/* <img src={data.displayIcon} className="image-detail-agent" alt="imageSkin" /> */}
+                      <Typography>
+                        <Typography>Rank : {data.currenttierpatched}</Typography>
+                        <Typography>MMR Match : {data.mmr_change_to_last_game}</Typography>
+                        <Typography>MMR in Tier : {data.ranking_in_tier}</Typography>
+                        <Typography>Elo : {data.elo}</Typography>
+                      </Typography>
+                    </AccordionDetails>
+                  </Accordion>
                 ))}
-                </div>
+              </div>
             </Typography>
           </Box>
         </Fade>

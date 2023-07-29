@@ -5,32 +5,32 @@ import React from 'react';
 // components
 import Page from '../components/Page';
 import WaitLoadData from '../components/WaitLoadData';
-import UpdateList from '../sections/@dashboard/products/UpdateList';
+import ProductList from '../sections/@dashboard/products/ProductList';
 // mock
 
 // ----------------------------------------------------------------------
 
-export default function UpdateValorant() {
-  const [listUpdates, setListUpdates] = React.useState([]);
+export default function Agents() {
+  const [agents, setAgents] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    axios.get('https://api.henrikdev.xyz/valorant/v1/website/en-us').then((response) => {
-      setListUpdates(response.data.data);
+    axios.get('https://valorant-api.com/v1/agents').then((response) => {
+      setAgents(response.data.data);
       setLoading(false);
     });
   }, []);
 
   return (
-    <Page title="Update Valorant">
+    <Page title="All Agents">
       {loading ? (
         <WaitLoadData loading={loading} />
       ) : (
         <Container>
           <Typography variant="h4" sx={{ mb: 5 }}>
-            Update Valorant
+            All Agents
           </Typography>
-          <UpdateList listUpdates={listUpdates} />
+          <ProductList products={agents} />
         </Container>
       )}
     </Page>

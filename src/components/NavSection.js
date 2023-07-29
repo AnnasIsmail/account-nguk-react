@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { NavLink as RouterLink, matchPath, useLocation } from 'react-router-dom';
 // material
-import { alpha, useTheme, styled } from '@mui/material/styles';
-import { Box, List, Collapse, ListItemText, ListItemIcon, ListItemButton } from '@mui/material';
+import { Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { alpha, styled, useTheme } from '@mui/material/styles';
 //
 import Iconify from './Iconify';
 
@@ -36,23 +36,17 @@ NavItem.propTypes = {
 
 function NavItem({ item, active }) {
   const theme = useTheme();
-
   const isActiveRoot = active(item.path);
-
   const { title, path, icon, info, children } = item;
-
   const [open, setOpen] = useState(isActiveRoot);
-
   const handleOpen = () => {
     setOpen((prev) => !prev);
   };
-
   const activeRootStyle = {
     color: 'primary.main',
     fontWeight: 'fontWeightMedium',
     bgcolor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
   };
-
   const activeSubStyle = {
     color: 'text.primary',
     fontWeight: 'fontWeightMedium',
@@ -75,7 +69,6 @@ function NavItem({ item, active }) {
             sx={{ width: 16, height: 16, ml: 1 }}
           />
         </ListItemStyle>
-
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {children.map((item) => {
@@ -141,9 +134,7 @@ NavSection.propTypes = {
 
 export default function NavSection({ navConfig, ...other }) {
   const { pathname } = useLocation();
-
   const match = (path) => (path ? !!matchPath({ path, end: false }, pathname) : false);
-
   return (
     <Box {...other}>
       <List disablePadding sx={{ p: 1 }}>

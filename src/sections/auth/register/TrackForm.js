@@ -1,7 +1,6 @@
 import React from 'react';
 import { useCookies } from 'react-cookie';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -18,22 +17,19 @@ import DetailAccount from './DetailAccount';
 
 // ----------------------------------------------------------------------
 
-export default function  TrackForm() {
-  const navigate = useNavigate();
-  
-  const [puuid , setpuuid] = React.useState();
-  const [data , setData] = React.useState({});
-  const [detailAccount , setDetailAccount] = React.useState();
-  const [error , setError] = React.useState(false);
-  const [textError , setTextError] = React.useState();
+export default function TrackForm() {
+  const [puuid, setpuuid] = React.useState();
+  const [detailAccount, setDetailAccount] = React.useState();
+  const [error, setError] = React.useState(false);
+  const [textError, setTextError] = React.useState();
   const [loading, setLoading] = React.useState(false);
 
-  const [cookies, setCookie, removeCookie] = useCookies();
+  const [cookies] = useCookies();
 
   const RegisterSchema = Yup.object().shape({
     riotId: Yup.string().required('First name required'),
     tagLine: Yup.string().required('Last name required'),
-});
+  });
 
   const defaultValues = {
     riotId: '',
@@ -45,81 +41,64 @@ export default function  TrackForm() {
     defaultValues,
   });
 
-  const {
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
-
+  const { handleSubmit } = methods;
 
   const onSubmit = async (e) => {
-
-    const riotId = e.riotId;
-    const tagline = e.tagLine;
-
-    if(data.name !== undefined){
-    
-    if(riotId.toLowerCase() === data.name.toLowerCase() && tagline.toLowerCase() === data.tag.toLowerCase()){
-      const riotId = e.riotId;
-      const tagline = e.tagLine;
-    }else{
-      CheckAccount(riotId , tagline);
+    const { riotId, tagLine } = e;
+    if (riotId && tagLine) {
+      CheckAccount(riotId, tagLine);
     }
-  }else{
-    CheckAccount(riotId , tagline);
-  }
-}
-
-const identity = useSelector((state) => state.user?.identity || undefined);
-const email = useSelector((state) => state.user.email || undefined);
-const name = useSelector((state) => state.user.nama);
-
-function CheckAccount(riotId , tagline){
-      
-  setLoading(true);
-  setDetailAccount(<></>);
-
-  const timeElapsed = Date.now();
-  const today = new Date(timeElapsed);
-
-  const objectLog = {
-    name,
-    email,
-    identity,
-    browser:cookies.browser,
-    created_at: today.toISOString(),
   };
-    axios.get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId.trim().replace(' ' , '%20')}/${tagline}`).then((response) =>{
-      setpuuid(response.data.data.puuid);
-      setData(response.data.data);
-      setLoading(false);
-      setError(false);
 
-      objectLog.activity = `Track Account Riot ID: ${riotId}, Tag Line: ${tagline}`;
-      axiosConfig.post('/logs/create', objectLog);
+  const identity = useSelector((state) => state.user?.identity || undefined);
+  const email = useSelector((state) => state.user.email || undefined);
+  const name = useSelector((state) => state.user.nama);
 
-      setDetailAccount(
-        <DetailAccount data={response.data.data} puuid={puuid} />
-      );
-    }).catch((error)=> {
-      setError(true);
-      setTextError('Account Not Found');
-      setLoading(false);
-      setData({});
-    });
-}
+  function CheckAccount(riotId, tagline) {
+    setLoading(true);
+    setDetailAccount(<></>);
+
+    const timeElapsed = Date.now();
+    const today = new Date(timeElapsed);
+
+    const objectLog = {
+      name,
+      email,
+      identity,
+      browser: cookies.browser,
+      created_at: today.toISOString(),
+    };
+    axios
+      .get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId.trim().replace(' ', '%20')}/${tagline}`)
+      .then((response) => {
+        setpuuid(response.data.data.puuid);
+        setLoading(false);
+        setError(false);
+
+        objectLog.activity = `Track Account Riot ID: ${riotId}, Tag Line: ${tagline}`;
+        axiosConfig.post('/logs/create', objectLog);
+
+        setDetailAccount(<DetailAccount data={response.data.data} puuid={puuid} />);
+      })
+      .catch(() => {
+        setError(true);
+        setTextError('Account Not Found');
+        setLoading(false);
+      });
+  }
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)} >
-      {(error)?
-        <Typography variant="h6" gutterBottom component="div" color="error" >
+    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      {error ? (
+        <Typography variant="h6" gutterBottom component="div" color="error">
           {textError}
         </Typography>
-      :
-      <></>
-      }
+      ) : (
+        <></>
+      )}
       <Stack spacing={3}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} className="form-new-account" >
-          <RHFTextField name="riotId" label="Riot ID" className="form-new-account-first"id="riotId" />
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} className="form-new-account">
+          <RHFTextField name="riotId" label="Riot ID" className="form-new-account-first" id="riotId" />
           <h1>#</h1>
           <RHFTextField name="tagLine" label="Tag Line" id="tagline" />
         </Stack>
@@ -127,7 +106,7 @@ function CheckAccount(riotId , tagline){
         <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading}>
           Track Account
         </LoadingButton>
-        
+
         {detailAccount}
       </Stack>
     </FormProvider>

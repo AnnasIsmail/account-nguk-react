@@ -16,64 +16,66 @@ import axiosConfig from './utils/axiosConfig';
 // ----------------------------------------------------------------------
 
 function App() {
-
   const [cookies, setCookie, removeCookie] = useCookies();
-  const dispatch = useDispatch()
-  const {token} = cookies;
+  const dispatch = useDispatch();
+  const { token } = cookies;
   const login = useSelector((state) => state.user.login);
-  const [isLoading , setIsLoading] = React.useState(true);
+  const [isLoading, setIsLoading] = React.useState(true);
 
   const today = new Date();
   const nextYear = new Date();
-  nextYear.setDate(today.getDate()+18000);
+  nextYear.setDate(today.getDate() + 18000);
 
-  if(cookies.browser === undefined){
-    const userAgent = navigator.userAgent;
+  if (cookies.browser === undefined) {
+    const { userAgent } = navigator;
     let browserName;
-    
-    if(userAgent.match(/chrome|chromium|crios/i)){
-        browserName = "chrome";
-      }else if(userAgent.match(/firefox|fxios/i)){
-        browserName = "firefox";
-      }  else if(userAgent.match(/safari/i)){
-        browserName = "safari";
-      }else if(userAgent.match(/opr\//i)){
-        browserName = "opera";
-      } else if(userAgent.match(/edg/i)){
-        browserName = "edge";
-      }else{
-        browserName="No browser detection";
-      }
-    
-     setCookie('browser', browserName , {expires: nextYear});         
+
+    if (userAgent.match(/chrome|chromium|crios/i)) {
+      browserName = 'chrome';
+    } else if (userAgent.match(/firefox|fxios/i)) {
+      browserName = 'firefox';
+    } else if (userAgent.match(/safari/i)) {
+      browserName = 'safari';
+    } else if (userAgent.match(/opr\//i)) {
+      browserName = 'opera';
+    } else if (userAgent.match(/edg/i)) {
+      browserName = 'edge';
+    } else {
+      browserName = 'No browser detection';
+    }
+    setCookie('browser', browserName, { expires: nextYear });
   }
 
   function checkToken(response, today) {
-    axiosConfig.post('/access/checkToken', {
-      token, identity: response.data, browser: cookies.browser, created_at: today.toISOString()
-    })
-    .then((response) =>{
-      console.log(response);
-      if(response.status === 204){
-        // removeCookie('token' , {path: '/'});
-        // removeCookie('token', { path: '/dashboard' });
-        // window.location.reload();
-        return false;
-      }
-      setIsLoading(false);
-      dispatch(changeUser(response.data.data.nama));
-      dispatch(changeRole(response.data.data.role));
-      dispatch(changeEmail(response.data.data.email));
-      dispatch(successLogin());
-    });
+    axiosConfig
+      .post('/access/checkToken', {
+        token,
+        identity: response.data,
+        browser: cookies.browser,
+        created_at: today.toISOString(),
+      })
+      // eslint-disable-next-line consistent-return
+      .then((response) => {
+        console.log(response);
+        if (response.status === 204) {
+          removeCookie('token', { path: '/' });
+          removeCookie('token', { path: '/dashboard' });
+          window.location.reload();
+          return false;
+        }
+        setIsLoading(false);
+        dispatch(changeUser(response.data.data.nama));
+        dispatch(changeRole(response.data.data.role));
+        dispatch(changeEmail(response.data.data.email));
+        dispatch(successLogin());
+      });
   }
 
-  React.useEffect(()=>{
-
+  React.useEffect(() => {
     try {
-      axios('https://ipapi.co/json/').then((response) =>{
+      axios('https://ipapi.co/json/').then((response) => {
         dispatch(changeIdentity(response.data));
-        if(token !== undefined){
+        if (token !== undefined) {
           const timeElapsed = Date.now();
           const today = new Date(timeElapsed);
           try {
@@ -81,25 +83,21 @@ function App() {
           } catch (error) {
             checkToken(response, today);
           }
-        }else{
+        } else {
           setIsLoading(false);
         }
       });
     } catch (error) {
       console.log(error);
     }
-
-  },[]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <ThemeProvider>
       <ScrollToTop />
       <BaseOptionChartStyle />
-      {(login)?
-        <Router />
-      :
-        <EntryCodeAccess isLoading={isLoading} />
-      }
+      {login ? <Router /> : <EntryCodeAccess isLoading={isLoading} />}
     </ThemeProvider>
   );
 }

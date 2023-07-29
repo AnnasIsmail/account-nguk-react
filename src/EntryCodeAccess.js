@@ -1,12 +1,12 @@
 // @mui
-import { Backdrop, Card, CircularProgress, Container, Typography } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import axios from 'axios';
-import React from 'react';
+import PropTypes from 'prop-types';
 // hooks
-import Page from './components/Page';
 import EntryCodeAccessForm from './EntryCodeAccessForm';
-import useResponsive from './hooks/useResponsive';
+import LeftForm from './components/LeftForm';
+import Page from './components/Page';
+import WaitLoadDataWithBackdrop from './components/WaitLoadDataWithBackdrop';
 // components
 // sections
 
@@ -16,31 +16,6 @@ const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     display: 'flex',
   },
-}));
-
-const HeaderStyle = styled('header')(({ theme }) => ({
-  top: 0,
-  zIndex: 9,
-  lineHeight: 0,
-  width: '100%',
-  display: 'flex',
-  alignItems: 'center',
-  position: 'absolute',
-  padding: theme.spacing(3),
-  justifyContent: 'space-between',
-  [theme.breakpoints.up('md')]: {
-    alignItems: 'flex-start',
-    padding: theme.spacing(7, 5, 0, 7),
-  },
-}));
-
-const SectionStyle = styled(Card)(({ theme }) => ({
-  width: '100%',
-  maxWidth: 464,
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  margin: theme.spacing(2, 0, 2, 2),
 }));
 
 const ContentStyle = styled('div')(({ theme }) => ({
@@ -55,111 +30,33 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function EntryCodeAccess(props) {
-  const smUp = useResponsive('up', 'sm');
-  const mdUp = useResponsive('up', 'md');
-  
-  const [message, setMessage] = React.useState('No Message');
+EntryCodeAccess.propTypes = {
+  isLoading: PropTypes.bool.isRequired,
+};
 
-  const [state, setState] = React.useState({
-    open: false,
-    vertical: 'bottom',horizontal: 'right'
-  });
-
-  const { vertical, horizontal, open } = state;
-
-  const handleClose = () => {
-    setState({ ...state, open: false });
-  };
-
-  const copy =(message)=>{
-    const newState = {  vertical: 'bottom',horizontal: 'right',}
-    setMessage(message);
-    setState({ open: true, ...newState });
-  }
-
-  const [loading , setLoading] = React.useState(false);
-  const [kelamaan , setkelamaan] = React.useState(false);
-  const [Textkelamaan , setTextkelamaan] = React.useState('API-nya masih ngantuk nih bang, sabar ya.');
-
-  setTimeout(() => {
-    setkelamaan(true);
-  }, 5000);
-
-  setTimeout(() => {
-    setTextkelamaan('Buset dah tidur lagi ini API-nya bang, maap.');
-  }, 10000);
-
-
-
-  const [srcImage , setSrcImage] = React.useState();
-  const [nameSkins , setNameSkins] = React.useState();
-
-  React.useEffect(()=>{
-    axios.get('https://valorant-api.com/v1/weapons/skins').then((response) =>{
-      const random = Math.floor(Math.random() * response.data.data.length);
-      console.log(random);
-      console.log(response.data.data[random].chromas[0]);
-      if(response.data.data[random].displayIcon !== null){
-        setSrcImage(response.data.data[random].displayIcon);
-      }else{
-        setSrcImage(response.data.data[random].chromas[0].displayIcon);
-      }
-      setNameSkins(response.data.data[random].displayName);
-      setLoading(true);
-    });
-  },[]);
-
+export default function EntryCodeAccess({ isLoading }) {
   return (
     <Page title="Entry Code Access" className="new-account-container">
-      {(props.isLoading)?
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, display: 'flex', flexDirection: 'column', gap: '20px' }}
-          open
-          onClick={handleClose}
-        >
-          <CircularProgress color="inherit" />
-          {(kelamaan)&&
-            <Typography variant='h6'>
-              {Textkelamaan}
-            </Typography>
-          }
-        </Backdrop>
-      :
-      <RootStyle>
-        {mdUp && (
-          <SectionStyle>
-            <Typography variant="h3" sx={{ px: 5, mt:-5 , mb: 3 }}>
-              Masukan Form ini dengan sesuai.
-            </Typography>
-            {(loading)?
-              <>
-                <img alt="Random Skins" src={srcImage} sx={{ px: 3 }} />
-                <Typography variant="subtitle1" sx={{ textAlign: 'center' }} gutterBottom>
-                  {nameSkins}
-                </Typography>
-              </>
-            :
-              <></>
-            }
+      {isLoading ? (
+        <WaitLoadDataWithBackdrop loading={isLoading} />
+      ) : (
+        <RootStyle>
+          <LeftForm text="Masukan Form ini dengan sesuai." />
+          <Container>
+            <ContentStyle>
+              <Typography variant="h4" gutterBottom>
+                Enter Your Email
+              </Typography>
 
-          </SectionStyle>
-        )}
+              <Typography sx={{ color: 'text.secondary', mb: 5 }}>
+                Enter you and you will get an OTP code to be able to view the contents of this website.
+              </Typography>
 
-        <Container>
-          <ContentStyle>
-            <Typography variant="h4" gutterBottom>
-              Entry Your Email
-            </Typography>
-
-            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Enter you and you will get an OTP code to be able to view the contents of this website.</Typography>
-
-            <EntryCodeAccessForm />
-            
-          </ContentStyle>
-        </Container>
-      </RootStyle>
-      }
+              <EntryCodeAccessForm />
+            </ContentStyle>
+          </Container>
+        </RootStyle>
+      )}
     </Page>
   );
 }

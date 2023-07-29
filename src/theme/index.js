@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 // material
 import { CssBaseline } from '@mui/material';
-import { createTheme, StyledEngineProvider, ThemeProvider as MUIThemeProvider } from '@mui/material/styles';
+import { ThemeProvider as MUIThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
 import React from 'react';
 import { useCookies } from 'react-cookie';
 //
@@ -10,48 +10,49 @@ import palette from './palette';
 import shadows, { customShadows } from './shadows';
 import typography from './typography';
 
-
 // ----------------------------------------------------------------------
 
 ThemeProvider.propTypes = {
   children: PropTypes.node,
 };
 
-const themeOptions ={
+const themeOptions = {
   shape: { borderRadius: 8 },
   typography,
   shadows,
   customShadows,
-  palette
-}
+  palette,
+};
 
 const themeDark = {
   shape: { borderRadius: 8 },
   typography,
   shadows,
   customShadows,
-  palette: {mode: 'dark'}
+  palette: { mode: 'dark' },
 };
 
-const useDarkMode = (themeCookie) => {
-  const [cookies, setCookie, removeCookie] = useCookies();
-  const [theme, setTheme] = React.useState((cookies.theme === 'light' || cookies.theme === undefined)? themeOptions : themeDark);
+const useDarkMode = () => {
+  const [cookies, setCookie] = useCookies();
+  const [theme, setTheme] = React.useState(
+    cookies.theme === 'light' || cookies.theme === undefined ? themeOptions : themeDark
+  );
 
   const today = new Date();
   const nextYear = new Date();
-  nextYear.setDate(today.getDate()+3600);
+  nextYear.setDate(today.getDate() + 3600);
 
   const toggleDarkMode = () => {
     let toTheme = '';
     if (cookies.theme === 'light' || cookies.theme === undefined) {
-      setCookie('theme' , 'dark' , {expires: nextYear , path: '/'});
-      setCookie('theme' , 'dark' , {expires: nextYear , path: '/dashboard'});
-      setCookie('theme' , 'dark' , {expires: nextYear , path: '/account'});
+      setCookie('theme', 'dark', { expires: nextYear, path: '/' });
+      setCookie('theme', 'dark', { expires: nextYear, path: '/dashboard' });
+      setCookie('theme', 'dark', { expires: nextYear, path: '/account' });
       toTheme = 'dark';
     } else {
-      setCookie('theme' , 'light' , {expires: nextYear , path: '/'});
-      setCookie('theme' , 'light' , {expires: nextYear , path: '/dashboard'});
-      setCookie('theme' , 'light' , {expires: nextYear , path: '/account'});
+      setCookie('theme', 'light', { expires: nextYear, path: '/' });
+      setCookie('theme', 'light', { expires: nextYear, path: '/dashboard' });
+      setCookie('theme', 'light', { expires: nextYear, path: '/account' });
       toTheme = 'light';
     }
 
@@ -70,11 +71,6 @@ const useDarkMode = (themeCookie) => {
 };
 
 export default function ThemeProvider({ children }) {
-
-  const [cookies, setCookie, removeCookie] = useCookies();
-
-  const themeCookie = cookies.theme;
-  
   const [theme, toggleDarkMode] = useDarkMode();
   const themeConfig = createTheme(theme);
 

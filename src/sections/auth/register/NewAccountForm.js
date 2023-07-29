@@ -24,15 +24,15 @@ let agents = [];
 
 export default function NewAccountForm() {
   const navigate = useNavigate();
-  const [skinSelect , setSkinSelect] = React.useState([]);
-  const [agentSelect , setAgentSelect] = React.useState([]);
+  const [skinSelect, setSkinSelect] = React.useState([]);
+  const [agentSelect, setAgentSelect] = React.useState([]);
   const [showPassword, setShowPassword] = useState(true);
 
-  const [puuid , setpuuid] = React.useState();
-  const [error , setError] = React.useState(false);
-  const [textError , setTextError] = React.useState();
+  const [puuid, setpuuid] = React.useState();
+  const [error, setError] = React.useState(false);
+  const [textError, setTextError] = React.useState();
 
-  const [cookies, setCookie, removeCookie] = useCookies();
+  const [cookies] = useCookies();
   const identity = useSelector((state) => state.user?.identity || undefined);
   const name = useSelector((state) => state.user.nama || undefined);
   const email = useSelector((state) => state.user.email || undefined);
@@ -43,7 +43,7 @@ export default function NewAccountForm() {
     username: Yup.string().required('Last name required'),
     password: Yup.string().required('Password is required'),
     owner: Yup.string().required('owner is required'),
-});
+  });
 
   const defaultValues = {
     tagLine: '',
@@ -56,200 +56,182 @@ export default function NewAccountForm() {
     defaultValues,
   });
 
-  const {
-    handleSubmit,
-    formState: { isSubmitting },
-  } = methods;
+  const { handleSubmit } = methods;
 
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async (e) => {
-    
     const timeElapsed = Date.now();
     const today = new Date(timeElapsed);
 
     const objectAccount = {
-      puuid, 
+      puuid,
       username: e.username,
       password: e.password,
       owner: e.owner,
-      skin:skinSelect,
+      skin: skinSelect,
       agent: agentSelect,
       created_at: today.toISOString(),
       update_at: today.toISOString(),
       update_by: email,
       delete_status: false,
-      token: cookies.token
+      token: cookies.token,
     };
-    
+
     const objectLog = {
       name,
       email,
       identity,
-      browser:cookies.browser,
+      browser: cookies.browser,
       created_at: today.toISOString(),
     };
-    setLoading(true);
-    
-    axiosConfig.post('/accounts/add', objectAccount)
-    .then((response) =>{
-      if(response.status === 200){
-        setLoading(false);
-        objectLog.activity = `Created Account Riot ID: ${e.riotId}, Tag Line: ${e.tagLine}, puuid: ${puuid},`;
-        axiosConfig.post('/logs/create', objectLog)
-        .then((response) =>{
-          if(response.status === 200){
-            navigate('/dashboard/all-account', { replace: true }) ;
-          }
-        });
-      }
-    });
+    if (!error) {
+      setLoading(true);
+      axiosConfig.post('/accounts/add', objectAccount).then((response) => {
+        if (response.status === 200) {
+          setLoading(false);
+          objectLog.activity = `Created Account Riot ID: ${e.riotId}, Tag Line: ${e.tagLine}, puuid: ${puuid},`;
+          axiosConfig.post('/logs/create', objectLog).then((response) => {
+            if (response.status === 200) {
+              navigate('/dashboard/all-account', { replace: true });
+            }
+          });
+        }
+      });
+    }
   };
 
   const [autocompleteSkins, setAutocompleteSkins] = React.useState(
-          <Autocomplete
-        multiple
-        id="skins"
-        name="skins"
-        options={noData}
-        getOptionLabel={(option) => option.title}
-        filterSelectedOptions
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Get Data"
-            placeholder="Get Data"
-          />
-        )}
-      />);
+    <Autocomplete
+      multiple
+      id="skins"
+      name="skins"
+      options={noData}
+      getOptionLabel={(option) => option.title}
+      filterSelectedOptions
+      renderInput={(params) => <TextField {...params} label="Get Data" placeholder="Get Data" />}
+    />
+  );
 
-      const [autocompleteAgents, setAutocompleteAgents] = React.useState(
-        <Autocomplete
+  const [autocompleteAgents, setAutocompleteAgents] = React.useState(
+    <Autocomplete
       multiple
       id="agents"
       name="agents"
       options={noData}
       getOptionLabel={(option) => option.title}
       filterSelectedOptions
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Get Data"
-          placeholder="Get Data"
+      renderInput={(params) => <TextField {...params} label="Get Data" placeholder="Get Data" />}
+    />
+  );
+
+  React.useEffect(() => {
+    axios.get('https://valorant-api.com/v1/weapons/skins').then((response) => {
+      let data = [];
+      data = response.data.data;
+      const skinsSementara = [];
+      data.map((data) => {
+        if (data.displayName.startsWith('Standard') !== true && data.displayName.startsWith('Random') !== true) {
+          return skinsSementara.push({ name: data.displayName, uuid: data.uuid });
+        }
+        return false;
+      });
+
+      skins = skinsSementara;
+
+      setAutocompleteSkins(
+        <Autocomplete
+          multiple
+          id="skins"
+          name="skins"
+          options={skins}
+          getOptionLabel={(option) => option.name}
+          onChange={(event, value) => setSkinSelect(value)}
+          filterSelectedOptions
+          renderInput={(params) => <TextField {...params} label="List Account Skins" placeholder="Reaver Vandal" />}
         />
-      )}
-    />);
-
-  React.useEffect(()=>{
-    axios.get('https://valorant-api.com/v1/weapons/skins').then((response) =>{
-        let data = [];
-        data  = response.data.data;
-
-        const skinsSementara = [];
-
-        data.map(data=>{
-            if(data.displayName.startsWith('Standard') !== true && data.displayName.startsWith('Random') !== true){
-                return skinsSementara.push({name : data.displayName , uuid : data.uuid});
-            }
-            return false;
-        });
-
-        skins = skinsSementara;
-        
-        setAutocompleteSkins(<Autocomplete
-            multiple
-            id="skins"
-            name="skins"
-            options={skins}
-            getOptionLabel={(option) => option.name}
-            onChange={(event, value) => setSkinSelect(value)}
-            filterSelectedOptions
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="List Account Skins"
-                placeholder="Reaver Vandal"
-              />
-            )}
-          />);
-
-    });
-    
-    axios.get('https://valorant-api.com/v1/agents').then((response) =>{
-        let data = [];
-        data  = response.data.data;
-
-        const agentsSementara = [];
-
-        data.map(data=>{
-            if(data.displayName !== 'Sova' && data.displayName !== 'Brimstone' && data.displayName !== 'Jett' && data.displayName !== 'Phoenix' && data.displayName !== 'Sage'){
-                return agentsSementara.push({name : data.displayName , uuid : data.uuid});
-            }
-            return false;
-        });
-
-        agents = agentsSementara;
-        
-        setAutocompleteAgents(<Autocomplete
-            multiple
-            id="agents"
-            name="agents"
-            options={agents}
-            getOptionLabel={(option) => option.name}
-            onChange={(event, value) => setAgentSelect(value)}
-            filterSelectedOptions
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="List Account Agents"
-                placeholder="Killjoy"
-              />
-            )}
-          />);
+      );
     });
 
-  },[]);
+    axios.get('https://valorant-api.com/v1/agents').then((response) => {
+      let data = [];
+      data = response.data.data;
+      const agentsSementara = [];
+      data.map((data) => {
+        if (
+          data.displayName !== 'Sova' &&
+          data.displayName !== 'Brimstone' &&
+          data.displayName !== 'Jett' &&
+          data.displayName !== 'Phoenix' &&
+          data.displayName !== 'Sage'
+        ) {
+          return agentsSementara.push({ name: data.displayName, uuid: data.uuid });
+        }
+        return false;
+      });
+      agents = agentsSementara;
+      setAutocompleteAgents(
+        <Autocomplete
+          multiple
+          id="agents"
+          name="agents"
+          options={agents}
+          getOptionLabel={(option) => option.name}
+          onChange={(event, value) => setAgentSelect(value)}
+          filterSelectedOptions
+          renderInput={(params) => <TextField {...params} label="List Account Agents" placeholder="Killjoy" />}
+        />
+      );
+    });
+  }, []);
 
-
-  const checkPuuid=()=>{
+  const checkPuuid = () => {
     const riotId = document.getElementById('riotId').value;
     const tagline = document.getElementById('tagline').value;
 
-    if(riotId !== '' && riotId !== undefined && tagline !== '' && tagline !== undefined){
-      axios.get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId}/${tagline}`).then((response) =>{
-        setpuuid(response.data.data.puuid);
-        checkExistAccount(response.data.data.puuid);
-      }).catch((error)=> {
-        setError(true);
-        setTextError('Account Not Found');
-      });
+    if (riotId !== '' && riotId !== undefined && tagline !== '' && tagline !== undefined) {
+      axios
+        .get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId}/${tagline}`)
+        .then((response) => {
+          setpuuid(response.data.data.puuid);
+          checkExistAccount(response.data.data.puuid);
+        })
+        .catch(() => {
+          setError(true);
+          setTextError('Account Not Found');
+        });
     }
-  }
+  };
 
-  const checkExistAccount=(puuid)=>{
-    axiosConfig.post('/accounts/exist',{puuid})
-    .then((response) =>{
-      if(response.status === 200){
+  const checkExistAccount = (puuid) => {
+    axiosConfig.post('/accounts/exist', { puuid }).then((response) => {
+      if (response.status === 200) {
         setError(true);
         setTextError('Account Already Registered');
-      }else{
+      } else {
         setError(false);
       }
     });
-  }
+  };
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)} >
-      {(error)?
-        <Typography variant="h6" gutterBottom component="div" color="error" >
+    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      {error ? (
+        <Typography variant="h6" gutterBottom component="div" color="error">
           {textError}
         </Typography>
-      :
-      <></>
-      }
+      ) : (
+        <></>
+      )}
       <Stack spacing={3}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} className="form-new-account" >
-          <RHFTextField name="riotId" label="Riot ID" className="form-new-account-first" onBlur={checkPuuid} id="riotId" />
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} className="form-new-account">
+          <RHFTextField
+            name="riotId"
+            label="Riot ID"
+            className="form-new-account-first"
+            onBlur={checkPuuid}
+            id="riotId"
+          />
           <h1>#</h1>
           <RHFTextField name="tagLine" label="Tag Line" onBlur={checkPuuid} id="tagline" />
         </Stack>
@@ -273,11 +255,10 @@ export default function NewAccountForm() {
 
         <RHFTextField name="owner" label="Nama Pemilik" />
 
+        {autocompleteSkins}
+        {autocompleteAgents}
 
-      {autocompleteSkins}
-      {autocompleteAgents}
-
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading}>
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading} disabled={error}>
           Add New Account
         </LoadingButton>
       </Stack>
@@ -285,6 +266,4 @@ export default function NewAccountForm() {
   );
 }
 
-
-const noData = [
-  ];
+const noData = [];

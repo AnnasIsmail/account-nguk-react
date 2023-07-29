@@ -20,10 +20,10 @@ AutoCompleteAgents.propTypes = {
 };
 
 export default function AutoCompleteAgents(props) {
-  const [value, setValue] = React.useState(dataSkinsReady);
   const skins = props.listAgents;
   const dataSkins = props.data;
   const dataSkinsReady = [];
+  const [value, setValue] = React.useState(dataSkinsReady);
 
   function getIndex(uuid) {
     let indexReturn;

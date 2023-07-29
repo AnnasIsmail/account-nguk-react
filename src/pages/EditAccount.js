@@ -47,7 +47,6 @@ export default function EditAccount() {
     <Page title="Edit Account" className="new-account-container">
       <RootStyle>
         <LeftForm text="Mohon Jujur Dalam Mengisi Form Ini." />
-
         <Container>
           <ContentStyle>
             <Typography variant="h4" gutterBottom>
@@ -57,7 +56,6 @@ export default function EditAccount() {
             <Typography sx={{ color: 'text.secondary', mb: 5 }}>
               Masukan dengan sesuai. Bila tidak ingin rata.
             </Typography>
-
             {form}
           </ContentStyle>
         </Container>

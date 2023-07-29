@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCookies } from 'react-cookie';
+import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as Yup from 'yup';
 // form
@@ -10,8 +11,9 @@ import { useForm } from 'react-hook-form';
 import { LoadingButton } from '@mui/lab';
 import { IconButton, InputAdornment, Stack } from '@mui/material';
 // components
-import { FormProvider, RHFTextField } from '../../../components/hook-form';
 import Iconify from '../../../components/Iconify';
+import { FormProvider, RHFTextField } from '../../../components/hook-form';
+import axiosConfig from '../../../utils/axiosConfig';
 import AutoCompleteAgents from './AutoCompleteAgents';
 import AutoCompleteSkins from './AutoCompleteSkins';
 
@@ -58,9 +60,14 @@ export default function EditAccountForm(props) {
       formState: { isSubmitting },
     } = methods;
 
+    const identity = useSelector((state) => state.user?.identity || undefined);
+    const name = useSelector((state) => state.user.nama || undefined);
+    const email = useSelector((state) => state.user.email || undefined);
+    const [loading, setLoading] = React.useState(false);
 
   const onSubmit = async (e) => {
 
+    setLoading(true);
     const timeElapsed = Date.now();
     const today = new Date(timeElapsed);
 
@@ -72,33 +79,27 @@ export default function EditAccountForm(props) {
       skin:skinSelect,
       agent: agentSelect,
       update_at: today.toISOString(),
-      update_by: cookies.codeAccess,
-      delete_status: false
+      update_by: email,
+      delete_status: false,
+      token: cookies.token
     };
+    
     const objectLog = {
-      access_code: cookies.codeAccess,
-      access_name: cookies.name,
-      ip_address: cookies.myIp,
+      name,
+      email,
+      identity,
       browser:cookies.browser,
       created_at: today.toISOString(),
-      activity: `Edited Account id: ${slug}, Riot ID: ${riotId}, Tag Line: ${tagLine}`
+      activity: `Edited Account Riot ID: ${riotId}, Tag Line: ${tagLine}, id: ${slug}`
     };
 
-  
-    axios({
-      url: 'http://localhost:5000/accounts/update', 
-      responseType: 'json',
-      method: 'post',
-      data : objectAccount
-    }).then((response) =>{
+    axiosConfig.post('/accounts/update', objectAccount)
+    .then((response) =>{
 
       if(response.status === 200){
-        axios({
-          url: 'http://localhost:5000/logs/create', 
-          responseType: 'json',
-          method: 'post',
-          data : objectLog
-        }).then((response) =>{
+        axiosConfig.post('/logs/create', objectLog)
+        .then((response) =>{
+          setLoading(false);
           navigate('/dashboard/all-account', { replace: true }) ;
         });
       }
@@ -212,7 +213,7 @@ export default function EditAccountForm(props) {
       {autocompleteSkins}
       {autocompleteAgents}
 
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading}>
           Submit Editing Account
         </LoadingButton>
       </Stack>

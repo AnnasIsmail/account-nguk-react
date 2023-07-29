@@ -1,14 +1,14 @@
 // @mui
-import { Card, Container, Typography } from '@mui/material';
+import { Backdrop, Card, CircularProgress, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import React from 'react';
 // hooks
+import Page from './components/Page';
+import EntryCodeAccessForm from './EntryCodeAccessForm';
 import useResponsive from './hooks/useResponsive';
 // components
-import Page from './components/Page';
 // sections
-import EntryCodeAccessForm from './EntryCodeAccessForm';
 
 // ----------------------------------------------------------------------
 
@@ -55,10 +55,9 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function EntryCodeAccess() {
+export default function EntryCodeAccess(props) {
   const smUp = useResponsive('up', 'sm');
   const mdUp = useResponsive('up', 'md');
-
   
   const [message, setMessage] = React.useState('No Message');
 
@@ -80,6 +79,19 @@ export default function EntryCodeAccess() {
   }
 
   const [loading , setLoading] = React.useState(false);
+  const [kelamaan , setkelamaan] = React.useState(false);
+  const [Textkelamaan , setTextkelamaan] = React.useState('API-nya masih ngantuk nih bang, sabar ya.');
+
+  setTimeout(() => {
+    setkelamaan(true);
+  }, 5000);
+
+  setTimeout(() => {
+    setTextkelamaan('Buset dah tidur lagi ini API-nya bang, maap.');
+  }, 10000);
+
+
+
   const [srcImage , setSrcImage] = React.useState();
   const [nameSkins , setNameSkins] = React.useState();
 
@@ -100,9 +112,21 @@ export default function EntryCodeAccess() {
 
   return (
     <Page title="Entry Code Access" className="new-account-container">
+      {(props.isLoading)?
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1, display: 'flex', flexDirection: 'column', gap: '20px' }}
+          open
+          onClick={handleClose}
+        >
+          <CircularProgress color="inherit" />
+          {(kelamaan)&&
+            <Typography variant='h6'>
+              {Textkelamaan}
+            </Typography>
+          }
+        </Backdrop>
+      :
       <RootStyle>
-        
-
         {mdUp && (
           <SectionStyle>
             <Typography variant="h3" sx={{ px: 5, mt:-5 , mb: 3 }}>
@@ -125,16 +149,17 @@ export default function EntryCodeAccess() {
         <Container>
           <ContentStyle>
             <Typography variant="h4" gutterBottom>
-              Entry Your Code Access
+              Entry Your Email
             </Typography>
 
-            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Entry Your Code Access To Access Content This Website.</Typography>
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Enter you and you will get an OTP code to be able to view the contents of this website.</Typography>
 
             <EntryCodeAccessForm />
             
           </ContentStyle>
         </Container>
       </RootStyle>
+      }
     </Page>
   );
 }

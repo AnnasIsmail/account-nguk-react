@@ -1,5 +1,5 @@
 // material
-import { Container, Typography } from '@mui/material';
+import { CircularProgress, Container, Typography } from '@mui/material';
 import axios from 'axios';
 import React from 'react';
 // components
@@ -13,13 +13,12 @@ export default function Skins() {
 
   const [realAgents , setRealAgents] = React.useState([]);
   const [agents , setAgents] = React.useState([]);
-  const [loading , setLoading] = React.useState(false);
 
   React.useEffect(()=>{
     axios.get('https://valorant-api.com/v1/weapons/skins').then((response) =>{
       setAgents(response.data.data);
       setRealAgents(response.data.data);
-      setLoading(true);
+      setLoading(false);
     });
   },[]);
 
@@ -30,18 +29,39 @@ export default function Skins() {
     setAgents(AgentSearch);
   }
 
+    
+  const [loading , setLoading] = React.useState(true);
+  const [kelamaan , setkelamaan] = React.useState(false);
+  const [Textkelamaan , setTextkelamaan] = React.useState('API-nya masih ngantuk nih bang, sabar ya.');
+
+  setTimeout(() => {
+    setkelamaan(true);
+  }, 5000);
+
+  setTimeout(() => {
+    setTextkelamaan('Buset dah tidur lagi ini API-nya bang, maap.');
+  }, 10000);
+
+
   return (
     <Page title="All Skins">
+            {(loading)?
+        <div style={{ width: '100%',marginTop: '30vh', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', justifyContent: 'center' }}>
+          <CircularProgress color="inherit" />
+          {(kelamaan)&&
+            <Typography variant='h6'>
+              {Textkelamaan}
+            </Typography>
+          }
+        </div>
+      :
       <Container>
         <Typography variant="h4" sx={{ mb: 5 }}>
           All Skins
         </Typography>
-        {(loading === true)?
           <SkinsList products={agents} />
-        :
-          <></>
-        }
       </Container>
+}
       <input hidden type='button' onClick={searchCall} id='searchCall' />
     </Page>
   );

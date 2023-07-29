@@ -11,6 +11,7 @@ import useResponsive from '../hooks/useResponsive';
 import Page from '../components/Page';
 // sections
 import EditAccountForm from '../sections/auth/register/EditAccountForm';
+import axiosConfig from '../utils/axiosConfig';
 
 // ----------------------------------------------------------------------
 
@@ -84,12 +85,8 @@ export default function EditAccount() {
   },[]);
 
   React.useEffect(()=>{
-    axios({
-      url: 'http://localhost:5000/accounts/specific', 
-      responseType: 'json',
-      method: 'post',
-      data : {_id: slug, access_code: cookies.codeAccess}
-    }).then((response) =>{
+    axiosConfig.post('/accounts/specific',{_id: slug, token: cookies.token})
+    .then((response) =>{
         setForm(<EditAccountForm dataAccount={response.data} />);
     });
 
@@ -100,14 +97,14 @@ export default function EditAccount() {
       <RootStyle>
         
 
-        {mdUp && (
+      {mdUp && (
           <SectionStyle>
-            <Typography variant="h3" sx={{ px: 5, mt:-5 , mb: 3 }}>
+            <Typography variant="h4" sx={{ p: 3 }}>
               Mohon Jujur Dalam Mengisi Form Ini.
             </Typography>
             {(loading)?
               <>
-                <img alt="Random Skins" src={srcImage} sx={{ px: 3 }} />
+                <img alt="Random Skins" src={srcImage} sx={{ p: 3 }} />
                 <Typography variant="subtitle1" sx={{ textAlign: 'center' }} gutterBottom>
                   {nameSkins}
                 </Typography>

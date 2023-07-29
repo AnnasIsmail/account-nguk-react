@@ -1,20 +1,21 @@
 // material
-import { Container } from '@mui/material';
+import { Container, Stack, Typography } from '@mui/material';
+import Button from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
 import { DataGrid } from '@mui/x-data-grid';
-import axios from 'axios';
 import moment from 'moment';
 import React from 'react';
 import { useCookies } from 'react-cookie';
+import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 // components
+import Iconify from '../components/Iconify';
 import Page from '../components/Page';
 import DetailLog from '../sections/@dashboard/app/DetailLog';
+import axiosConfig from '../utils/axiosConfig';
 // mock
 
 // ----------------------------------------------------------------------
-
-
 
 export default function User() {
 
@@ -27,17 +28,26 @@ export default function User() {
 
   const [cookies, setCookie, removeCookie] = useCookies();
   const navigate = useNavigate();
+  const isAdmin = useSelector((state) => state.user.role);
 
-  
-  if(cookies.aStre23 !== '1892gdb18'){
+  if(isAdmin !== 'admin'){
     navigate("/404", { replace: true });
   }
+  const [rows, setRows] = React.useState([]);
 
   React.useEffect(()=>{
-    axios.get('http://localhost:5000/logs/').then((response) =>{
-      const temporaryRows = []
+    setOpenDetailMMR(false);
+    getData();
+  },[]);
+  
+  const getData = () => {
+    setLoading(false);
+    axiosConfig.post('/logs/', {token: cookies.token})
+    .then((response) =>{
+    console.log(response);
+    const temporaryRows = []
       const wait = new Promise((res , rej)=>{
-        response.data.forEach((data , index)=>{
+        response.data.reverse().forEach((data , index)=>{
           const temporaryObject = data;
           temporaryObject.id = index+1;
           temporaryObject.ago = moment(data.created_at).fromNow();
@@ -46,13 +56,13 @@ export default function User() {
           if(index === response.data.length-1) res();
         });
       })
-
+  
       wait.then(()=>{
-        rows = temporaryRows;        
+        setRows(temporaryRows);        
         setLoading(true);
       });
     });
-  },[]);
+  }
 
   const openDetailLog=(e)=> {
     setDetailMMR(e.row);
@@ -60,47 +70,52 @@ export default function User() {
   }
 
   return (
-    <Page title="Logs Users" >
-      <Container >
-      {(loading)?
-        <div style={{ height: '75vh', width: '100%' }}>
-          <DataGrid
-              rows={rows}
-              columns={columns}
-              pageSize={pageSize}
-              onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-              rowsPerPageOptions={[10, 25, 50, 100]}
-              onRowClick={openDetailLog}
-              pagination
-              sx={{
-                boxShadow: 2,
-                border: 2,
-                borderColor: 'primary.light',
-                '& .MuiDataGrid-cell:hover': {
-                  color: 'primary.main',
-                },
-              }}
-            />
-          </div>
-      :
-        <Skeleton variant="rectangular" style={{ height: '75vh', width: '100%', borderRadius: 10 }} />
-      }
-      
+      <Page title="Logs Users" >
+          <Container>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+                <Typography variant="h4" gutterBottom component="div">
+                    Logs
+                </Typography>
+                <Button variant="contained" onClick={getData} startIcon={<Iconify icon="material-symbols:refresh" />}>
+                    Refresh
+                </Button>
+            </Stack>
+          <Container >
+          {(loading)?
+            <div style={{ height: '75vh', width: '100%' }}>
+              <DataGrid
+                  rows={rows}
+                  columns={columns}
+                  pageSize={pageSize}
+                  onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+                  rowsPerPageOptions={[10, 25, 50, 100]}
+                  onRowClick={openDetailLog}
+                  pagination
+                  sx={{
+                    boxShadow: 2,
+                    border: 2,
+                    borderColor: 'primary.light',
+                    '& .MuiDataGrid-cell:hover': {
+                      color: 'primary.main',
+                    },
+                  }}
+                />
+              </div>
+          :
+            <Skeleton variant="rectangular" style={{ height: '75vh', width: '100%', borderRadius: 10 }} />
+          }
+          
+          </Container>
+          <DetailLog open={openDetailMMR} handleClose={handleCloseDetailMMR} dataLog={detailMMR} />
       </Container>
-      <DetailLog open={openDetailMMR} handleClose={handleCloseDetailMMR} dataLog={detailMMR} />
-
     </Page>
   );
 }
 
 const columns = [
-  { field: 'access_name', headerName: 'Name', width: 150, editable: false },
-  { field: 'access_code', headerName: 'Access Code', width: 150, editable: false, hide: true },
+  { field: 'name', headerName: 'Name', width: 150, editable: false },
+  { field: 'email', headerName: 'Email', width: 250, editable: false },
   { field: 'activity', headerName: 'Activity',width:250 , editable: false },
-  { field: 'ip_address',headerName: 'Ip Address',width: 130,editable: false,},
-  { field: 'browser',headerName: 'Browser',width: 140,editable: false,},
   { field: 'ago',headerName: 'Ago',width: 120,editable: false},
   { field: 'created_at',headerName: 'Create At',width: 280,editable: false},
 ];
-
-let rows = [];

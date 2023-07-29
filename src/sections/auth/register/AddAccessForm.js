@@ -1,5 +1,6 @@
-import axios from 'axios';
 import React from 'react';
+import { useCookies } from 'react-cookie';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 // form
@@ -8,30 +9,29 @@ import { LoadingButton } from '@mui/lab';
 import { useForm } from 'react-hook-form';
 // @mui
 import { Stack } from '@mui/material';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 // components
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
-import Iconify from '../../../components/Iconify';
+import axiosConfig from '../../../utils/axiosConfig';
 // ----------------------------------------------------------------------
 
 export default function AddAccessForm(props) {
   const navigate = useNavigate();
   
-  const [code , setCode] = React.useState();
-  const [done , setDone] = React.useState(false);
   const [codeField ,setCodeField] = React.useState();
   const [error , setError] = React.useState(false);
   const [textError , setTextError] = React.useState();
   const [loading, setLoading] = React.useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies();
 
   const RegisterSchema = Yup.object().shape({
     name: Yup.string().required('Name required'),
+    email: Yup.string().email('The data entered must be in the form of an email').required('Email required'),
 });
 
   const defaultValues = {
     name: '',
-    accessCode: '',
+    email: '',
   };
 
   const methods = useForm({
@@ -44,45 +44,55 @@ export default function AddAccessForm(props) {
     formState: { isSubmitting },
   } = methods;
 
+  const identity = useSelector((state) => state.user?.identity || undefined);
+  const nameUser = useSelector((state) => state.user.nama || undefined);
+  const emailUser = useSelector((state) => state.user.email || undefined);
 
   const onSubmit = async (e) => {
-
-    const name = e.name;
+    setLoading(true);
+    const {email, name} = e;
     const timeElapsed = Date.now();
     const today = new Date(timeElapsed);
-
-    const d = new Date();
-    const time = d.getTime().toString().slice(9);
-    const accessCode = `${name}${time}`;
     const role = 'User';
 
     const objectSubmit = {
-      access_code: accessCode,name,role,created_at:today.toISOString(),
+      token: cookies.token,
+      email,
+      nama:name,
+      role,
+      created_at:today.toISOString(),
     }
 
-    axios({
-      url: 'http://localhost:5000/access/GiveNewAccess', 
-      responseType: 'json',
-      method: 'post',
-      data : objectSubmit
-    }).then((response) =>{
-      setDone(true);
-      setCodeField(
-        <RHFTextField name="accessCode" label="Access Code" className="form-new-account-first"id="accessCode" value={accessCode} disabled />
-      );
-      setCode(accessCode);
+    const objectLog = {
+      name: nameUser,
+      email: emailUser,
+      identity,
+      browser:cookies.browser,
+      created_at: today.toISOString()
+    };
+
+    axiosConfig.post('/access/GiveNewAccess', objectSubmit)
+    .then((response) =>{
       setLoading(false);
       setError(false);
+      if(response.status === 200){
+        objectLog.activity = `Created Access Name: ${name}, Email: ${email}`;
+        axiosConfig.post('/logs/create', objectLog)
+        .then((response) =>{
+          if(response.status === 200){
+            navigate('/dashboard/user-management');
+          }
+        });
+      }else if(response.status === 204){
+        setError(true);
+        setTextError('You are not an Admin!');
+        setLoading(false);
+      }
     }).catch((error)=> {
       setError(true);
       setTextError('Add New Access Failed!');
       setLoading(false);
     });
-}
-
-const copy =(message, text)=>{
-  props.copyProps(message);
-  navigator.clipboard.writeText(text);
 }
 
   return (
@@ -95,32 +105,13 @@ const copy =(message, text)=>{
       <></>
       }
       <Stack spacing={3}>
-        
-
-        {(done)?
-        <>
-          <RHFTextField name="name" label="Name" disabled />
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} className="form-new-account" >
-            {codeField}
-            <Button color='primary' onClick={()=>copy('Password', 'string')} >
-              <Iconify icon='fluent:copy-16-filled' width={24} height={24} />
-            </Button>
-          </Stack>
-          <Button fullWidth size="large"  variant="contained" onClick={()=>document.location.reload()}>
-            Add Again
-          </Button>
-        </>
-        :
         <>
           <RHFTextField name="name" label="Name" />
+          <RHFTextField name="email" label="Email" />
           <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading}>
             Add New Access
           </LoadingButton>
         </>
-      }
-
-
-        
       </Stack>
     </FormProvider>
   );

@@ -12,9 +12,24 @@ const navConfig = [
     icon: getIcon('material-symbols:switch-account-rounded'),
   },
   {
+    title: 'Crosshair',
+    path: '/dashboard/crosshair',
+    icon: getIcon('ph:crosshair-bold'),
+  },
+  {
     title: 'Track Account',
     path: '/account/track',
-    icon: getIcon('gg:track'),
+    icon: getIcon('ic:outline-track-changes'),
+  },
+  {
+    title: 'Update Valorant',
+    path: '/dashboard/update-valorant',
+    icon: getIcon('ic:outline-update'),
+  },
+  {
+    title: 'Esports Schedule',
+    path: '/dashboard/esport-schedule',
+    icon: getIcon('material-symbols:auto-schedule'),
   },
   {
     title: 'Agents',

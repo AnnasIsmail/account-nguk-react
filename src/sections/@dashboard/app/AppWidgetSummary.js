@@ -20,13 +20,16 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useCookies } from 'react-cookie';
+import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 
 // components
 import Iconify from '../../../components/Iconify';
+import axiosConfig from '../../../utils/axiosConfig';
 import BackdropLoading from './BackDropLoading';
 import DetailAgent from './DetailAgent';
 import DetailMMR from './DetailMMR';
+import DetailRank from './DetailRank';
 import DetailSkin from './DetailSkin';
 
 // ----------------------------------------------------------------------
@@ -89,6 +92,10 @@ export default function AppWidgetSummary({ puuid, rerender, dataAccount, usernam
   const [detailMMR,setDetailMMR] = React.useState([]);
   const handleCloseDetailMMR = () => setOpenDetailMMR(false);
 
+  const [openDetailRank, setOpenDetailRank] = React.useState(false);
+  const [detailRank,setDetailRank] = React.useState([]);
+  const handleCloseDetailRank = () => setOpenDetailRank(false);
+
   const [openBackDrop , setOpenBackdrop] = React.useState(false);
 
   const handleCloseBackDrop = () => {
@@ -126,33 +133,27 @@ export default function AppWidgetSummary({ puuid, rerender, dataAccount, usernam
     setOpen(true);
   };
 
+  const identity = useSelector((state) => state.user?.identity || undefined);
+  const nama = useSelector((state) => state.user.nama || undefined);
+  const email = useSelector((state) => state.user.email || undefined);
+
   const handleClose = (e) => {
     if(e === 'agree'){
       const timeElapsed = Date.now();
       const today = new Date(timeElapsed);
       const objectLog = {
-        access_code: cookies.codeAccess,
-        access_name: cookies.name,
-        ip_address: cookies.myIp,
+        name: nama,
+        email,
+        identity,
         browser:cookies.browser,
         activity: `Deleted Account id: ${idAccount}, Riot ID: ${name}, Tag Line: ${tag},  PUUID: ${puuid}`,
         created_at: today.toISOString()
       };
-      console.log(idAccount)
-      axios({
-        url: 'http://localhost:5000/accounts/delete', 
-        responseType: 'json',
-        method: 'post',
-        data : {idAccount, access_code: cookies.codeAccess}
-      }).then((response) =>{
-        console.log(response)
+      axiosConfig.post('/accounts/delete',{idAccount, token: cookies.token})
+      .then((response) =>{
         if(response.status === 200){
-          axios({
-            url: 'http://localhost:5000/logs/create', 
-            responseType: 'json',
-            method: 'post',
-            data : objectLog
-          }).then((response) => {
+          axiosConfig.post('/logs/create', objectLog)
+          .then((response) => {
             setOpen(false);
             rerender();
           });
@@ -192,8 +193,14 @@ export default function AppWidgetSummary({ puuid, rerender, dataAccount, usernam
         handleCloseBackDrop();
         setDetailMMR(response.data);
         setOpenDetailMMR(true);
-    });
-  }
+      });
+    }else if(name === 'Rank'){
+      axios.get(`https://api.henrikdev.xyz/valorant/v2/mmr/ap/${uuid}`).then((response) =>{
+        handleCloseBackDrop();
+        setDetailRank(response.data);
+        setOpenDetailRank(true);
+      });
+    }
   }
 
   return (
@@ -265,7 +272,7 @@ export default function AppWidgetSummary({ puuid, rerender, dataAccount, usernam
       <CardActions className='bottom-card-account'>
         <div>
           <Button className='button-bottom' target="_blank" href={`https://tracker.gg/valorant/profile/riot/${name}%23${tag}/overview`} color={color} size="small">Tracker.gg</Button>
-          <Button className='button-bottom' target="_blank" href={`https://auth.riotgames.com/login#acr_values=urn%3Ariot%3Agold&client_id=accountodactyl-prod&redirect_uri=https%3A%2F%2Faccount.riotgames.com%2Foauth2%2Flog-in&response_type=code&scope=openid%20email%20profile%20riot%3A%2F%2Friot.atlas%2Faccounts.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Fpassword.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Femail.edit%20riot%3A%2F%2Friot.atlas%2Faccounts.auth%20riot%3A%2F%2Fthird_party.revoke%20riot%3A%2F%2Fthird_party.query%20riot%3A%2F%2Fforgetme%2Fnotify.write%20riot%3A%2F%2Friot.authenticator%2Fauth.code%20riot%3A%2F%2Friot.authenticator%2Fauthz.edit%20riot%3A%2F%2Frso%2Fmfa%2Fdevice.write&state=4d7f39cb-9920-4700-a11f-e742346bba80&ui_locales=en`} color={color} size="small">Riot Account</Button>
+          <Button disabled={!loading} className='button-bottom' target="_blank" onClick={()=>openDetailSkin(`${name}/${tag}` , 'Rank')} color={color} size="small">History Rank</Button>
           <Button className='button-bottom' onClick={()=>openDetailSkin(puuid , 'MMR')} color={color} size="small">History MMR</Button>
         </div>
         <Button  onClick={handleExpandClick} aria-expanded={expanded} aria-label="show more" className='button-bottom' color={color} size="small">
@@ -302,6 +309,7 @@ export default function AppWidgetSummary({ puuid, rerender, dataAccount, usernam
           </Typography>
           <Button className='button-bottom' component={RouterLink} to={`/account/edit/${idAccount}`} color={color} size="small">Edit Account</Button>
           <Button className='button-bottom' onClick={handleClickOpen} color={color} size="small">Delete Account</Button>
+          <Button className='button-bottom' target="_blank" href={`https://auth.riotgames.com/login#acr_values=urn%3Ariot%3Agold&client_id=accountodactyl-prod&redirect_uri=https%3A%2F%2Faccount.riotgames.com%2Foauth2%2Flog-in&response_type=code&scope=openid%20email%20profile%20riot%3A%2F%2Friot.atlas%2Faccounts.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Fpassword.edit%20riot%3A%2F%2Friot.atlas%2Faccounts%2Femail.edit%20riot%3A%2F%2Friot.atlas%2Faccounts.auth%20riot%3A%2F%2Fthird_party.revoke%20riot%3A%2F%2Fthird_party.query%20riot%3A%2F%2Fforgetme%2Fnotify.write%20riot%3A%2F%2Friot.authenticator%2Fauth.code%20riot%3A%2F%2Friot.authenticator%2Fauthz.edit%20riot%3A%2F%2Frso%2Fmfa%2Fdevice.write&state=4d7f39cb-9920-4700-a11f-e742346bba80&ui_locales=en`} color={color} size="small">Riot Account</Button>
 
         </CardContent>
       </Collapse>
@@ -309,6 +317,7 @@ export default function AppWidgetSummary({ puuid, rerender, dataAccount, usernam
     <DetailSkin open={openDetail} handleClose={handleCloseDetailSkin} detailSkin={detailSkin} />
     <DetailAgent open={openDetailAgent} handleClose={handleCloseDetailAgent} detailSkin={detailAgent} />
     <DetailMMR open={openDetailMMR} handleClose={handleCloseDetailMMR} detailSkin={detailMMR} />
+    <DetailRank open={openDetailRank} handleClose={handleCloseDetailRank} detailSkin={detailRank} />
       <Dialog
         open={open}
         onClose={handleClose}
@@ -324,9 +333,9 @@ export default function AppWidgetSummary({ puuid, rerender, dataAccount, usernam
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={()=> handleClose('disagree')}>Disagree</Button>
-          <Button onClick={()=> handleClose('agree')} autoFocus>
-            Agree
+          <Button onClick={()=> handleClose('disagree')}>Cancel</Button>
+          <Button onClick={()=> handleClose('agree')} autoFocus sx={{ color: 'red' }}>
+            Delete
           </Button>
         </DialogActions>
       </Dialog>

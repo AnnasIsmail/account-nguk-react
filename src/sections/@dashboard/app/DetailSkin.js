@@ -1,13 +1,15 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable react/jsx-no-undef */
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Fade from '@mui/material/Fade';
-import Link from '@mui/material/Link';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-
+import { useState } from 'react';
+import ReactPlayer from 'react-player';
 import Iconify from '../../../components/Iconify';
 
 const style = {
@@ -15,11 +17,13 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
+  minWidth: 400,
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  maxHeight: '80vh',
+  overflow: 'auto'
 };
 
 export default function DetailSkin(props) {
@@ -31,7 +35,8 @@ export default function DetailSkin(props) {
     levels = props.detailSkin.levels;
     chromas = props.detailSkin.chromas;
   }
-
+  const [buffer, setBuffer] = useState(false);
+  
   return (
     <>
       <Modal
@@ -48,8 +53,8 @@ export default function DetailSkin(props) {
       >
         <Fade in={props.open}>
           <Box sx={style}>
-            <Typography>
-              <img src={(detailSkin.displayIcon !== null)?detailSkin.displayIcon:detailSkin.chromas[0].displayIcon} alt="imageSkin" />
+            <Typography sx={{ textAlign: 'center', display: 'flex', justifyContent: 'center' }}>
+              <img style={{ maxHeight: 250 }} src={(detailSkin.displayIcon !== null)?detailSkin.displayIcon:detailSkin.chromas[0].displayIcon} alt="imageSkin" />
             </Typography>
             <Typography id="transition-modal-title" variant="h6" component="h2">
               {detailSkin.displayName}
@@ -58,8 +63,7 @@ export default function DetailSkin(props) {
 
                   <div>
                         <Typography variant='h6'>Level</Typography>
-              {levels.map((data , index)=>{
-                return(
+              {levels.map((data , index)=>(
                   <Accordion>
                       <AccordionSummary
                         expandIcon={<Iconify icon='ic:twotone-expand-more' width={24} height={24} />}
@@ -69,17 +73,24 @@ export default function DetailSkin(props) {
                         <Typography>{data.displayName}</Typography>
                       </AccordionSummary>
                       <AccordionDetails>
-                        <Typography>
-                          Video Weapon : {(data.streamedVideo !== null)? <Link href={data.streamedVideo} target="_blank" underline="hover">{'Link Video'}</Link> : <>Not Found</>}
-                        </Typography>
+                        {(data.streamedVideo !== null)? 
+                          <div>
+                            {(buffer)&&
+                              <Typography color='error' variant="h6" gutterBottom>
+                                Besok ganti Provider yaaa.
+                              </Typography>
+                            }
+                            <ReactPlayer controls url={data.streamedVideo} onBuffer={()=> setBuffer(true)} onBufferEnd={()=> setBuffer(false)} />
+                          </div>
+                          :
+                          <>Video not found.</>
+                        }
                       </AccordionDetails>
                     </Accordion>
-                );
-              })}
+                ))}
                         <Typography variant='h6'>Variant</Typography>
 
-                {chromas.map((data , index)=>{
-                return(
+                {chromas.map((data , index)=>(
                   <Accordion>
                       <AccordionSummary
                         expandIcon={<Iconify icon='ic:twotone-expand-more' width={24} height={24} />}
@@ -94,8 +105,7 @@ export default function DetailSkin(props) {
                         </Typography>
                       </AccordionDetails>
                     </Accordion>
-                );
-              })}
+                ))}
                     
                 </div>
                 

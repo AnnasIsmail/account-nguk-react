@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useCookies } from 'react-cookie';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 // form
@@ -15,6 +16,7 @@ import Typography from '@mui/material/Typography';
 // components
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
 import Iconify from '../../../components/Iconify';
+import axiosConfig from '../../../utils/axiosConfig';
 
 // ----------------------------------------------------------------------
 let skins = [];
@@ -31,6 +33,9 @@ export default function NewAccountForm() {
   const [textError , setTextError] = React.useState();
 
   const [cookies, setCookie, removeCookie] = useCookies();
+  const identity = useSelector((state) => state.user?.identity || undefined);
+  const name = useSelector((state) => state.user.nama || undefined);
+  const email = useSelector((state) => state.user.email || undefined);
 
   const RegisterSchema = Yup.object().shape({
     riotId: Yup.string().required('First name required'),
@@ -56,8 +61,10 @@ export default function NewAccountForm() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = async (e) => {
+  const [loading, setLoading] = useState(false);
 
+  const onSubmit = async (e) => {
+    
     const timeElapsed = Date.now();
     const today = new Date(timeElapsed);
 
@@ -70,36 +77,32 @@ export default function NewAccountForm() {
       agent: agentSelect,
       created_at: today.toISOString(),
       update_at: today.toISOString(),
-      update_by: cookies.codeAccess,
-      delete_status: false
+      update_by: email,
+      delete_status: false,
+      token: cookies.token
     };
+    
     const objectLog = {
-      access_code: cookies.access_code,
-      access_name: cookies.name,
-      ip_address: cookies.myIp,
+      name,
+      email,
+      identity,
       browser:cookies.browser,
-      created_at: today.toISOString()
+      created_at: today.toISOString(),
     };
-
-    axios({
-      url: 'http://localhost:5000/accounts/add', 
-      responseType: 'json',
-      method: 'post',
-      data : objectAccount
-    }).then((response) =>{
-
+    setLoading(true);
+    
+    axiosConfig.post('/accounts/add', objectAccount)
+    .then((response) =>{
       if(response.status === 200){
-        objectLog.activity = `Created Account id: ${puuid}, Riot ID: ${e.riotId}, Tag Line: ${e.tagLine}`;
-        axios({
-          url: 'http://localhost:5000/logs/create', 
-          responseType: 'json',
-          method: 'post',
-          data : objectLog
-        }).then((response) =>{
-          navigate('/dashboard/all-account', { replace: true }) ;
+        setLoading(false);
+        objectLog.activity = `Created Account Riot ID: ${e.riotId}, Tag Line: ${e.tagLine}, puuid: ${puuid},`;
+        axiosConfig.post('/logs/create', objectLog)
+        .then((response) =>{
+          if(response.status === 200){
+            navigate('/dashboard/all-account', { replace: true }) ;
+          }
         });
       }
-
     });
   };
 
@@ -224,19 +227,15 @@ export default function NewAccountForm() {
   }
 
   const checkExistAccount=(puuid)=>{
-      axios({
-        url: 'http://localhost:5000/accounts/exist', 
-        responseType: 'json',
-        method: 'post',
-        data : {puuid}
-      }).then((response) =>{
-        if(response.status === 200){
-          setError(true);
-          setTextError('Account Already Registered');
-        }else{
-          setError(false);
-        }
-      });
+    axiosConfig.post('/accounts/exist',{puuid})
+    .then((response) =>{
+      if(response.status === 200){
+        setError(true);
+        setTextError('Account Already Registered');
+      }else{
+        setError(false);
+      }
+    });
   }
 
   return (
@@ -278,7 +277,7 @@ export default function NewAccountForm() {
       {autocompleteSkins}
       {autocompleteAgents}
 
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading}>
           Add New Account
         </LoadingButton>
       </Stack>

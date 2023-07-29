@@ -19,6 +19,8 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  maxHeight: '80vh',
+  overflow: 'auto'
 };
 
 export default function DetailMMR(props) {
@@ -28,7 +30,6 @@ export default function DetailMMR(props) {
   if(props.detailSkin.data !== undefined){
     levels = props.detailSkin.data;
   }
-
 
   return (
     <>
@@ -46,14 +47,14 @@ export default function DetailMMR(props) {
       >
         <Fade in={props.open}>
           <Box sx={style}>
-            <Typography id="transition-modal-title" variant="h6" component="h2">
-              {props.detailSkin.name}#{props.detailSkin.tag}
+            <Typography id="transition-modal-title" variant="h5" component="h2">
+              {props.detailSkin.name} # {props.detailSkin.tag}
             </Typography>
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
 
                   <div>
-              {levels.map((data , index)=>{
-                return(
+              {levels.map((data , index)=>(
+                  // eslint-disable-next-line react/jsx-key
                   <Accordion>
                       <AccordionSummary
                         expandIcon={<Iconify icon='ic:twotone-expand-more' width={24} height={24} />}
@@ -91,12 +92,8 @@ export default function DetailMMR(props) {
                         </Typography>
                       </AccordionDetails>
                     </Accordion>
-                );
-              })}
-
-                    
+                ))}
                 </div>
-                
             </Typography>
           </Box>
         </Fade>

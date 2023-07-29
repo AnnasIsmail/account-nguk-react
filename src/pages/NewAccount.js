@@ -67,8 +67,6 @@ export default function NewAccount() {
   React.useEffect(()=>{
     axios.get('https://valorant-api.com/v1/weapons/skins').then((response) =>{
       const random = Math.floor(Math.random() * response.data.data.length);
-      console.log(random);
-      console.log(response.data.data[random].chromas[0]);
       if(response.data.data[random].displayIcon !== null){
         setSrcImage(response.data.data[random].displayIcon);
       }else{
@@ -84,14 +82,14 @@ export default function NewAccount() {
       <RootStyle>
         
 
-        {mdUp && (
+      {mdUp && (
           <SectionStyle>
-            <Typography variant="h3" sx={{ px: 5, mt:-5 , mb: 3 }}>
+            <Typography variant="h4" sx={{ p: 3 }}>
               Mohon Jujur Dalam Mengisi Form Ini.
             </Typography>
             {(loading)?
               <>
-                <img alt="Random Skins" src={srcImage} sx={{ px: 3 }} />
+                <img alt="Random Skins" src={srcImage} sx={{ p: 3 }} />
                 <Typography variant="subtitle1" sx={{ textAlign: 'center' }} gutterBottom>
                   {nameSkins}
                 </Typography>

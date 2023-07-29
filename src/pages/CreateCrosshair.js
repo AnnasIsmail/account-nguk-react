@@ -3,12 +3,15 @@ import { Card, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import React from 'react';
+import { useCookies } from 'react-cookie';
+import { useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
 // hooks
 import useResponsive from '../hooks/useResponsive';
 // components
 import Page from '../components/Page';
 // sections
-import TrackForm from '../sections/auth/register/TrackForm';
+import CreateCrosshairForm from '../sections/auth/register/CreateCrosshairForm';
 
 // ----------------------------------------------------------------------
 
@@ -46,7 +49,7 @@ const SectionStyle = styled(Card)(({ theme }) => ({
 const ContentStyle = styled('div')(({ theme }) => ({
   maxWidth: 480,
   margin: 'auto',
-  minHeight: 'calc(100vh - 200px)',
+//   minHeight: '100vh',
   display: 'flex',
   justifyContent: 'center',
   flexDirection: 'column',
@@ -55,9 +58,33 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function TrackAccount() {
+export default function CreateCrosshair() {
   const smUp = useResponsive('up', 'sm');
   const mdUp = useResponsive('up', 'md');
+
+  
+  const [message, setMessage] = React.useState('No Message');
+
+  const [state, setState] = React.useState({
+    open: false,
+    vertical: 'bottom',horizontal: 'right'
+  });
+
+  const { vertical, horizontal, open } = state;
+
+  const handleClose = () => {
+    setState({ ...state, open: false });
+  };
+
+  const copy =(message)=>{
+    const newState = {  vertical: 'bottom',horizontal: 'right',}
+    setMessage(message);
+    setState({ open: true, ...newState });
+  }
+
+  const [cookies, setCookie, removeCookie] = useCookies();
+  const navigate = useNavigate();
+  const isAdmin = useSelector((state) => state.user.role);
 
   const [loading , setLoading] = React.useState(false);
   const [srcImage , setSrcImage] = React.useState();
@@ -79,11 +106,10 @@ export default function TrackAccount() {
   },[]);
 
   return (
-    <Page title="Track Account" className="new-account-container">
+    <Page title="Add New Access" className="new-account-container">
       <RootStyle>
-        
 
-        {mdUp && (
+      {mdUp && (
           <SectionStyle>
             <Typography variant="h4" sx={{ p: 3 }}>
               Mohon Jujur Dalam Mengisi Form Ini.
@@ -104,12 +130,12 @@ export default function TrackAccount() {
         <Container>
           <ContentStyle>
             <Typography variant="h4" gutterBottom>
-              Track Account Valorant
+              New Crosshair
             </Typography>
 
-            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Profile Private? Gangaruh Banh.</Typography>
+            <Typography sx={{ color: 'text.secondary', mb: 5 }}>Name and code the Crosshair you want to share.</Typography>
 
-            <TrackForm  />
+            <CreateCrosshairForm copyProps={copy} />
             
           </ContentStyle>
         </Container>

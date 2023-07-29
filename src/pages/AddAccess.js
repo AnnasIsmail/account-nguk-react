@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import axios from 'axios';
 import React from 'react';
 import { useCookies } from 'react-cookie';
+import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 // hooks
 import useResponsive from '../hooks/useResponsive';
@@ -48,7 +49,7 @@ const SectionStyle = styled(Card)(({ theme }) => ({
 const ContentStyle = styled('div')(({ theme }) => ({
   maxWidth: 480,
   margin: 'auto',
-  minHeight: '100vh',
+  // minHeight: '100vh',
   display: 'flex',
   justifyContent: 'center',
   flexDirection: 'column',
@@ -83,8 +84,9 @@ export default function AddAccess() {
 
   const [cookies, setCookie, removeCookie] = useCookies();
   const navigate = useNavigate();
+  const isAdmin = useSelector((state) => state.user.role);
 
-  if(cookies.aStre23 !== '1892gdb18'){
+  if(isAdmin !== 'admin'){
     navigate("/404", { replace: true });
   }
 
@@ -110,17 +112,15 @@ export default function AddAccess() {
   return (
     <Page title="Add New Access" className="new-account-container">
       <RootStyle>
-        
 
-        {mdUp && (
+      {mdUp && (
           <SectionStyle>
-            <Typography variant="h3" sx={{ px: 5, mt:-5 , mb: 3 }}>
+            <Typography variant="h4" sx={{ p: 3 }}>
               Mohon Jujur Dalam Mengisi Form Ini.
             </Typography>
-            
             {(loading)?
               <>
-                <img alt="Random Skins" src={srcImage} sx={{ px: 3 }} />
+                <img alt="Random Skins" src={srcImage} sx={{ p: 3 }} />
                 <Typography variant="subtitle1" sx={{ textAlign: 'center' }} gutterBottom>
                   {nameSkins}
                 </Typography>
@@ -128,7 +128,6 @@ export default function AddAccess() {
             :
               <></>
             }
-
           </SectionStyle>
         )}
 

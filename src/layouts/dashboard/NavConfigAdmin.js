@@ -12,6 +12,11 @@ const navConfigAdmin = [
     icon: getIcon('ic:baseline-person-add-alt-1'),
   },
   {
+    title: 'User Management',
+    path: '/dashboard/user-management',
+    icon: getIcon('fa6-solid:user-gear'),
+  },
+  {
     title: 'Logs',
     path: '/dashboard/logs',
     icon: getIcon('fluent:arrow-repeat-all-20-filled'),

@@ -1,19 +1,22 @@
+import React from 'react';
 import { useCookies } from 'react-cookie';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
+import { logout } from './user';
 
 export default function Logout(){
     const [cookies, setCookie, removeCookie] = useCookies();
+    const dispatch = useDispatch()
     const navigate = useNavigate();
-    removeCookie('codeAccess' , {path: '/'});
-    removeCookie('name' , {path: '/'});
-    removeCookie('aStre23' , {path: '/'});
 
-    removeCookie('codeAccess' , {path: '/dashboard'});
-    removeCookie('name',  {path: '/dashboard'});
-    removeCookie('aStre23' , {path: '/dashboard'});
-
-    document.location.reload();
-    navigate("/", { replace: true });
+    removeCookie('token', { path: '/' });
+    removeCookie('token', { path: '/dashboard' });
+    removeCookie('token', { path: '/account' });
+    removeCookie('token', { path: '/crosshair' });
+    dispatch(logout());
+    React.useEffect(()=>{
+        navigate("/");
+    });
     
     return(
     <>

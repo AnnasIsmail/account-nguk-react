@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Fade from '@mui/material/Fade';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-
+import ReactJson from 'react-json-view';
 
 const style = {
   position: 'absolute',
@@ -15,16 +15,16 @@ const style = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 4,
+  maxHeight: '80vh',
+  overflow: 'auto'
 };
 
 export default function DetailLog(props) {
-    console.log(props.dataLog);
     let dataLog = [];
 
   if(props.dataLog !== undefined){
     dataLog = props.dataLog;
   }
-
 
   return (
     <>
@@ -43,32 +43,30 @@ export default function DetailLog(props) {
         <Fade in={props.open}>
           <Box sx={style}>
             <Typography id="transition-modal-title" variant="h6" component="h2">
-              {dataLog.access_name}
+              {dataLog.email}
             </Typography>
             <Typography id="transition-modal-description" sx={{ mt: 2 }}>
             <Typography>
               <b>Activity : </b>
                {dataLog.activity}
-                          </Typography>
-                          <Typography>
-                            <b>Ip Address : </b>
-                            {dataLog.ip_address}
-                          </Typography>
-                          <Typography>
-                          <b>Browser : </b>
-                            {dataLog.browser}
-                          </Typography>
-                          <Typography>
-                          <b>Different Time : </b>
-                            {dataLog.ago}
-                          </Typography>
-                          <Typography>
-                          <b>Actually Time : </b>
-                            {dataLog.created_at}
-                          </Typography>
-                        </Typography>
-                      
-                
+            </Typography>
+            <Typography>
+            <b>Browser : </b>
+              {dataLog.browser}
+            </Typography>
+            <Typography>
+            <b>Different Time : </b>
+              {dataLog.ago}
+            </Typography>
+            <Typography>
+            <b>Actually Time : </b>
+              {dataLog.created_at}
+            </Typography>
+            <Typography>
+              <b>Identity </b>
+              <ReactJson src={dataLog.identity} name={false} collapsed displayDataTypes={false} enableClipboard={false} displayObjectSize={false} />
+            </Typography>
+          </Typography>
           </Box>
         </Fade>
       </Modal>

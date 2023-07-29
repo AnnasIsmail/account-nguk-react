@@ -1,6 +1,6 @@
-import axios from 'axios';
 import React from 'react';
 import { useCookies } from 'react-cookie';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 // form
@@ -8,11 +8,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
 import { useForm } from 'react-hook-form';
 // @mui
-import { IconButton, InputAdornment, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import Typography from '@mui/material/Typography';
 // components
+import VerifyOTP from './components/VerifyOTP';
 import { FormProvider, RHFTextField } from './components/hook-form';
-import Iconify from './components/Iconify';
+import axiosConfig from './utils/axiosConfig';
+
 // ----------------------------------------------------------------------
 
 export default function EntryCodeAccessForm(props) {
@@ -21,7 +23,9 @@ export default function EntryCodeAccessForm(props) {
   const [done , setDone] = React.useState(false);
   const [error , setError] = React.useState(false);
   const [textError , setTextError] = React.useState();
+  const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [email, setEmail] = React.useState('');
 
   const [cookies, setCookie, removeCookie] = useCookies();
   const today = new Date();
@@ -29,14 +33,16 @@ export default function EntryCodeAccessForm(props) {
 
   const [showPassword, setShowPassword] = React.useState(false);
 
+  const identity = useSelector((state) => state.user?.identity || undefined);
+
   nextYear.setDate(today.getDate()+3600);
 
   const RegisterSchema = Yup.object().shape({
-    code: Yup.string().required('Code required'),
+    email: Yup.string().email('The data entered must be in the form of an email').required('Email is required'),
 });
 
   const defaultValues = {
-    code: '',
+    email: '',
   };
 
   const methods = useForm({
@@ -51,67 +57,63 @@ export default function EntryCodeAccessForm(props) {
 
 
   const onSubmit = async (e) => {
-
+    setLoading(true);
+    setError(false);
+    setTextError('');
     const timeElapsed = Date.now();
     const today = new Date(timeElapsed);
-    const code = e.code;
+    const email = e.email;
+    setEmail(e.email);
     const objectLog = {
-      access_code: code,
-      ip_address: cookies.myIp,
-      browser:cookies.browser,
+      email,
+      identity,
+      browser: cookies.browser,
       created_at: today.toISOString()
     };
-
-    axios({
-      url: 'http://localhost:5000/access/', 
-      responseType: 'json',
-      method: 'post',
-      data : {access_code: code}
-    }).then((response) =>{
-
-        const responseName = response.data.name;
-        const role = response.data.role;
-        objectLog.access_name = responseName;
-        objectLog.activity = 'Success Login';
-
+    
+    axiosConfig.post('/access/sendotp',{email})
+    .then((response) =>{
+        setLoading(false);
         if(response.status === 200){
-          axios({
-            url: 'http://localhost:5000/logs/create', 
-            responseType: 'json',
-            method: 'post',
-            data : objectLog
-          }).then((response) =>{
-            console.log(response)
-            if(response.status === 200){
-              setCookie('codeAccess', code , {expires: nextYear});
-              setCookie('name', responseName , {expires: nextYear});
-              if(role === 'admin'){
-                setCookie('aStre23', '1892gdb18' , {expires: nextYear});
-              }else{
-                setCookie('aStre23', '18924jdbfbr' , {expires: nextYear});
-              }
-              // document.location.reload()
-            }
+          objectLog.name = 'Not Authorized';
+          objectLog.activity = 'Request OTP and Email Registered.';
+          axiosConfig.post('/logs/create', objectLog)
+          .then((response) =>{
+          if(response.status === 200){
+            setOpen(true);
+          }
         });
-        }else if(response.status === 201){
-          objectLog.access_name = 'No Detect';
-              objectLog.activity = 'Failed Login';
-
-              axios({
-                  url: 'http://localhost:5000/logs/create', 
-                  responseType: 'json',
-                  method: 'post',
-                  data : objectLog
-                }).then((response) =>{
-                  setError(true);
-                  setTextError('Access Code Is Wrong!');
-                  setLoading(false);
-              });
+        }else if(response.status === 204){
+          objectLog.name = 'No Detect';
+          objectLog.activity = 'Request OTP and Email Unregistered.';
+          axiosConfig.post('/logs/create', objectLog)
+          .then((response) =>{
+              setError(true);
+              setTextError('Email has not been registered, please contact admin!');
+              setLoading(false);
+          });
         }
     });
-}
+    
+    setTimeout(() => {
+      if (loading) {
+        setError(true);
+        setTextError('Maap Bang API-nya masih ngantuk.');
+      }
+    }, 10000);
+  
+    setTimeout(() => {
+      if (loading) {
+        setLoading(false);
+        setError(true);
+        setTextError('Yahh API-nya gamau bangun bang, coba lagi dan bang NT.');
+      }
+    }, 20000);
+  }
+
 
   return (
+    <>
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)} >
       {(error)?
         <Typography variant="h6" gutterBottom component="div" color="error" >
@@ -121,23 +123,13 @@ export default function EntryCodeAccessForm(props) {
       <></>
       }
       <Stack spacing={3}>
-
-          <RHFTextField name="code" label="Access Code" type={showPassword ? 'text' : 'password'} 
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton edge="end" onClick={() => setShowPassword(!showPassword)}>
-                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          />
-          <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading}>
-            Submit
-          </LoadingButton>
-        
+        <RHFTextField name="email" id="outlined-basic" label="Email" variant="outlined" />
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={loading}>
+          Submit
+        </LoadingButton>
       </Stack>
     </FormProvider>
+      <VerifyOTP open={open} email={email} />
+    </>
   );
 }

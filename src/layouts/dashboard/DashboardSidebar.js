@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useCookies } from 'react-cookie';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 // material
 import { Box, Drawer, Typography } from '@mui/material';
@@ -43,7 +44,8 @@ DashboardSidebar.propTypes = {
 };
 
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
-  const [isAdmin , setIsAdmin] = useState(false);
+  const isAdmin = useSelector((state) => state.user.role);
+  console.log(isAdmin);
   const [cookies, setCookie, removeCookie] = useCookies();
 
   const { pathname } = useLocation();
@@ -53,12 +55,6 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
     if (isOpenSidebar) {
       onCloseSidebar();
     }
-    console.log(cookies.aStre23);
-    
-    if(cookies.aStre23 === '1892gdb18'){
-      setIsAdmin(true);
-    }
-
   }, [pathname]);
 
   const renderContent = (
@@ -89,13 +85,11 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       </Box> */}
 
       <NavSection navConfig={navConfig} />
-      {(isAdmin)?
+      {(isAdmin === 'admin')&&
         <>
           <Typography className='navbar-admin' color='primary' >Administrator</Typography>
           <NavSection navConfig={navConfigAdmin} />
         </>
-        :
-        <></>
       }
 
 

@@ -13,6 +13,7 @@ import React from 'react';
 //
 import BackdropLoading from '../../@dashboard/app/BackDropLoading';
 import DetailMMR from '../../@dashboard/app/DetailMMR';
+import DetailRank from '../../@dashboard/app/DetailRank';
 
 function LinearProgressWithLabel(props) {
   return (
@@ -73,6 +74,10 @@ export default function DetailAccount({ data , puuid , color = 'primary', sx, ..
     const [detailMMR,setDetailMMR] = React.useState([]);
     const handleCloseDetailMMR = () => setOpenDetailMMR(false);
 
+    const [openDetailRank, setOpenDetailRank] = React.useState(false);
+    const [detailRank,setDetailRank] = React.useState([]);
+    const handleCloseDetailRank = () => setOpenDetailRank(false);
+
     const [openBackDrop , setOpenBackdrop] = React.useState(false);
 
     const handleCloseBackDrop = () => {
@@ -84,11 +89,20 @@ export default function DetailAccount({ data , puuid , color = 'primary', sx, ..
 
     const openDetailSkin =(uuid , name)=> {
     handleToggleBackDrop();
-        axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr-history/${data.region}/${uuid}`).then((response) =>{
-          handleCloseBackDrop();
-          setDetailMMR(response.data);
-          setOpenDetailMMR(true);
+    if(name === 'MMR'){
+      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr-history/ap/${uuid}`).then((response) =>{
+        handleCloseBackDrop();
+        setDetailMMR(response.data);
+        setOpenDetailMMR(true);
       });
+    }else if(name === 'Rank'){
+      axios.get(`https://api.henrikdev.xyz/valorant/v2/mmr/ap/${uuid}`).then((response) =>{
+        handleCloseBackDrop();
+        setDetailRank(response.data);
+        console.log(response);
+        setOpenDetailRank(true);
+      });
+    }
     }
 
   return (
@@ -168,10 +182,12 @@ export default function DetailAccount({ data , puuid , color = 'primary', sx, ..
       <CardActions className='bottom-card-account'>
         <div>
           <Button className='button-bottom' target="_blank" href={`https://tracker.gg/valorant/profile/riot/${data.name}%23${data.tag}/overview`} color={color} size="small">Tracker.gg</Button>
+          <Button className='button-bottom' onClick={()=>openDetailSkin(`${data.name}/${data.tag}` , 'Rank')} color={color} size="small">History Rank</Button>
           <Button className='button-bottom' onClick={()=>openDetailSkin(data.puuid , 'MMR')} color={color} size="small">History MMR</Button>
         </div>
       </CardActions>
       <DetailMMR open={openDetailMMR} handleClose={handleCloseDetailMMR} detailSkin={detailMMR} />
+      <DetailRank open={openDetailRank} handleClose={handleCloseDetailRank} detailSkin={detailRank} />
     </Card>
     </>
 

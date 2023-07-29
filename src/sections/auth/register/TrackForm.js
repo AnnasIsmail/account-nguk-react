@@ -1,8 +1,8 @@
 import React from 'react';
 import { useCookies } from 'react-cookie';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-
 // form
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoadingButton } from '@mui/lab';
@@ -13,11 +13,12 @@ import { Stack } from '@mui/material';
 import Typography from '@mui/material/Typography';
 // components
 import { FormProvider, RHFTextField } from '../../../components/hook-form';
+import axiosConfig from '../../../utils/axiosConfig';
 import DetailAccount from './DetailAccount';
 
 // ----------------------------------------------------------------------
 
-export default function TrackForm() {
+export default function  TrackForm() {
   const navigate = useNavigate();
   
   const [puuid , setpuuid] = React.useState();
@@ -68,30 +69,34 @@ export default function TrackForm() {
   }
 }
 
+const identity = useSelector((state) => state.user?.identity || undefined);
+const email = useSelector((state) => state.user.email || undefined);
+const name = useSelector((state) => state.user.nama);
+
 function CheckAccount(riotId , tagline){
       
   setLoading(true);
   setDetailAccount(<></>);
 
-  const formDataLog = new FormData();
-      
-  formDataLog.append('access_code', cookies.codeAccess);
-  formDataLog.append('ip_address', cookies.myIp);
-  formDataLog.append('browser', cookies.browser);
-  formDataLog.append('access_name', cookies.name);
-  formDataLog.append('activity', `Tracked Account Riot ID: ${riotId}, Tag Line: ${tagline}`);
+  const timeElapsed = Date.now();
+  const today = new Date(timeElapsed);
 
+  const objectLog = {
+    name,
+    email,
+    identity,
+    browser:cookies.browser,
+    created_at: today.toISOString(),
+  };
     axios.get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId.trim().replace(' ' , '%20')}/${tagline}`).then((response) =>{
       setpuuid(response.data.data.puuid);
       setData(response.data.data);
       setLoading(false);
       setError(false);
-      axios({
-        url: 'http://127.0.0.1:8000/api/log/store', 
-        responseType: 'json',
-        method: 'post',
-        data : formDataLog
-      });
+
+      objectLog.activity = `Track Account Riot ID: ${riotId}, Tag Line: ${tagline}`;
+      axiosConfig.post('/logs/create', objectLog);
+
       setDetailAccount(
         <DetailAccount data={response.data.data} puuid={puuid} />
       );
@@ -102,7 +107,6 @@ function CheckAccount(riotId , tagline){
       setData({});
     });
 }
-
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)} >

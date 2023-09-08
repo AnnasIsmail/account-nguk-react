@@ -21,7 +21,7 @@ function App() {
   const { token } = cookies;
   const login = useSelector((state) => state.user.login);
   const [isLoading, setIsLoading] = React.useState(true);
-
+  const [APIDie, setAPIDie] = React.useState(false);
   const today = new Date();
   const nextYear = new Date();
   nextYear.setDate(today.getDate() + 18000);
@@ -56,7 +56,6 @@ function App() {
       })
       // eslint-disable-next-line consistent-return
       .then((response) => {
-        console.log(response);
         if (response.status === 204) {
           removeCookie('token', { path: '/' });
           removeCookie('token', { path: '/dashboard' });
@@ -68,6 +67,10 @@ function App() {
         dispatch(changeRole(response.data.data.role));
         dispatch(changeEmail(response.data.data.email));
         dispatch(successLogin());
+      })
+      .catch((error) => {
+        console.log('error');
+        setAPIDie(true);
       });
   }
 
@@ -97,7 +100,11 @@ function App() {
     <ThemeProvider>
       <ScrollToTop />
       <BaseOptionChartStyle />
-      {login ? <Router /> : <EntryCodeAccess isLoading={isLoading} />}
+      {APIDie ? (
+        <>Please reload this page and try again.</>
+      ) : (
+        <>{login ? <Router /> : <EntryCodeAccess isLoading={isLoading} />}</>
+      )}
     </ThemeProvider>
   );
 }

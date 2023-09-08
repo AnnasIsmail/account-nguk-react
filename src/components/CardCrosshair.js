@@ -16,6 +16,7 @@ import { useCookies } from 'react-cookie';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import axiosConfig from '../utils/axiosConfig';
+import AlertDelete from './AlertDelete';
 import Iconify from './Iconify';
 
 const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
@@ -26,9 +27,8 @@ CardCrosshair.propTypes = {
     code: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     author: PropTypes.string.isRequired,
-    // Tambahkan properti lain yang diperlukan
   }).isRequired,
-  getData: PropTypes.func.isRequired, // Contoh: Prop getData harus berupa fungsi yang diperlukan
+  getData: PropTypes.func.isRequired,
 };
 
 export default function CardCrosshair(props) {
@@ -110,10 +110,17 @@ export default function CardCrosshair(props) {
       objectLog.activity = `Deleted Crosshair Name: ${props.data.name}, ID:${props.data._id} Code: ${props.data.code}`;
       axiosConfig.post('/logs/create', objectLog).then((response) => {
         if (response.status === 200) {
+          setOpenDelete(false);
           props.getData();
         }
       });
     });
+  };
+
+  const [openDelete, setOpenDelete] = useState(false);
+  const handleDelete = () => {
+    handleCloseMenu();
+    setOpenDelete(true);
   };
 
   return (
@@ -146,11 +153,9 @@ export default function CardCrosshair(props) {
       </CardContent>
       <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
         <Button size="small" onClick={handleClick}>
-          {/* Copy Code */}
           <Iconify icon="fluent:copy-16-filled" width={24} height={24} />
         </Button>
         <Button size="small" onClick={() => setIndex(index < arrayBackground.length - 1 ? index + 1 : 0)}>
-          {/* Change Background */}
           <Iconify icon="ic:round-change-circle" width={24} height={24} />
         </Button>
         <IconButton
@@ -168,12 +173,13 @@ export default function CardCrosshair(props) {
           anchorEl={anchorEl}
           open={openMenu}
           onClose={handleCloseMenu}
+          aria-haspopup="true"
           MenuListProps={{
             'aria-labelledby': 'basic-button',
           }}
         >
           <MenuItem onClick={() => navigate(`/crosshair/edit/${props.data._id}`)}>Edit</MenuItem>
-          <MenuItem onClick={deleteCrosshair}>Remove</MenuItem>
+          <MenuItem onClick={handleDelete}>Remove</MenuItem>
         </Menu>
       </CardActions>
 
@@ -182,6 +188,12 @@ export default function CardCrosshair(props) {
           Success Copy {props.data.name} to clipboard.
         </Alert>
       </Snackbar>
+      <AlertDelete
+        open={openDelete}
+        actionDelete={deleteCrosshair}
+        handleClose={() => setOpenDelete(false)}
+        message={`Apakah kamu yakin ingin menghapus croshhair ${props.data.name}`}
+      />
     </Card>
   );
 }

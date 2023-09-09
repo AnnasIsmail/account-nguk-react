@@ -46,12 +46,6 @@ const navConfig = [
     path: '/dashboard/logout',
     icon: getIcon('humbleicons:logout'),
   },
-
-  // {
-  //   title: 'blog',
-  //   path: '/dashboard/blog',
-  //   icon: getIcon('eva:file-text-fill'),
-  // }
 ];
 
 export default navConfig;

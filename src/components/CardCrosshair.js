@@ -47,6 +47,7 @@ export default function CardCrosshair(props) {
     'https://www.vcrdb.net/img/bgs/sky.webp',
   ];
   useEffect(() => {
+    setLoading(true);
     fetch(`https://api.henrikdev.xyz/valorant/v1/crosshair/generate?id=${props.data.code}`)
       .then((response) => response.blob())
       .then((blob) => {
@@ -55,7 +56,7 @@ export default function CardCrosshair(props) {
         setLoading(false);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.data.code]);
 
   const handleClick = () => {
     navigator.clipboard.writeText(props.data.code);

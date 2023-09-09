@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { useCookies } from 'react-cookie';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 // material
@@ -45,9 +44,6 @@ DashboardSidebar.propTypes = {
 
 export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
   const isAdmin = useSelector((state) => state.user.role);
-  console.log(isAdmin);
-  const [cookies, setCookie, removeCookie] = useCookies();
-
   const { pathname } = useLocation();
   const isDesktop = useResponsive('up', 'lg');
 
@@ -64,7 +60,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         '& .simplebar-content': { height: 1, display: 'flex', flexDirection: 'column' },
       }}
     >
-      <Box sx={{ px: 2.5, py: 3, display: 'inline-flex' }}>
+      <Box sx={{ px: 2.5, py: 3, display: 'flex' }}>
         <Logo />
       </Box>
 
@@ -84,16 +80,18 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
         </Link>
       </Box> */}
 
-      <NavSection navConfig={navConfig} />
-      {(isAdmin === 'admin')&&
+      <NavSection navConfig={navConfig.filter((data) => data.path !== '/dashboard/logout')} />
+      {isAdmin === 'admin' && (
         <>
-          <Typography className='navbar-admin' color='primary' >Administrator</Typography>
+          <Typography sx={{ marginLeft: '20px' }} color="primary">
+            Administrator
+          </Typography>
           <NavSection navConfig={navConfigAdmin} />
         </>
-      }
-
+      )}
 
       <Box sx={{ flexGrow: 1 }} />
+      <NavSection navConfig={navConfig.filter((data) => data.path === '/dashboard/logout')} />
 
       {/* <Box sx={{ px: 2.5, pb: 3, mt: 10 }}>
         <Stack alignItems="center" spacing={3} sx={{ pt: 5, borderRadius: 2, position: 'relative' }}>

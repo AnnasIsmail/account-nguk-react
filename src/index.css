@@ -32,10 +32,6 @@
     justify-content: space-between;
 }
 
-.navbar-admin{
-    margin-left: 20px;
-}
-
 .layout-manage-data{
     display: grid;
     grid-template-columns: 280px 1fr;

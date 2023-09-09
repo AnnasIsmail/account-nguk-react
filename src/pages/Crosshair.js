@@ -1,4 +1,4 @@
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Pagination, Stack, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { useEffect, useState } from 'react';
@@ -9,6 +9,8 @@ import Iconify from '../components/Iconify';
 import Page from '../components/Page';
 import WaitLoadData from '../components/WaitLoadData';
 import axiosConfig from '../utils/axiosConfig';
+
+const itemsPerPage = 5;
 
 export default function Crosshair() {
   const [dataCrosshair, setDataCrosshair] = useState([]);
@@ -24,6 +26,16 @@ export default function Crosshair() {
     });
   };
   const [loading, setLoading] = useState(true);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handleChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = dataCrosshair.slice(startIndex, endIndex);
 
   return (
     <Page title="Crosshair">
@@ -46,13 +58,16 @@ export default function Crosshair() {
               </Button>
             </Stack>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '15px', justifyContent: 'space-evenly' }}>
-              {dataCrosshair.map((data, index) => (
+              {paginatedData.map((data, index) => (
                 <CardCrosshair data={data} key={index} getData={getData} />
               ))}
             </Box>
           </Box>
         </Container>
       )}
+      <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+        <Pagination count={Math.ceil(dataCrosshair.length / itemsPerPage)} page={currentPage} onChange={handleChange} />
+      </Box>
     </Page>
   );
 }

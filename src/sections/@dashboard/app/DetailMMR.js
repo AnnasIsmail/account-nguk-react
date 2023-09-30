@@ -7,6 +7,7 @@ import Fade from '@mui/material/Fade';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 
+import moment from 'moment';
 import Iconify from '../../../components/Iconify';
 
 const style = {
@@ -30,6 +31,9 @@ export default function DetailMMR(props) {
   if (props.detailSkin.data !== undefined) {
     levels = props.detailSkin.data;
   }
+  const formattedDate = (data) => (
+    <>{moment(data.date, 'dddd, MMMM D, YYYY h:mm A').add(7, 'hours').format('dddd, MMMM D, YYYY HH:mm')}</>
+  );
 
   return (
     <>
@@ -62,15 +66,15 @@ export default function DetailMMR(props) {
                     >
                       {data.mmr_change_to_last_game > 1 ? (
                         <Typography variant="h6" color="primary">
-                          {data.date}
+                          {formattedDate(data)}
                         </Typography>
                       ) : (
                         <>
                           {data.mmr_change_to_last_game === 0 ? (
-                            <Typography variant="h6">{data.date}</Typography>
+                            <Typography variant="h6">{formattedDate(data)}</Typography>
                           ) : (
                             <Typography variant="h6" color="error">
-                              {data.date}
+                              {formattedDate(data)}
                             </Typography>
                           )}
                         </>

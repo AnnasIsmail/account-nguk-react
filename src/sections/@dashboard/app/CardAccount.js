@@ -125,7 +125,9 @@ export default function CardAccount({
   const [cookies] = useCookies();
 
   React.useEffect(() => {
-    axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr/ap/${puuid}`).then((response) => {
+    axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/account/${puuid}?force=true`, {headers: {
+      Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'
+    }}).then((response) => {
       setNameRank(response.data.data.currenttierpatched);
       setName(response.data.data.name);
       setTag(response.data.data.tag);
@@ -193,7 +195,9 @@ export default function CardAccount({
         setOpenDetailAgent(true);
       });
     } else if (name === 'MMR') {
-      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr-history/ap/${uuid}`).then((response) => {
+      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/account/${puuid}?force=true`, {headers: {
+        Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'
+      }}).then((response) => {
         handleCloseBackDrop();
         setDetailMMR(response.data);
         setOpenDetailMMR(true);

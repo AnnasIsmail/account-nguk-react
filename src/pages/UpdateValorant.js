@@ -15,7 +15,7 @@ export default function UpdateValorant() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    axios.get('https://api.henrikdev.xyz/valorant/v1/website/en-us').then((response) => {
+    axios.get('https://api.henrikdev.xyz/valorant/v1/website/en-us', {Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'}).then((response) => {
       setListUpdates(response.data.data);
       setLoading(false);
     });

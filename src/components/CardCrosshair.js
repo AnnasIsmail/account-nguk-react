@@ -48,7 +48,7 @@ export default function CardCrosshair(props) {
   ];
   useEffect(() => {
     setLoading(true);
-    fetch(`https://api.henrikdev.xyz/valorant/v1/crosshair/generate?id=${props.data.code}`)
+    fetch(`https://api.henrikdev.xyz/valorant/v1/crosshair/generate?id=${props.data.code}`, {Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'})
       .then((response) => response.blob())
       .then((blob) => {
         const url = URL.createObjectURL(blob);

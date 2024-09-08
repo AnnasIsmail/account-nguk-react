@@ -61,7 +61,7 @@ export default function DetailAccount({ data , puuid , color = 'primary', sx, ..
     const [elo , setElo] = React.useState();
 
     React.useEffect(()=>{
-      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr/${data.region}/${data.puuid}`).then((response) =>{
+      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr/${data.region}/${data.puuid}`, {Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'}).then((response) =>{
         setRank(response.data.data.currenttierpatched);
         setElo(response.data.data.elo);
         setSrcRank(response.data.data.images.small);
@@ -90,7 +90,7 @@ export default function DetailAccount({ data , puuid , color = 'primary', sx, ..
     const openDetailSkin =(uuid , name)=> {
     handleToggleBackDrop();
     if(name === 'MMR'){
-      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr-history/ap/${uuid}`).then((response) =>{
+      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/mmr-history/ap/${uuid}`, {Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'}).then((response) =>{
         handleCloseBackDrop();
         setDetailMMR(response.data);
         setOpenDetailMMR(true);

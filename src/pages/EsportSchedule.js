@@ -19,7 +19,7 @@ export default function EsportSchedule() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('https://api.henrikdev.xyz/valorant/v1/esports/schedule').then((response) => {
+    axios.get('https://api.henrikdev.xyz/valorant/v1/esports/schedule', {Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'}).then((response) => {
       setDataEsport(response.data.data.filter((data) => data.match.teams.length > 1));
       dataExportNoFilter = response.data.data.filter((data) => data.match.teams.length > 1);
       setLoading(false);

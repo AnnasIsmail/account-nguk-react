@@ -191,7 +191,7 @@ export default function NewAccountForm() {
 
     if (riotId !== '' && riotId !== undefined && tagline !== '' && tagline !== undefined) {
       axios
-        .get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId}/${tagline}`)
+        .get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId}/${tagline}`, {Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'})
         .then((response) => {
           setpuuid(response.data.data.puuid);
           checkExistAccount(response.data.data.puuid);

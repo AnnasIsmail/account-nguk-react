@@ -69,7 +69,7 @@ export default function TrackForm() {
       created_at: today.toISOString(),
     };
     axios
-      .get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId.trim().replace(' ', '%20')}/${tagline}`)
+      .get(`https://api.henrikdev.xyz/valorant/v1/account/${riotId.trim().replace(' ', '%20')}/${tagline}`, {Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'})
       .then((response) => {
         setpuuid(response.data.data.puuid);
         setLoading(false);

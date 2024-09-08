@@ -122,7 +122,7 @@ export default function EditAccountForm(props) {
   React.useEffect(()=>{
 
     function getRiotIdAndTagLine(){
-      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/account/${dataAccount.puuid}`).then((response) =>{
+      axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/account/${dataAccount.puuid}`, {Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'}).then((response) =>{
           setRiotId(response.data.data.name);
           setTagLine(response.data.data.tag);
       });

@@ -114,7 +114,7 @@ export default function UpdateCrosshairForm() {
     setCodeFilled(true);
     setLoadingPreview(true);
     try {
-      fetch(`https://api.henrikdev.xyz/valorant/v1/crosshair/generate?id=${code.target.value}`)
+      fetch(`https://api.henrikdev.xyz/valorant/v1/crosshair/generate?id=${code.target.value}`, {Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'})
         .then((response) => response.blob())
         .then((blob) => {
           console.log(blob);
@@ -139,7 +139,7 @@ export default function UpdateCrosshairForm() {
       setCodeFilled(true);
       setLoadingPreview(true);
       try {
-        fetch(`https://api.henrikdev.xyz/valorant/v1/crosshair/generate?id=${res.data.data.code}`)
+        fetch(`https://api.henrikdev.xyz/valorant/v1/crosshair/generate?id=${res.data.data.code}`, {Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'})
           .then((response) => response.blob())
           .then((blob) => {
             const url = URL.createObjectURL(blob);

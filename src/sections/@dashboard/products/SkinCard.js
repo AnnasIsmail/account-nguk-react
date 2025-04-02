@@ -32,7 +32,7 @@ export default function SkinsCard({ skin }) {
 
   const openDetailSkin = (uuid, name) => {
     if (name === 'skin') {
-      axios.get(`https://valorant-api.com/v1/weapons/skins/${uuid}`).then((response) => {
+      axios.get(`https://account-nguk-api.vercel.app/weapons/skins/${uuid}`).then((response) => {
         setDetailSkin(response.data.data);
         setOpenDetail(true);
       });

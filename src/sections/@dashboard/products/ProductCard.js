@@ -38,12 +38,12 @@ export default function ShopProductCard({ product }) {
 
   const openDetailSkin =(uuid , name)=> {
     if(name === 'agent'){
-      axios.get(`https://valorant-api.com/v1/agents/${uuid}`).then((response) =>{
+      axios.get(`https://account-nguk-api.vercel.app/agents/${uuid}`).then((response) =>{
           setDetailAgent(response.data.data);
           setOpenDetailAgent(true);
       });
     }else{
-      axios.get(`https://valorant-api.com/v1/agents/${uuid}`).then((response) =>{
+      axios.get(`https://account-nguk-api.vercel.app/agents/${uuid}`).then((response) =>{
           setDetailRole(response.data.data.role);
           setOpenDetailRole(true);
       });

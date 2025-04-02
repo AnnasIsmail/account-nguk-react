@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 // @mui
 import { Card, Typography } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
@@ -115,6 +116,7 @@ export default function CardAccount({
 
   const [open, setOpen] = React.useState(false);
 
+  const [errorMessage, setErrorMessage] = React.useState(false);
   const [name, setName] = React.useState();
   const [nameRank, setNameRank] = React.useState();
   const [tag, setTag] = React.useState();
@@ -125,16 +127,18 @@ export default function CardAccount({
   const [cookies] = useCookies();
 
   React.useEffect(() => {
-    axios.get(`https://api.henrikdev.xyz/valorant/v1/by-puuid/account/${puuid}?force=true`, {headers: {
-      Authorization: 'HDEV-546994ff-f305-4d59-a37b-fdad32b442f5'
-    }}).then((response) => {
+    axiosConfig.get(`/valo-data/account/${puuid}`, { token: cookies.token }).then((response) => {
+      setLoading(true);
       setNameRank(response.data.data.currenttierpatched);
       setName(response.data.data.name);
       setTag(response.data.data.tag);
       setRank(response.data.data.images.small);
       setExp(response.data.data.ranking_in_tier);
       setElo(response.data.data.elo);
+    }).catch((error) => {
+      setErrorMessage(error.response.data.error.errors[0].message)
       setLoading(true);
+      console.error("Error fetching data:", error);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -183,13 +187,13 @@ export default function CardAccount({
   const openDetailSkin = (uuid, name) => {
     handleToggleBackDrop();
     if (name === 'skin') {
-      axios.get(`https://valorant-api.com/v1/weapons/skins/${uuid}`).then((response) => {
+      axios.get(`https://account-nguk-api.vercel.app/weapons/skins/${uuid}`).then((response) => {
         handleCloseBackDrop();
         setDetailSkin(response.data.data);
         setOpenDetail(true);
       });
     } else if (name === 'agent') {
-      axios.get(`https://valorant-api.com/v1/agents/${uuid}`).then((response) => {
+      axios.get(`https://account-nguk-api.vercel.app/agents/${uuid}`).then((response) => {
         handleCloseBackDrop();
         setDetailAgent(response.data.data);
         setOpenDetailAgent(true);
@@ -256,11 +260,13 @@ export default function CardAccount({
         )}
 
         <Typography className="RiotIdCard" sx={{ px: 2 }} variant="h5">
-          {/* {RiotIdTagLine} */}
-          {loading === false ? (
+          {!loading ? (
             <Skeleton width="100%">
               <Typography>.</Typography>
             </Skeleton>
+          // eslint-disable-next-line no-unneeded-ternary
+          ) : errorMessage ? (
+            errorMessage
           ) : (
             `${name}#${tag}`
           )}

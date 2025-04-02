@@ -25,7 +25,7 @@ export default function LeftForm({ text }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    axios.get('https://valorant-api.com/v1/weapons/skins').then((response) => {
+    axios.get('https://account-nguk-api.vercel.app/weapons/skins').then((response) => {
       const random = Math.floor(Math.random() * response.data.data.length);
       if (response.data.data[random].displayIcon !== null) {
         setSrcImage(response.data.data[random].displayIcon);

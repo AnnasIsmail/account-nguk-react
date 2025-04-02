@@ -16,7 +16,7 @@ export default function Skins() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    axios.get('https://valorant-api.com/v1/weapons/skins').then((response) => {
+    axios.get('https://account-nguk-api.vercel.app/weapons/skins').then((response) => {
       setListSkins(response.data.data);
       setRealListSkins(response.data.data);
       setLoading(false);

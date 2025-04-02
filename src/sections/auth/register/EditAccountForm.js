@@ -140,7 +140,7 @@ export default function EditAccountForm(props) {
         setAutocompleteAgents( <AutoCompleteAgents SetAgent={SetAgent} listAgents={agents} data={dataAccount.agent} /> );
     }
 
-    axios.get('https://valorant-api.com/v1/weapons/skins').then((response) =>{
+    axios.get('https://account-nguk-api.vercel.app/weapons/skins').then((response) =>{
         let data = [];
         data  = response.data.data;
 
@@ -158,7 +158,7 @@ export default function EditAccountForm(props) {
         
     });
     
-    axios.get('https://valorant-api.com/v1/agents').then((response) =>{
+    axios.get('https://account-nguk-api.vercel.app/agents').then((response) =>{
         let data = [];
         data  = response.data.data;
 

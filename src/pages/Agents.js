@@ -15,7 +15,7 @@ export default function Agents() {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    axios.get('https://valorant-api.com/v1/agents').then((response) => {
+    axios.get('https://account-nguk-api.vercel.app/agents').then((response) => {
       setAgents(response.data.data);
       setLoading(false);
     });

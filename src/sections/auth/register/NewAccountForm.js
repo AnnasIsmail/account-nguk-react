@@ -126,7 +126,7 @@ export default function NewAccountForm() {
   );
 
   React.useEffect(() => {
-    axios.get('https://valorant-api.com/v1/weapons/skins').then((response) => {
+    axios.get('https://account-nguk-api.vercel.app/weapons/skins').then((response) => {
       let data = [];
       data = response.data.data;
       const skinsSementara = [];
@@ -153,7 +153,7 @@ export default function NewAccountForm() {
       );
     });
 
-    axios.get('https://valorant-api.com/v1/agents').then((response) => {
+    axios.get('https://account-nguk-api.vercel.app/agents').then((response) => {
       let data = [];
       data = response.data.data;
       const agentsSementara = [];
